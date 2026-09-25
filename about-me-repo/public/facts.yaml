@@ -1,0 +1,154 @@
+# facts.yaml — single source of truth.
+# The agent may use ONLY the numbers, dates and titles written here and in project cards.
+
+name: Vildana Razumova
+headline: "AI Solutions Builder — bridging business problems and technical AI solutions"
+location: Germany
+
+open_to:
+  roles: ["AI Automation", "AI / analytics product roles"]
+  formats: ["in a team"]
+  interests: "Open to interesting projects; especially interested in projects in education"
+  region: "Not limited to one region; on-site, hybrid or remote"
+
+  work_authorization: "Unrestricted right to work in Germany and the EU, as an employee or as a freelancer; no visa sponsorship needed"
+  availability: "Start date is discussed in a conversation with her"
+
+working_style:   # her own words, from her working constitution (25.09.2026); the ONLY source for "weaknesses", "how to work with her", "what matters to her"
+  weakness_in_her_words: "Her high standards sometimes reach further than a task needs, and she watches for that."
+  what_she_looks_for: "A project that is interesting and useful to people and the business, and a place where she understands the big picture, not just her own task."
+  how_she_works:
+    - "Takes on ambitious tasks and keeps the quality bar."
+    - "Sees her role as: spot the problem, choose the solution, organise the work and own the result; she does not have to do everything herself."
+    - "Communication is part of the work itself."
+    - "Working with AI does not devalue expertise: the value is in setting the task, choosing the solution and owning the result."
+  best_with: "People with energy and drive."
+  how_to_work_with_her: "Directly and with structure; through dialogue and precise questions rather than templates; offer options instead of imposing one."
+
+languages:
+  - { language: Russian, level: native }
+  - { language: English, level: "professional working proficiency" }
+  - { language: German,  level: "B1 (exam passed); B2 course completed" }
+languages_in_use: "German in daily life; her Master's was taught in English; at work she uses Russian and English"
+
+experience:
+  ml: "Master's in Data Science, AI & Digital Business (June 2024 – June 2026) and about 1 year on the ML pricing project at Fun&Sun (since October 2025)"
+  banking_risk_and_analytics: "10.5 years (June 2011 – November 2021) at Halyk Bank, Kazakhstan: financial accounting and regulatory reporting, sales analytics, operational risk"
+
+current_role:
+  company_first_mention: "Fun&Sun, a leading tour operator in Central Asia"
+  company_after_first_mention: ["Fun&Sun", "the tour operator"]
+  company_website: "https://fstravel.asia"
+  company_public_facts: "Tour operator in Central Asia; works with 2,000+ travel agencies in Kazakhstan, Uzbekistan and Kyrgyzstan; package tours to Turkey, Egypt, UAE, Thailand, Vietnam, the Maldives and other destinations"
+  title: "Lead of the ML pricing project (sole data scientist)"
+  engagement: freelance
+  engagement_reason: "The company's head office is in Kazakhstan; working from Germany, freelance was the official way to join"
+  since: "October 2025"
+  team_context: "Sole data scientist on the pricing project, working within a broader AI team"
+
+previous_roles:
+  # Source for this block: LinkedIn profile (PDF, 2026-09-24), cross-checked with the career presentation on GitHub.
+  - company: Linde (Linde GmbH)
+    title: "AI Project Manager (internship during her Master's)"
+    team: "Global AI & Digital"
+    level: "6-month internship as a Master's student"
+    dates: "July 2025 – December 2025"
+    location: Pullach, Germany
+    source: "official internship reference from Linde (December 2025) and her LinkedIn"
+    work:
+      - "Built a Power Automate workflow for content approval and significantly supported the launch of an internal AI podcast"
+      - "Built a dashboard of learning progress and completion rates, and used it to improve the communication recommendations for a learning path in the global learning platform"
+      - "Product work on internal AI tools: user interviews and feedback for new features, a test concept and test runs for an AI tool; documentation, prioritised feature list and MVP roadmap for an internal GenAI agent"
+      - "Learning videos in Synthesia and learning materials on agile methods and Scrum; a concept for an internal community on agile techniques"
+      - "Managed e-learning content, courses and certificates on the global learning platform; intranet pages and newsletter articles"
+    reference_rating: "Official internship reference (Praktikumszeugnis): top overall rating — performance received 'our fullest recognition without exception and in every respect', 'always very good performance'"
+
+  - company: Choco Holding (Chocofamily)
+    what: "E-commerce group in Kazakhstan. Its Chocolife.me, founded in 2011, calls itself the #1 discount service in Kazakhstan, with 1.9M+ registered users and 6,000+ partners"
+    website: "https://chocolife.me"
+    title: Project Manager and Business Analyst
+    dates: "September 2021 – May 2023"
+    reason_for_leaving: "Relocated to Germany"
+    duties:
+      - "Gathered stakeholder requirements and got solution concepts for business-process automation approved"
+      - "Technical documentation with UML and BPMN diagrams; discovery phases and audits of existing solutions; UI/UX prototypes"
+      - "Managed requirements and their changes; worked with the development team, including Scrum Master duties"
+      - "Led two teams in parallel: one improving the website and app for users, one optimising and automating internal business processes"
+    scope_stated_on_linkedin: "Coordinated 2 teams (7 developers and QA engineers); introduced Scrum in a team of 8"
+    results_stated_on_linkedin:
+      - "350+ working hours saved per month for 50+ internal CRM users, across 10+ optimised business processes"
+      - "Documentation of financial business processes from 0% to 80%; developer onboarding shortened to 4 weeks"
+      - "Conversion to purchase +23% after UX/UI changes on the main screen"
+      - "Successful payments +33% after fixing a payment method used by 73% of users"
+      - "Backlog of 500 issues reduced by 40% with prioritisation frameworks"
+      - "Tech debt reduced by 60%; development speed +55% after introducing Scrum rituals"
+  - company: Halyk Bank
+    what: "Halyk Bank (People's Bank of Kazakhstan), founded in 1923, part of Halyk Group; describes itself as the largest universal commercial bank in Kazakhstan"
+    website: "https://halykbank.kz/about-bank/o-banke"
+    country: Kazakhstan (Almaty)
+    dates: "June 2011 – December 2021"
+    reason_for_leaving: "Was invited to Choco Holding; she wanted to work in an IT team and have an influence on the product"
+    path:   # titles as on her LinkedIn and CV; departments from the official recommendation letter
+      - "June 2011 – June 2014: Financial Accounting Analyst, Accounting and Reporting Department — 30+ monthly regulatory reports to the National Bank"
+      - "July 2014 – October 2017: Financial Analyst, Retail Sales Department (Banking Sales) — financial results of 22 branches and 3,000 sub-branches"
+      - "October 2017 – December 2021: Senior Operational Risk Manager, Financial Risk and Portfolio Analysis Department"
+    duties_per_recommendation_letter:
+      - "Automation of the bank's reporting: remote sales channels (ATMs, kiosks, payment terminals), management reports (profit, operational risk), reports to the National Bank of Kazakhstan"
+      - "As operational-risk manager: expert reviews of new and existing bank projects to find operational risks in business processes, and measures to prevent operational-risk losses"
+    results_stated_on_linkedin:
+      - "Automated 30+ regulatory reports via SAP integration (loans, deposits, cards): regulator fines down from 4 a year to 0"
+      - "Automated 10+ reports on payment devices and branch efficiency: 3+ hours of manual work saved daily"
+      - "Automated the loss-event database (100K+ events): 1,040 working hours saved per year"
+      - "Operational risk: 10+ scenario analyses across 5+ divisions, 100+ new products and processes reviewed, 20 key risk indicators across 10 divisions, fraud investigations in 50+ cases under the Basel principles"
+
+career_break:
+  dates: "May 2023 – June 2024"
+  what: "Relocated from Kazakhstan to Germany: learned German (passed a B1 exam, completed a B2 course), got to know German culture, and was admitted to the Master's in Data Science, AI & Digital Business at GISMA"
+
+education:
+  - degree: "M.Sc. Data Science, AI & Digital Business"
+    school: GISMA University of Applied Sciences
+    campus: "Berlin (Potsdam)"
+    format: "part-time, online, taught in English"
+    dates: "June 2024 – June 2026"
+    status: "All taught modules passed; Master's thesis defended in 2026, dissertation and defence graded 96 out of 100"
+    module_marks:   # source: official Record of Achievement; out of 100, pass mark 50
+      - "AI and Applications: 100"
+      - "Methods of Prediction: 100"
+      - "Big Data Analytics: 100"
+      - "Digital Competencies: 100"
+      - "Behavioral Competencies in Virtual Teams: 94"
+      - "Intro to AI and Machine Learning: 90"
+      - "Research Methods and Scientific Work: 86"
+      - "Digital Marketing and Analytics: 83"
+      - "Project Management: 80"
+      - "Innovation Management and Digital Transformation: 63"
+    average_mark: "88.4 out of 100 across the 9 graded taught modules (thesis not included)"
+    thesis: "Multi-Horizon Load Factor Forecasting for B2B Charter Flights: A Machine Learning Approach"
+    thesis_result: "Best model: tuned Random Forest 60 days before departure, test RMSE 15.31 percentage points, R² 0.50."
+    thesis_grade: "96 out of 100 (dissertation and defence)"
+  - degree: "MBA, Business Administration and Management (AMBA-accredited programme)"
+    school: Almaty Management University (AlmaU)
+    dates: "2018 – 2019 (graduated July 2019)"
+  - degree: "Bachelor of Finance"
+    school: "International Academy of Business, Almaty (now Almaty Management University, AlmaU)"
+    dates: "2007 – 2011 (degree awarded 2011)"
+
+certifications: ["Business Analysis in IT (BPMN, UML)", "Fast Track to MVP: Lean Strategies for Product Innovation", "Digital Enthusiast: New Product Development", "HTML and CSS in depth"]
+
+contact:
+  linkedin: "https://www.linkedin.com/in/vildanarazumova"
+  telegram: "https://t.me/vildanaraz"
+  github: "https://github.com/VildanaRazumova"
+
+skills:   # portfolio level, not tied to any employer's architecture
+  data_and_ml: [Python, SQL, pandas, scikit-learn, LightGBM, XGBoost, SHAP, time-series validation, NLP]
+  data_engineering: [ClickHouse, PostgreSQL, Airflow, Docker, data-quality monitoring]
+  llm_and_automation: [Claude API, Claude Code, LLM applications and evaluation, n8n, FastAPI, Dify]
+  business: [business analysis (BPMN, UML), Scrum, requirements management, operational risk, Power BI]
+
+do_not_disclose:
+  - salary expectations            # agent: "please discuss directly with Vildana"
+  - family, health, residence/visa details beyond work_authorization
+  - internal systems, table names, prices, partners, colleagues of any employer
+  - how employer systems are built (architecture, data sources, security and access controls), data volumes and business metrics beyond what the project cards say
