@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'self'">
+<title>Price revisions — Vildana Razumova</title>
+<meta name="description" content="Prototype on generated data: price revision recommendations for a fictional tour operator, with the breakdown of every signal and managers' comments.">
+<style>
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(../fonts/inter-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(../fonts/inter-cyrillic-400-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/inter-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/inter-cyrillic-500-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/inter-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/inter-cyrillic-600-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/source-serif-4-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/source-serif-4-cyrillic-500-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/source-serif-4-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/source-serif-4-cyrillic-600-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  :root {
+    --bg: #ffffff; --surface: #ffffff; --ink: #1d1d1f; --muted: #6e6e73; --faint: #86868b; --line: #d2d2d7;
+    --brand: #0071e3; --brand-ink: #0066cc; --brand-soft: #eaf2fd; --accent: #0071e3;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+    --radius: 14px;
+    --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: "Source Serif 4", Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000; --surface: #1d1d1f; --ink: #f5f5f7; --muted: #a1a1a6; --faint: #86868b;
+      --line: #424245; --brand: #2997ff; --brand-ink: #6fb5ff; --brand-soft: #14304d; --accent: #2997ff;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 15.5px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: var(--brand-ink); }
+  .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px max(16px, calc((100vw - 1040px) / 2)); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; color: var(--ink); text-decoration: none; }
+  .who { display: flex; flex-direction: column; line-height: 1.15; }
+  .who small { font-weight: 500; font-size: 12.5px; color: var(--muted); }
+  .actions { display: flex; gap: 8px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font: 500 14px var(--sans); cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: var(--faint); }
+  .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .btn[aria-disabled="true"] { opacity: .5; cursor: default; }
+  .lang { display: inline-flex; height: 36px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); overflow: hidden; }
+  .lang button { border: 0; background: none; padding: 0 11px; font: 600 12.5px var(--sans); letter-spacing: .04em; color: var(--muted); cursor: pointer; }
+  .lang button + button { border-left: 1px solid var(--line); }
+  .lang button[aria-pressed="true"] { background: var(--brand-soft); color: var(--brand-ink); }
+  main { max-width: 1040px; margin: 0 auto; padding: 34px 20px 56px; }
+  h1 { font: 600 clamp(28px, 4.4vw, 40px)/1.1 var(--serif); letter-spacing: -.02em; margin: 0 0 10px; text-wrap: balance; }
+  .lead { color: var(--muted); font-size: 17px; max-width: 64ch; margin: 0 0 24px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font: 500 12.5px var(--sans); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #2fb36f; }
+  .pill .dot.grey { background: var(--faint); }
+  .tag { font: 500 12px var(--sans); color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
+  .small { color: var(--faint); font-size: 12.5px; }
+  @media (max-width: 640px) {
+    .top { padding: 10px 16px; } .who small { display: none; } .brand { font-size: 14px; }
+    .lang button { padding: 0 8px; } .btn { padding: 0 12px; } .hide-sm { display: none; }
+    main { padding: 24px 16px 40px; }
+  }
+
+  main { max-width: 1140px; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; align-items: center; }
+  .filters label { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 0 12px; height: 34px; font-size: 13px; color: var(--muted); background: var(--surface); }
+  .filters select, .filters input { border: 0; background: transparent; color: var(--ink); font: 500 13.5px var(--sans); outline: 0; max-width: 150px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted); margin: 0 0 12px; align-items: center; }
+  .legend i { display: inline-block; width: 13px; height: 13px; border-radius: 4px; vertical-align: -2px; margin-right: 5px; }
+  .legend .sum { margin-left: auto; color: var(--ink); font-weight: 500; }
+  .twrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 900px; }
+  th { text-align: left; font: 600 11px var(--sans); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: 0; }
+  tr.sel td { background: var(--brand-soft); }
+  .lf { background: color-mix(in srgb, var(--line) 60%, var(--surface)); border-radius: 6px; padding: 2px 6px; font-weight: 600; }
+  .p { display: inline-block; border-radius: 8px; padding: 3px 8px; font-weight: 600; font-size: 12.5px; cursor: pointer; border: 1px solid transparent; }
+  .p.down { background: #fbe9e7; color: #a83a2a; } .p.deep { background: #c0392b; color: #fff; } .p.up { background: #e6f4ec; color: #1f7a4d; } .p.zero { border-color: var(--line); color: var(--faint); }
+  .p.on { outline: 2px solid var(--brand); }
+  .dash { color: var(--faint); }
+  .dec { font-size: 12.5px; color: var(--muted); }
+  .drawer { display: none; border: 1.5px solid var(--brand); border-radius: 14px; padding: 16px 18px; margin-top: 14px; background: color-mix(in srgb, var(--brand-soft) 40%, var(--surface)); grid-template-columns: 1.1fr 1fr; gap: 22px; }
+  .drawer.open { display: grid; }
+  .drawer h3 { margin: 0 0 4px; font: 600 16px var(--sans); }
+  .sec { font: 600 11.5px var(--sans); letter-spacing: .05em; text-transform: uppercase; color: var(--brand-ink); margin: 12px 0 6px; }
+  .sec.grey { color: var(--faint); }
+  .k { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+  .k b { font-weight: 600; white-space: nowrap; }
+  .k.total { border-bottom: 0; font-weight: 600; }
+  .pos { color: #1f7a4d; }
+  .acts { display: flex; gap: 8px; margin: 6px 0 14px; }
+  .cmt { border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; color: var(--muted); margin-bottom: 8px; background: var(--surface); }
+  .cmt b { color: var(--ink); }
+  textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font: 13.5px var(--sans); background: var(--surface); color: var(--ink); resize: vertical; min-height: 60px; }
+  .how { margin-top: 26px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+  .how summary { font-weight: 600; cursor: pointer; }
+  .steps { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .step { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .num { width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 600; display: grid; place-items: center; flex: none; font-size: 14px; }
+  .step .txt { flex: 1; min-width: 0; } .step .txt b { display: block; font-size: 14.5px; } .step .txt span { color: var(--muted); font-size: 13px; }
+  @media (max-width: 760px) { .drawer { grid-template-columns: 1fr; } .step { flex-wrap: wrap; } .step .txt { flex: 1 1 150px; } .step .tag { margin-left: 40px; } }
+
+</style>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="../"><span class="who"><span>Vildana Razumova</span><small id="t-crumb">Live examples · Price revisions</small></span></a>
+    <nav class="actions">
+      <div class="lang" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="de">DE</button><button type="button" data-lang="ru">RU</button></div>
+      <a class="btn" href="../examples.html">←<span id="t-back" class="hide-sm">&nbsp;All examples</span></a>
+      <a class="btn hide-sm" href="#how" id="t-howbtn">How it works</a>
+    </nav>
+  </header>
+  <span id="t-role" hidden></span>
+  <main>
+    <div class="head">
+      <div><h1 id="t-title"></h1><p class="lead" id="t-lead" style="margin:0"></p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill"><span class="dot"></span><span id="t-run"></span></span><span id="t-proto" hidden></span></div>
+    </div>
+    <div class="filters">
+      <label><span id="l-dir"></span><select id="f-dir"></select></label>
+      <label><span id="l-city"></span><select id="f-city"></select></label>
+      <label><span id="l-air"></span><select id="f-air"></select></label>
+      <label><span id="l-grp"></span><select id="f-grp"></select></label>
+      <label><span id="l-who"></span><input id="f-who" maxlength="24" style="width:90px"></label>
+    </div>
+    <div class="legend"><span><i style="background:#e6f4ec"></i><span id="leg1"></span></span><span><i style="background:#fbe9e7"></i><span id="leg2"></span></span><span><i style="background:#c0392b"></i><span id="leg3"></span></span><span><i style="border:1px dashed var(--line)"></i><span id="leg4"></span></span><span class="sum" id="sum"></span></div>
+    <div class="twrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+    <div class="drawer" id="drawer"></div>
+    <details class="how" id="how"><summary id="t-how">How it works</summary><div class="steps" id="steps"></div></details>
+  </main>
+<script>
+
+  const T = {"en": {"role": "Data Scientist · AI Automation", "crumb": "Live examples · Price revisions", "back": "← All examples", "how": "How it works", "title": "Price revisions: destination “Sunny Coast”", "lead": "A synthetic tour operator. The system recalculates recommendations three times a day; each can be accepted or rejected with a comment.", "run": "run", "proto": "prototype · demo data", "f": {"dir": "Destination", "city": "Departure city", "air": "Airline", "grp": "Hotel group", "who": "Who are you", "all": "all"}, "dirs": ["Sunny Coast", "Azure Bay"], "cities": ["City A", "City B"], "grps": ["Group A", "Group B"], "leg": ["price up", "price down", "deep discount (from $120)", "no change"], "sum": ["accepted", "rejected", "waiting"], "th": ["Date", "Airline", "Flight", "Block", "Sold", "Left", "Load", "4 nights", "5", "6", "7", "8", "Decision"], "stim": "sales stimulus — the flight is not selling yet", "wait": "waiting", "acc": "accepted", "rej": "rejected", "d": {"ctx": "{d} days to departure · load {lf}% (plan {plan}%)", "calc": "Revision calculation", "s1": "Base revision — managers' historical decision", "s2": "Load and pace of the flight — towards the lower historical price", "s3": "Demand for the destination this week", "total": "Total per person", "same": "No change since the last run.", "mkt": "Market · for reference", "ours": "ours", "comp": "competitor", "sales": "No sales in the last 3 days", "sales2": "Sales in the last 3 days: {n}", "q": "Do you agree with the recommendation?", "yes": "👍 Agree", "no": "👎 Disagree", "cmts": "Comments", "ph": "Your comment…", "send": "Send", "agreed": "agrees", "disagreed": "disagrees", "nights": "nights"}, "steps": [["Demo data", "all data is generated for the demonstration", "Python"], ["Model and rules", "flight load forecast and a calculation layer: every signal is converted into dollars per person", "LightGBM · Python"], ["Three runs a day", "recalculation, data checks, saving the result and a health alert", "n8n · Railway · PostgreSQL"], ["This page", "the revisions table, the breakdown of each recommendation, the market for reference", "HTML/JS · GitHub Pages"], ["Managers' decisions", "“agree / disagree” and comments go to the database; the next run takes them into account", "webhook · n8n · PostgreSQL"]]}, "de": {"role": "Data Scientist · KI-Automatisierung", "crumb": "Live-Beispiele · Preisrevisionen", "back": "← Alle Beispiele", "how": "So funktioniert es", "title": "Preisrevisionen: Ziel „Sonnenküste“", "lead": "Ein synthetischer Reiseveranstalter. Das System berechnet die Empfehlungen dreimal täglich neu; jede kann mit Kommentar angenommen oder abgelehnt werden.", "run": "Lauf", "proto": "Prototyp · Demo-Daten", "f": {"dir": "Ziel", "city": "Abflughafen", "air": "Airline", "grp": "Hotelgruppe", "who": "Wer sind Sie", "all": "alle"}, "dirs": ["Sonnenküste", "Azurbucht"], "cities": ["Stadt A", "Stadt B"], "grps": ["Gruppe A", "Gruppe B"], "leg": ["Preis rauf", "Preis runter", "tiefer Rabatt (ab $120)", "keine Änderung"], "sum": ["angenommen", "abgelehnt", "offen"], "th": ["Datum", "Airline", "Flug", "Block", "Verkauft", "Rest", "Auslastung", "4 Nächte", "5", "6", "7", "8", "Entscheidung"], "stim": "Verkaufsanreiz — der Flug verkauft sich noch nicht", "wait": "offen", "acc": "angenommen", "rej": "abgelehnt", "d": {"ctx": "{d} Tage bis Abflug · Auslastung {lf} % (Plan {plan} %)", "calc": "Berechnung der Revision", "s1": "Basisrevision — historische Entscheidung der Manager", "s2": "Auslastung und Tempo des Flugs — Richtung unterer historischer Preis", "s3": "Nachfrage nach dem Ziel in dieser Woche", "total": "Gesamt pro Person", "same": "Keine Änderung seit dem letzten Lauf.", "mkt": "Markt · zur Information", "ours": "wir", "comp": "Wettbewerber", "sales": "Keine Verkäufe in den letzten 3 Tagen", "sales2": "Verkäufe in den letzten 3 Tagen: {n}", "q": "Stimmen Sie der Empfehlung zu?", "yes": "👍 Zustimmen", "no": "👎 Ablehnen", "cmts": "Kommentare", "ph": "Ihr Kommentar …", "send": "Senden", "agreed": "stimmt zu", "disagreed": "lehnt ab", "nights": "Nächte"}, "steps": [["Demo-Daten", "alle Daten sind für die Demonstration generiert", "Python"], ["Modell und Regeln", "Prognose der Flugauslastung und eine Berechnungsschicht: jedes Signal wird in Dollar pro Person übersetzt", "LightGBM · Python"], ["Drei Läufe am Tag", "Neuberechnung, Datenprüfungen, Speichern des Ergebnisses und eine Zustandsmeldung", "n8n · Railway · PostgreSQL"], ["Diese Seite", "Tabelle der Revisionen, Aufschlüsselung jeder Empfehlung, Markt zur Information", "HTML/JS · GitHub Pages"], ["Entscheidungen der Manager", "„zustimmen / ablehnen“ und Kommentare gehen in die Datenbank; der nächste Lauf berücksichtigt sie", "Webhook · n8n · PostgreSQL"]]}, "ru": {"role": "Дата-сайентист · ИИ-автоматизация", "crumb": "Живые примеры · Ревизии цен", "back": "← Все примеры", "how": "Как это работает", "title": "Ревизии цен: направление «Солнечный берег»", "lead": "Синтетический туроператор. Система пересчитывает рекомендации три раза в день; каждую можно принять или отклонить с комментарием.", "run": "прогон", "proto": "прототип · демо-данные", "f": {"dir": "Направление", "city": "Город вылета", "air": "Авиакомпания", "grp": "Группа отелей", "who": "Кто вы", "all": "все"}, "dirs": ["Солнечный берег", "Лазурная бухта"], "cities": ["Город A", "Город B"], "grps": ["Группа A", "Группа B"], "leg": ["цена вверх", "цена вниз", "глубокая скидка (от $120)", "без изменений"], "sum": ["принято", "отклонено", "ждут"], "th": ["Дата", "Авиакомпания", "Рейс", "Блок", "Продано", "Остаток", "Загрузка", "4 ночи", "5", "6", "7", "8", "Решение"], "stim": "стимул продаж — рейс ещё не продаётся", "wait": "ждёт", "acc": "принято", "rej": "отклонено", "d": {"ctx": "За {d} дн. до вылета · загружено {lf} % (план {plan} %)", "calc": "Расчёт ревизии", "s1": "Базовая ревизия — историческое решение менеджеров", "s2": "Загрузка и темп рейса — к нижней исторической цене", "s3": "Спрос по направлению за неделю", "total": "Итого на человека", "same": "Без изменений с прошлого прогона.", "mkt": "Рынок · справочно", "ours": "у нас", "comp": "конкурент", "sales": "Продаж за последние 3 дня нет", "sales2": "Продаж за последние 3 дня: {n}", "q": "Согласны с рекомендацией?", "yes": "👍 Согласен", "no": "👎 Не согласен", "cmts": "Комментарии", "ph": "Ваш комментарий…", "send": "Отправить", "agreed": "согласие", "disagreed": "несогласие", "nights": "ночей"}, "steps": [["Демо-данные", "все данные сгенерированы для демонстрации", "Python"], ["Модель и правила", "прогноз загрузки рейса и слой расчёта: каждый сигнал переводится в доллары на человека", "LightGBM · Python"], ["Прогон три раза в день", "пересчёт, проверки данных, запись результата и алерт о состоянии", "n8n · Railway · PostgreSQL"], ["Эта страница", "таблица ревизий, разбор каждой рекомендации, рынок справочно", "HTML/JS · GitHub Pages"], ["Решения менеджеров", "«согласен / не согласен» и комментарии уходят в базу; следующий прогон их учитывает", "webhook · n8n · PostgreSQL"]]}};
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const fmt = (n) => (n < 0 ? "−" : "+") + "$" + Math.abs(n);
+  // ── Demo data: a deterministic generator (seeded), so every visitor sees the same fictional operator ──
+  let seed = 20260927; const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const AIR = [["Sky A", ["SA101", "SA103"]], ["Blue B", ["BB536", "BB540"]]];
+  const HOTELS = [["Hotel Aurora 4*", 935, 770, "A"], ["Marina Bay 5*", 942, 782, "A"], ["Coral Garden 3*", 993, 834, "B"], ["Sunset Villas 4*", 880, 795, "B"]];
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const rows = [];
+  for (let day = 0; day < 14; day++) {
+    for (const [air, flights] of AIR) {
+      const fl = day === 4 && air === "Sky A" ? "SA103" : flights[(day + (air === "Sky A" ? 0 : 1)) % 2];
+      const d = new Date(today); d.setDate(d.getDate() + day);
+      const block = air === "Sky A" ? 35 : 51 + Math.floor(rnd() * 8);
+      const plan = day === 4 && air === "Sky A" ? 65 : Math.max(40, Math.min(95, Math.round(96 - day * 2.6)));   // expected load at this distance to departure
+      let lf0 = Math.max(2, Math.min(99, plan + (rnd() - 0.6) * 50));
+      if (day === 9) lf0 = 6;                                                              // one flight that is not selling yet
+      if (day === 4 && air === "Sky A") lf0 = 42.9;                                     // the example row that is opened on load
+      if (day === 0 && air === "Sky A") lf0 = 88.6;
+      const sold = Math.max(1, Math.round(block * lf0 / 100)), remain = block - sold, lf = Math.round(sold / block * 1000) / 10;
+      const dir = day % 5 === 3 ? 1 : 0, city = day % 3 === 2 ? 1 : 0, grp = day % 4 === 1 ? 1 : 0;
+      const cells = {};
+      for (const n of [4, 5, 6, 7, 8]) {
+        if (rnd() < 0.62) { cells[n] = null; continue; }                               // no offers for this stay length
+        const gap = lf - plan;                                                          // negative = behind plan
+        const base = Math.round(Math.max(-220, Math.min(100, gap * 4.2 - 15)) / 5) * 5;   // managers' historical revision at this state
+        const pace = Math.round(Math.max(-90, Math.min(40, gap * 1.6 + (n - 6) * 8)) / 5) * 5;
+        const dem = Math.round((rnd() - 0.6) * 60 / 5) * 5;
+        let total = base + pace + dem; total = Math.max(-300, Math.min(300, total));
+        if (Math.abs(total) < 15) total = 0;
+        cells[n] = { base, pace, dem, total, sales3: Math.max(0, Math.round((lf / 25) * rnd())) };
+      }
+      if (day === 4 && air === "Sky A") { cells[6] = { base: -180, pace: -85, dem: -35, total: -300, sales3: 0 }; cells[8] = { base: -180, pace: -85, dem: -35, total: -300, sales3: 0 }; cells[4] = null; cells[5] = null; cells[7] = null; }
+      if (day === 0 && air === "Sky A") { cells[6] = { base: -60, pace: -30, dem: -10, total: -100, sales3: 2 }; cells[8] = { base: -80, pace: -34, dem: -10, total: -124, sales3: 1 }; cells[4] = null; cells[5] = null; cells[7] = null; }
+      rows.push({ id: fl + "-" + d.toISOString().slice(0, 10), day, date: d, air, fl, block, sold, remain, lf, plan, dir, city, grp, cells, stim: day === 9 });
+    }
+  }
+  // ── Decisions and comments live in this browser only (prototype) ──
+  const iso = (d) => d.toISOString().slice(0, 10);
+  const first = rows.find((r) => r.day === 0 && r.air === "Sky A"), deep = rows.find((r) => r.day === 4 && r.air === "Sky A");
+  const SEED = {};
+  SEED[first.id] = { decision: "acc", who: "Мэри", comments: [{ who: "Мэри", when: "27.09, 09:12", dec: "acc", text: "" }] };
+  SEED[deep.id] = { decision: "rej", who: "Марат", comments: [{ who: "Марат", when: "01.10, 09:12", dec: "rej", text: "По этому рейсу идёт групповая заявка на 12 мест, завтра подтвердят." }, { who: "Мэри", when: "01.10, 11:40", dec: null, text: "Заявка не подтвердилась, снижаем." }] };
+  let store = {}; try { store = Object.assign({}, SEED, JSON.parse(localStorage.getItem("rev-demo") || "{}")); } catch (e) { store = Object.assign({}, SEED); }
+  const save = () => { try { localStorage.setItem("rev-demo", JSON.stringify(store)); } catch (e) {} };
+  let lang = "en", sel = null;
+  const L = () => T[lang];
+  const fmtDate = (d) => d.toLocaleDateString(lang === "en" ? "en-GB" : lang === "de" ? "de-DE" : "ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+  function cls(v) { return v === 0 ? "zero" : v <= -120 ? "deep" : v < 0 ? "down" : "up"; }
+  function decisionOf(id) { const s = store[id]; return s && s.decision ? s.decision : null; }
+  function render() {
+    const t = L(); const dir = +$("f-dir").value, city = $("f-city").value, air = $("f-air").value, grp = $("f-grp").value;
+    const list = rows.filter((r) => r.dir === dir && (city === "all" || r.city === +city) && (air === "all" || r.air === air) && (grp === "all" || r.grp === +grp));
+    let acc = 0, rej = 0, wait = 0;
+    for (const r of list) { const d = decisionOf(r.id); if (d === "acc") acc++; else if (d === "rej") rej++; else wait++; }
+    $("sum").textContent = `${t.sum[0]} ${acc} · ${t.sum[1]} ${rej} · ${t.sum[2]} ${wait}`;
+    $("thead").innerHTML = "<tr>" + t.th.map((h) => `<th>${esc(h)}</th>`).join("") + "</tr>";
+    $("tbody").innerHTML = list.map((r) => {
+      const d = decisionOf(r.id); const who = store[r.id] && store[r.id].who;
+      const dec = d === "acc" ? `${t.acc}${who ? " · " + esc(who) : ""}` : d === "rej" ? `${t.rej}${who ? " · " + esc(who) : ""}` : t.wait;
+      let cells;
+      if (r.stim) cells = `<td colspan="5"><span class="p zero" data-id="${r.id}" data-n="8">−$300</span> <span class="dash">${esc(t.stim)}</span></td>`;
+      else cells = [4, 5, 6, 7, 8].map((n) => { const c = r.cells[n]; return c ? `<td><span class="p ${cls(c.total)}" data-id="${r.id}" data-n="${n}">${c.total === 0 ? "$0" : fmt(c.total)}</span></td>` : '<td class="dash">—</td>'; }).join("");
+      return `<tr data-id="${r.id}" class="${sel && sel.id === r.id ? "sel" : ""}"><td>${fmtDate(r.date)}</td><td>${r.air}</td><td><b>${r.fl}</b></td><td>${r.block}</td><td>${r.sold}</td><td>${r.remain}</td><td><span class="lf">${r.lf.toFixed(1).replace(".", lang === "en" ? "." : ",")}&nbsp;%</span></td>${cells}<td class="dec">${dec}</td></tr>`;
+    }).join("");
+    document.querySelectorAll(".p[data-id]").forEach((p) => p.addEventListener("click", () => open(p.dataset.id, +p.dataset.n)));
+    if (sel) { const p = document.querySelector(`.p[data-id="${sel.id}"][data-n="${sel.n}"]`); if (p) p.classList.add("on"); }
+  }
+  function open(id, n) {
+    sel = { id, n }; const r = rows.find((x) => x.id === id); const t = L(), d = t.d;
+    const c = r.stim ? { base: -300, pace: 0, dem: 0, total: -300, sales3: 0 } : r.cells[n];
+    const days = r.day; const s = store[id] || {};
+    const mkt = HOTELS.map(([h, ours, comp]) => `<div class="k"><span>${esc(h)} — ${d.ours} $${ours} / ${d.comp} $${comp}</span><b class="pos">+$${ours - comp}</b></div>`).join("");
+    const cmts = (s.comments || []).map((x) => `<div class="cmt"><b>${esc(x.who)} · ${esc(x.when)}${x.dec ? " · " + (x.dec === "acc" ? d.agreed : d.disagreed) : ""}</b><br>${esc(x.text)}</div>`).join("");
+    $("drawer").innerHTML = `
+      <div><h3>${fmt(c.total)} · ${r.fl} · ${fmtDate(r.date)} · ${n} ${d.nights}</h3>
+        <div class="small">${d.ctx.replace("{d}", days).replace("{lf}", r.lf).replace("{plan}", r.plan)}</div>
+        <div class="sec">${esc(d.calc)}</div>
+        <div class="k"><span>${esc(d.s1)}</span><b>${(c.base / 10).toFixed(1).replace(".", lang === "en" ? "." : ",")} % · ${fmt(c.base)}</b></div>
+        <div class="k"><span>${esc(d.s2)}</span><b>${(c.pace / 10).toFixed(1).replace(".", lang === "en" ? "." : ",")} % · ${fmt(c.pace)}</b></div>
+        <div class="k"><span>${esc(d.s3)}</span><b>${(c.dem / 10).toFixed(1).replace(".", lang === "en" ? "." : ",")} % · ${fmt(c.dem)}</b></div>
+        <div class="k total"><span>${esc(d.total)}</span><b>${fmt(c.total)}</b></div>
+        <div class="small" style="margin:6px 0 2px">${esc(d.same)}</div>
+        <div class="sec grey">${esc(d.mkt)}</div>${mkt}
+        <div class="small" style="margin-top:8px">${c.sales3 ? d.sales2.replace("{n}", c.sales3) : d.sales}</div></div>
+      <div><h3>${esc(d.q)}</h3>
+        <div class="acts"><button class="btn primary" id="b-yes">${esc(d.yes)}</button><button class="btn" id="b-no">${esc(d.no)}</button></div>
+        <h3 style="font-size:15px">${esc(d.cmts)}</h3><div id="cmts">${cmts}</div>
+        <textarea id="cmt" placeholder="${esc(d.ph)}"></textarea>
+        <div class="acts" style="margin-top:8px"><button class="btn" id="b-send">${esc(d.send)}</button></div></div>`;
+    $("drawer").classList.add("open");
+    const decide = (dec) => { const who = $("f-who").value.trim() || "—"; const text = $("cmt").value.trim(); const when = new Date().toLocaleString(lang === "en" ? "en-GB" : lang === "de" ? "de-DE" : "ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+      store[id] = store[id] || { comments: [] }; if (dec) { store[id].decision = dec; store[id].who = who; } if (text || dec) store[id].comments.push({ who, when, dec, text }); save(); render(); open(id, n); };
+    $("b-yes").addEventListener("click", () => decide("acc")); $("b-no").addEventListener("click", () => decide("rej")); $("b-send").addEventListener("click", () => decide(null));
+    render(); $("drawer").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+  function fill(sel, items, allLabel) { const cur = sel.value; sel.innerHTML = (allLabel ? `<option value="all">${esc(allLabel)}</option>` : "") + items.map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join(""); if ([...sel.options].some((o) => o.value === cur)) sel.value = cur; }
+  function setLang(l) {
+    if (!T[l]) l = "en"; lang = l; const t = T[l]; document.documentElement.lang = l;
+    $("t-role").textContent = t.role; $("t-crumb").textContent = t.crumb; $("t-back").textContent = t.back.replace(/^←\s*/, "\u00a0"); $("t-howbtn").textContent = t.how; $("t-how").textContent = t.how;
+    $("t-title").textContent = t.title; $("t-lead").textContent = t.lead; $("t-proto").textContent = t.proto; document.title = t.title + " — Vildana Razumova";
+    $("t-run").textContent = `${t.run} ${fmtDate(today)}, 14:30`;
+    $("l-dir").textContent = t.f.dir; $("l-city").textContent = t.f.city; $("l-air").textContent = t.f.air; $("l-grp").textContent = t.f.grp; $("l-who").textContent = t.f.who;
+    fill($("f-dir"), t.dirs.map((x, i) => [i, x])); fill($("f-city"), t.cities.map((x, i) => [i, x]), t.f.all); fill($("f-air"), AIR.map(([a]) => [a, a]), t.f.all); fill($("f-grp"), t.grps.map((x, i) => [i, x]), t.f.all);
+    ["leg1", "leg2", "leg3", "leg4"].forEach((id, i) => { $(id).textContent = t.leg[i]; });
+    $("steps").innerHTML = t.steps.map(([a, b, c], i) => `<div class="step"><div class="num">${i + 1}</div><div class="txt"><b>${esc(a)}</b><span>${esc(b)}</span></div><span class="tag">${esc(c)}</span></div>`).join("");
+    document.querySelectorAll("#lang button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.lang === l)));
+    try { localStorage.setItem("lang", l); } catch (e) {}
+    render(); if (sel) open(sel.id, sel.n);
+  }
+  let initial = null; try { initial = localStorage.getItem("lang"); } catch (e) {}
+  if (!initial) { const nav = (navigator.language || "en").slice(0, 2).toLowerCase(); initial = T[nav] ? nav : "en"; }
+  $("f-who").value = "Мэри";
+  setLang(initial);
+  $("f-grp").value = "0"; render();
+  open(deep.id, 8); window.scrollTo(0, 0);
+  document.querySelectorAll("#lang button").forEach((x) => x.addEventListener("click", () => setLang(x.dataset.lang)));
+  ["f-dir", "f-city", "f-air", "f-grp"].forEach((id) => $(id).addEventListener("change", render));
+  $("t-howbtn").addEventListener("click", (e) => { e.preventDefault(); $("how").open = true; $("how").scrollIntoView({ behavior: "smooth" }); });
+  if (location.hash === "#how") { $("how").open = true; setTimeout(() => $("how").scrollIntoView(), 50); }
+
+</script>
+</body>
+</html>
