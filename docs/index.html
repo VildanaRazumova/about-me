@@ -39,7 +39,8 @@
     }
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; }
+  html { height: 100%; }
+  body { margin: 0; min-height: 100%; }   /* min-height, not height: a sticky top bar only sticks within its parent, and the chat grows past one screen */
   body {
     background: var(--bg); color: var(--ink); font: 15.5px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
     display: flex; flex-direction: column; min-height: 100dvh;
@@ -214,6 +215,7 @@
       <div class="lang" id="lang" role="group" aria-label="Language">
         <button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="de" lang="de">DE</button><button type="button" data-lang="ru" lang="ru">RU</button>
       </div>
+      <a class="btn hide-sm" href="examples.html" id="t-examples">Examples</a>
       <button type="button" class="btn hide-sm" id="built-btn"><span id="t-built-btn">About the assistant</span></button>
       <details class="talk" id="talk">
         <summary class="btn primary"><span id="t-talk">Contact</span>
@@ -264,7 +266,7 @@
       </button>
     </form>
     <p class="count" id="count" aria-live="polite"></p>
-    <p class="note"><span id="t-note">AI answers based on Vildana's profile. Please confirm important details with her directly.</span> <a href="#privacy" id="t-privacy-link">Privacy</a> · <a href="#built" id="t-built-link">How it's built</a></p>
+    <p class="note"><span id="t-note">AI answers based on Vildana's profile. Please confirm important details with her directly.</span> <a href="examples.html" id="t-examples-link">Examples</a> · <a href="#privacy" id="t-privacy-link">Privacy</a> · <a href="#built" id="t-built-link">How it's built</a></p>
   </div>
 
   <section class="legal" id="privacy" hidden aria-labelledby="t-privacy-h">
@@ -339,7 +341,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
 
   // ── Page language. The assistant itself answers in the language you write in; this only translates the page. ──
   const T = {
-    en: { role: "Data Scientist · AI Automation", talk: "Contact", menu: ["Profile and recommendations", "Message her directly", "Email", "CV as PDF", "Download, two pages"],
+    en: { role: "Data Scientist · AI Automation", talk: "Contact", examples: "Examples", menu: ["Profile and recommendations", "Message her directly", "Email", "CV as PDF", "Download, two pages"],
           bot: "AI assistant", h1: "Don't read my CV.<br>Ask it.",
           lead: "I'm Vildana's AI. Ask me about her experience, projects, skills and the way she works.",
           reset: "New conversation",
@@ -349,8 +351,8 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
                   ["What has she built?", "What has she built?"],
                   ["Would she fit my team?", "How would I know if she'd fit my team?"],
                   ["Tell me something interesting", "Tell me something interesting about her."]],
-          more: [["Is she open to offers?", "Is she open to new offers?"], ["What is she working on now?", "What is she working on right now?"], ["How does this assistant work?", "How does this assistant work?"]] },
-    de: { role: "Data Scientist · KI-Automatisierung", talk: "Kontakt", menu: ["Profil und Empfehlungen", "Direkt schreiben", "E-Mail", "Lebenslauf als PDF", "Download, zwei Seiten"],
+          more: [["Show me a live example", "Show me a live example of her work."], ["Is she open to offers?", "Is she open to new offers?"], ["What is she working on now?", "What is she working on right now?"], ["How does this assistant work?", "How does this assistant work?"]] },
+    de: { role: "Data Scientist · KI-Automatisierung", talk: "Kontakt", examples: "Beispiele", menu: ["Profil und Empfehlungen", "Direkt schreiben", "E-Mail", "Lebenslauf als PDF", "Download, zwei Seiten"],
           bot: "KI-Assistent", h1: "Lesen Sie nicht meinen Lebenslauf.<br>Fragen Sie ihn.",
           lead: "Ich bin Vildanas KI. Fragen Sie mich nach ihrer Erfahrung, ihren Projekten, Fähigkeiten und ihrer Arbeitsweise.",
           reset: "Neues Gespräch",
@@ -360,8 +362,8 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
                   ["Was hat sie gebaut?", "Was hat sie gebaut?"],
                   ["Passt sie in mein Team?", "Woran erkenne ich, ob sie in mein Team passt?"],
                   ["Etwas Interessantes, bitte", "Erzählen Sie mir etwas Interessantes über sie."]],
-          more: [["Ist sie offen für Angebote?", "Ist sie offen für neue Angebote?"], ["Woran arbeitet sie gerade?", "Woran arbeitet sie gerade?"], ["Wie funktioniert dieser Assistent?", "Wie funktioniert dieser Assistent?"]] },
-    ru: { role: "Дата-сайентист · ИИ-автоматизация", talk: "Связаться", menu: ["Профиль и рекомендации", "Написать напрямую", "Почта", "Резюме в PDF", "Скачать, две страницы"],
+          more: [["Zeig mir ein Live-Beispiel", "Zeigen Sie mir ein Live-Beispiel ihrer Arbeit."], ["Ist sie offen für Angebote?", "Ist sie offen für neue Angebote?"], ["Woran arbeitet sie gerade?", "Woran arbeitet sie gerade?"], ["Wie funktioniert dieser Assistent?", "Wie funktioniert dieser Assistent?"]] },
+    ru: { role: "Дата-сайентист · ИИ-автоматизация", talk: "Связаться", examples: "Примеры", menu: ["Профиль и рекомендации", "Написать напрямую", "Почта", "Резюме в PDF", "Скачать, две страницы"],
           bot: "ИИ-ассистент", h1: "Не читайте моё резюме.<br>Спросите его.",
           lead: "Я ИИ-ассистент Вильданы. Спросите меня о её опыте, проектах, навыках и о том, как она работает.",
           reset: "Новый разговор",
@@ -371,7 +373,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
                   ["Что она построила?", "Что она построила?"],
                   ["Подойдёт ли она моей команде?", "Как понять, подойдёт ли она моей команде?"],
                   ["Расскажи что-нибудь интересное", "Расскажи что-нибудь интересное о ней."]],
-          more: [["Открыта ли она к предложениям?", "Открыта ли она к новым предложениям?"], ["Над чем работает сейчас?", "Над чем она работает сейчас?"], ["Как устроен этот ассистент?", "Как устроен этот ассистент?"]] },
+          more: [["Покажи живой пример", "Покажи живой пример её работы."], ["Открыта ли она к предложениям?", "Открыта ли она к новым предложениям?"], ["Над чем работает сейчас?", "Над чем она работает сейчас?"], ["Как устроен этот ассистент?", "Как устроен этот ассистент?"]] },
   };
   const PRIVACY = {
     en: ["<p><b>What happens with your question.</b> The text you type is sent to the workflow that runs this assistant (n8n, hosted on Railway, United States) and from there to Anthropic's Claude API (United States) to generate the answer. The workflow keeps a log of questions and answers for a limited time for debugging and abuse prevention, then deletes it.</p>",
@@ -422,7 +424,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     pageLang = l; const d = T[l];
     document.documentElement.lang = l;
     $("t-h1").innerHTML = d.h1; $("t-lead").innerHTML = d.lead; $("t-note").textContent = d.note;
-    $("t-role").textContent = d.role; $("t-talk").textContent = d.talk;
+    $("t-role").textContent = d.role; $("t-talk").textContent = d.talk; $("t-examples").textContent = d.examples; $("t-examples-link").textContent = d.examples;
     $("t-li").textContent = d.menu[0]; $("t-tg").textContent = d.menu[1]; $("t-em").textContent = d.menu[2]; $("t-cv").textContent = d.menu[3]; $("t-cv-s").textContent = d.menu[4];
     input.placeholder = matchMedia("(max-width: 640px)").matches ? d.phShort : d.ph;
     document.querySelectorAll("#suggest .chip[data-i]").forEach((c) => { const [t1, q] = d.chips[+c.dataset.i]; c.dataset.q = q; c.textContent = t1; });
