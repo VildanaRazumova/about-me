@@ -161,6 +161,19 @@
   .legal-box h2 { margin: 0 0 10px; font: 600 18px var(--sans); }
   .legal-box p { margin: 0 0 10px; color: var(--muted); }
   .legal-box .btn { margin-top: 6px; }
+  /* "About the assistant": five steps instead of prose */
+  .legal-box.wide { max-width: 760px; }
+  .bp-steps { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 12px; }
+  .bp-step { display: flex; align-items: center; gap: 14px; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+  .bp-num { width: 32px; height: 32px; border-radius: 50%; background: var(--brand); color: #fff; font: 600 15px var(--sans); display: grid; place-items: center; flex: none; }
+  .bp-txt { flex: 1; min-width: 0; }
+  .bp-txt b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+  .bp-txt span { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
+  .bp-tag { flex: none; font: 500 12.5px var(--sans); color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 5px 10px; white-space: nowrap; }
+  .bp-data { border: 1px dashed var(--faint); border-radius: 12px; padding: 10px 14px; font-size: 13.5px; color: var(--muted); line-height: 1.45; margin: 0 0 10px; }
+  .bp-data b, .bp-foot b { color: var(--ink); font-weight: 600; }
+  .bp-foot { font-size: 13.5px; color: var(--muted); margin: 0 0 12px; }
+  @media (max-width: 640px) { .bp-step { flex-wrap: wrap; } .bp-txt { flex: 1 1 150px; } .bp-tag { margin-left: 46px; max-width: calc(100% - 46px); white-space: normal; } }
 
   @media (max-width: 640px) {
     .top { padding: 10px 16px; }
@@ -263,9 +276,11 @@
   </section>
 
   <section class="legal" id="built" hidden aria-labelledby="t-built-h">
-    <div class="legal-box">
-      <h2 id="t-built-h">How it's built</h2>
-      <div id="t-built-body"></div>
+    <div class="legal-box wide">
+      <h2 id="t-built-h">How this assistant is built</h2>
+      <div class="bp-steps" id="bp-steps"></div>
+      <p class="bp-data" id="bp-data"></p>
+      <p class="bp-foot" id="bp-foot"></p>
       <button type="button" class="btn primary" id="built-ask">Ask the assistant</button>
       <button type="button" class="btn" id="built-close">Close</button>
     </div>
@@ -376,23 +391,29 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
          "<p><a href=\"privacy.html\">Полная политика конфиденциальности</a> (Deutsch · English · Русский)</p>"],
   };
   const PRIVACY_LABEL = { en: ["Privacy", "Close"], de: ["Datenschutz", "Schließen"], ru: ["Конфиденциальность", "Закрыть"] };
-  // "How it's built": the architecture at a high level. The knowledge base, rules and workflow themselves are not published.
+  // "About the assistant": five steps, each with its technology. The knowledge base, rules and workflow themselves are not published.
   const BUILT = {
-    en: ["<p><b>What it is.</b> A personal AI assistant that answers questions about Vildana's work from a knowledge base she writes and maintains herself: facts, project cards, interview stories.</p>",
-         "<p><b>How it works.</b> This page (static, on GitHub Pages) sends your question to a workflow in n8n (hosted on Railway). The workflow detects the language in code, applies usage limits, adds the knowledge base and the rules to the prompt and calls Claude (Anthropic). The answer comes back as text and is rendered here.</p>",
-         "<p><b>Stack.</b> One HTML/JS page without frameworks · n8n · Claude Sonnet via API · a Markdown/YAML knowledge base assembled by build scripts · deterministic language detection and rate limits in code · no vector database: the whole profile fits into the prompt.</p>",
-         "<p><b>Principles.</b> Honesty over persuasion: no superlatives, no invented experience, \"I don't know\" when the knowledge base is silent. Employer projects at use-case level. Public and private knowledge in separate folders. No tools: the assistant can only read the text it is given.</p>",
-         "<p><b>Not open source.</b> The knowledge base, the rules and the workflow are private. Ask the assistant if you want to know more about how it is built.</p>"],
-    de: ["<p><b>Was es ist.</b> Ein persönlicher KI-Assistent, der Fragen zu Vildanas Arbeit aus einer Wissensbasis beantwortet, die sie selbst schreibt und pflegt: Fakten, Projektkarten, Interview-Geschichten.</p>",
-         "<p><b>Wie es funktioniert.</b> Diese Seite (statisch, auf GitHub Pages) schickt Ihre Frage an einen Workflow in n8n (gehostet bei Railway). Der Workflow erkennt die Sprache per Code, wendet Nutzungslimits an, fügt Wissensbasis und Regeln zum Prompt hinzu und ruft Claude (Anthropic) auf. Die Antwort kommt als Text zurück und wird hier dargestellt.</p>",
-         "<p><b>Stack.</b> Eine HTML/JS-Seite ohne Frameworks · n8n · Claude Sonnet per API · eine Markdown/YAML-Wissensbasis, die Build-Skripte zusammensetzen · deterministische Spracherkennung und Limits im Code · keine Vektordatenbank: das ganze Profil passt in den Prompt.</p>",
-         "<p><b>Prinzipien.</b> Ehrlichkeit statt Überzeugung: keine Superlative, keine erfundene Erfahrung, „Das weiß ich nicht“, wenn die Wissensbasis schweigt. Arbeitgeberprojekte auf Use-Case-Ebene. Öffentliches und privates Wissen in getrennten Ordnern. Keine Tools: der Assistent kann nur den Text lesen, den er bekommt.</p>",
-         "<p><b>Nicht Open Source.</b> Wissensbasis, Regeln und Workflow sind privat. Fragen Sie den Assistenten, wenn Sie mehr darüber wissen möchten, wie er gebaut ist.</p>"],
-    ru: ["<p><b>Что это.</b> Личный ИИ-ассистент, который отвечает на вопросы о работе Вильданы из базы знаний, которую она пишет и ведёт сама: факты, карточки проектов, истории для интервью.</p>",
-         "<p><b>Как работает.</b> Эта страница (статическая, на GitHub Pages) отправляет ваш вопрос в workflow в n8n (хостинг Railway). Workflow определяет язык кодом, применяет лимиты, добавляет к промпту базу знаний и правила и вызывает Claude (Anthropic). Ответ возвращается текстом и отображается здесь.</p>",
-         "<p><b>Стек.</b> Одна HTML/JS-страница без фреймворков · n8n · Claude Sonnet через API · база знаний в Markdown/YAML, собираемая скриптами · определение языка и лимиты в коде · без векторной базы: весь профиль помещается в промпт.</p>",
-         "<p><b>Принципы.</b> Честность вместо убеждения: без превосходных степеней, без выдуманного опыта, «не знаю», если в базе знаний этого нет. Проекты работодателя на уровне use case. Публичное и приватное знание в разных папках. Без инструментов: ассистент читает только тот текст, который ему дали.</p>",
-         "<p><b>Не open source.</b> База знаний, правила и workflow приватны. Спросите ассистента, если хотите узнать больше о том, как он устроен.</p>"],
+    en: { steps: [["You ask a question", "on this page", "HTML/JS · GitHub Pages"],
+                  ["The workflow receives it", "detects the language and keeps a log", "n8n · Railway"],
+                  ["Adds the knowledge base and the rules", "facts, project cards and stories; no vector database", "Markdown / YAML · build scripts"],
+                  ["Claude writes the answer", "only from the knowledge base and the rules", "Anthropic API · prompt caching"],
+                  ["The answer returns to the page", "as text with three follow-up questions; checked in code and sanitised on the page", "JSON → page"]],
+          data: ["Data.", " The log of questions and answers and the daily counters live in PostgreSQL on Railway for up to 14 days, then they are deleted. Your browser keeps only the language and a conversation id."],
+          foot: ["Not open source.", " The knowledge base, the rules and the workflow are private."] },
+    de: { steps: [["Sie stellen eine Frage", "auf dieser Seite", "HTML/JS · GitHub Pages"],
+                  ["Der Workflow nimmt sie an", "erkennt die Sprache und führt ein Protokoll", "n8n · Railway"],
+                  ["Fügt Wissensbasis und Regeln hinzu", "Fakten, Projektkarten und Geschichten; keine Vektordatenbank", "Markdown / YAML · Build-Skripte"],
+                  ["Claude schreibt die Antwort", "nur aus Wissensbasis und Regeln", "Anthropic API · Prompt-Caching"],
+                  ["Die Antwort kommt zurück auf die Seite", "als Text mit drei Vorschlägen; im Code geprüft und auf der Seite bereinigt", "JSON → Seite"]],
+          data: ["Daten.", " Das Protokoll der Fragen und Antworten und die Tageszähler liegen bis zu 14 Tage in PostgreSQL auf Railway und werden dann gelöscht. Im Browser bleiben nur die Sprache und eine Gesprächsnummer."],
+          foot: ["Nicht Open Source.", " Wissensbasis, Regeln und Workflow sind privat."] },
+    ru: { steps: [["Вы задаёте вопрос", "на этой странице", "HTML/JS · GitHub Pages"],
+                  ["Воркфлоу принимает вопрос", "определяет язык и ведёт журнал", "n8n · Railway"],
+                  ["Добавляет базу знаний и правила", "факты, карточки проектов и истории; без векторной базы", "Markdown / YAML · скрипты сборки"],
+                  ["Claude пишет ответ", "отвечает только по базе знаний и правилам", "Anthropic API · кэш промпта"],
+                  ["Ответ возвращается на страницу", "текстом, с тремя подсказками; текст проверяется кодом и очищается на странице", "JSON → страница"]],
+          data: ["Данные.", " Журнал вопросов и ответов и дневные счётчики хранятся в PostgreSQL на Railway до 14 дней, затем удаляются. В браузере — только язык и номер разговора."],
+          foot: ["Не open source.", " База знаний, правила и воркфлоу приватны."] },
   };
   const BUILT_LABEL = { en: ["About the assistant", "Ask the assistant", "Close", "How does this assistant work?", "How this assistant is built"], de: ["Über den Assistenten", "Assistenten fragen", "Schließen", "Wie funktioniert dieser Assistent?", "So ist dieser Assistent gebaut"], ru: ["Об ассистенте", "Спросить ассистента", "Закрыть", "Как устроен этот ассистент?", "Как сделан этот ассистент"] };
   let pageLang = "en";
@@ -411,7 +432,17 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     $("t-privacy-link").textContent = PRIVACY_LABEL[l][0]; $("t-privacy-h").textContent = PRIVACY_LABEL[l][0]; $("privacy-close").textContent = PRIVACY_LABEL[l][1];
     $("t-privacy-body").innerHTML = PRIVACY[l].join("");
     $("t-built-btn").textContent = BUILT_LABEL[l][0]; $("t-built-link").textContent = BUILT_LABEL[l][0]; $("t-built-h").textContent = BUILT_LABEL[l][4]; $("built-ask").textContent = BUILT_LABEL[l][1]; $("built-close").textContent = BUILT_LABEL[l][2];
-    $("t-built-body").innerHTML = BUILT[l].join("");
+    const bp = BUILT[l]; const stepsEl = $("bp-steps"); stepsEl.innerHTML = "";
+    bp.steps.forEach(([t1, sub, tag], i) => {
+      const row = document.createElement("div"); row.className = "bp-step";
+      const num = document.createElement("div"); num.className = "bp-num"; num.textContent = String(i + 1);
+      const txt = document.createElement("div"); txt.className = "bp-txt";
+      const b = document.createElement("b"); b.textContent = t1; const sp = document.createElement("span"); sp.textContent = sub; txt.append(b, sp);
+      const tg = document.createElement("div"); tg.className = "bp-tag"; tg.textContent = tag;
+      row.append(num, txt, tg); stepsEl.appendChild(row);
+    });
+    const setBold = (id, [lead, rest]) => { const el = $(id); el.innerHTML = ""; const b = document.createElement("b"); b.textContent = lead; el.append(b, document.createTextNode(rest)); };
+    setBold("bp-data", bp.data); setBold("bp-foot", bp.foot);
     try { localStorage.setItem("lang", l); } catch (e) {}
   }
   let initial = null;
