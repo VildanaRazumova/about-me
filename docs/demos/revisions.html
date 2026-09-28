@@ -41,43 +41,47 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body { background: var(--bg); color: var(--ink); font: 15.5px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  b, strong { font-weight: 600; }   /* the fonts ship 400/500/600 only: no faux bold */
   a { color: var(--brand-ink); }
+  :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
   :root { --page: 1000px; }
   .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 12px max(16px, calc((100% - var(--page)) / 2)); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    padding: 12px max(16px, calc((100% - var(--page)) / 2)); background: color-mix(in srgb, var(--bg) 93%, transparent);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
   .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; color: var(--ink); text-decoration: none; }
+  .brand img { width: 32px; height: 32px; flex: none; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
   .who { display: flex; flex-direction: column; line-height: 1.15; }
   .who small { font-weight: 500; font-size: 12.5px; color: var(--muted); }
-  .actions { display: flex; gap: 8px; align-items: center; }
-  .btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font: 500 14px var(--sans); cursor: pointer; white-space: nowrap; }
-  .btn:hover { border-color: var(--faint); }
-  .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .actions { display: flex; gap: 6px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font: 500 14px var(--sans); cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: var(--line-strong); }
+  .btn.primary { background: var(--ink); border-color: var(--ink); color: var(--bg); }
   .btn[aria-disabled="true"] { opacity: .5; cursor: default; }
-  .lang { display: inline-flex; height: 36px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); overflow: hidden; }
-  .lang button { border: 0; background: none; padding: 0 11px; font: 600 12.5px var(--sans); letter-spacing: .04em; color: var(--muted); cursor: pointer; }
-  .lang button + button { border-left: 1px solid var(--line); }
-  .lang button[aria-pressed="true"] { background: var(--brand-soft); color: var(--brand-ink); }
-  main { max-width: calc(var(--page) + 40px); margin: 0 auto; padding: 40px 20px 96px; }
-  h1 { font: 600 clamp(28px, 4.4vw, 40px)/1.1 var(--serif); letter-spacing: -.02em; margin: 0 0 10px; text-wrap: balance; }
+  .lang { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--surface) 70%, transparent); }
+  .lang button { height: 30px; min-width: 36px; padding: 0 8px; border: 0; border-radius: 999px; background: none; font: 600 12px var(--sans); letter-spacing: .06em; color: var(--muted); cursor: pointer; }
+  .lang button:hover { color: var(--ink); }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  main { max-width: calc(var(--page) + 40px); margin: 0 auto; padding: 48px 20px 96px; }
+  h1 { font: 600 clamp(30px, 4.6vw, 48px)/1.08 var(--serif); letter-spacing: -.025em; margin: 0 0 10px; text-wrap: balance; }
   .lead { color: var(--muted); font-size: 17px; max-width: 64ch; margin: 0 0 24px; }
-  .pill { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border: 0; background: var(--chip, #f2f2f5); font: 500 12px/24px var(--sans); color: var(--muted); border-radius: 999px; white-space: nowrap; }
+  .pill { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border: 0; background: var(--chip, #ebe8df); font: 500 12px/24px var(--sans); color: var(--muted); border-radius: 999px; white-space: nowrap; }
   .tag { font: 500 12px var(--sans); color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
   .small { color: var(--faint); font-size: 12.5px; }
   @media (max-width: 640px) {
-    .top { padding: 10px 16px; } .who small { display: none; } .brand { font-size: 14px; }
-    .lang button { padding: 0 8px; } .btn { padding: 0 12px; } .hide-sm { display: none; }
-    main { padding: 24px 16px 64px; }
+    .top { padding: 10px 14px; } .who small { display: none; } .brand { font-size: 14px; }
+    .lang button { min-width: 32px; padding: 0 6px; } .btn { padding: 0 12px; } .hide-sm { display: none; }
+    main { padding: 28px 16px 64px; }
   }
 
-  /* ── flow tokens ── */
-  :root { --canvas: #f5f5f7; --dot: rgba(0,0,0,.08); --edge: #aeaeb2; --node: #fff; --chip: #f2f2f5;
-    --r-user: #1d1d1f; --r-user-bg: #ededf0; --r-flow: #0071e3; --r-flow-bg: #e8f1fc; --r-ai: #8944ab; --r-ai-bg: #f3eafa; --r-data: #0b7285; --r-data-bg: #e1f2f5;
+  /* ── flow tokens: roles in the diagram — logic green, AI model gold, data slate ── */
+  :root { --canvas: #efece4; --dot: rgba(26,31,28,.08); --edge: #a4a295; --node: #ffffff; --chip: #ebe8df;
+    --r-user: #1a1f1c; --r-user-bg: #ebe8df; --r-flow: #2e7a63; --r-flow-bg: #e4efe9; --r-ai: #8a6100; --r-ai-bg: #f6ecd2; --r-data: #3b6c8c; --r-data-bg: #e3edf4;
     --ok: #1f7a4d; --warn: #b25000; --err: #c0392b; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --canvas: #161617; --dot: rgba(255,255,255,.07); --edge: #636366; --node: #1d1d1f; --chip: #2c2c2e;
-    --r-user: #f5f5f7; --r-user-bg: #3a3a3c; --r-flow: #2997ff; --r-flow-bg: #14304d; --r-ai: #bf5af2; --r-ai-bg: #35203f; --r-data: #5ac8e0; --r-data-bg: #0f3038;
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --canvas: #111815; --dot: rgba(237,241,237,.07); --edge: #56635c; --node: #151b18; --chip: #1f2824;
+    --r-user: #edf1ed; --r-user-bg: #26302b; --r-flow: #5cc29c; --r-flow-bg: #16302a; --r-ai: #e3bd52; --r-ai-bg: #3a3016; --r-data: #86b8d8; --r-data-bg: #17293a;
     --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; } }
-  :root[data-theme="dark"] { --canvas: #161617; --dot: rgba(255,255,255,.07); --edge: #636366; --node: #1d1d1f; --chip: #2c2c2e;
-    --r-user: #f5f5f7; --r-user-bg: #3a3a3c; --r-flow: #2997ff; --r-flow-bg: #14304d; --r-ai: #bf5af2; --r-ai-bg: #35203f; --r-data: #5ac8e0; --r-data-bg: #0f3038;
+  :root[data-theme="dark"] { --canvas: #111815; --dot: rgba(237,241,237,.07); --edge: #56635c; --node: #151b18; --chip: #1f2824;
+    --r-user: #edf1ed; --r-user-bg: #26302b; --r-flow: #5cc29c; --r-flow-bg: #16302a; --r-ai: #e3bd52; --r-ai-bg: #3a3016; --r-data: #86b8d8; --r-data-bg: #17293a;
     --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; }
   /* ── level rows ── */
   .meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 32px 0 12px; }
@@ -218,11 +222,16 @@
   @media (max-width: 960px) { .drawer { grid-template-columns: 1fr; gap: 20px; } .drawer > :last-child { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 20px; } }
   @media (max-width: 640px) { .drawer { padding: 16px; } .k { grid-template-columns: 1fr 56px 70px; } .mk { grid-template-columns: 1fr 52px 60px 60px; font-size: 12.5px; } .meta { margin-top: 24px; } }
 
+  /* ── site style: section titles in the serif, like the portfolio ── */
+  .how h2 { font: 600 30px/1.15 var(--serif); letter-spacing: -.02em; }
+  @media (max-width: 640px) { .how h2 { font-size: 24px; } }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .frame { border-color: var(--line); } }
+
 </style>
 </head>
 <body>
   <header class="top">
-    <a class="brand" href="../"><span class="who"><span class="nm">Vildana Razumova</span><small id="t-crumb">Portfolio · Price revisions</small></span></a>
+    <a class="brand" href="../"><img src="../photo.jpg" alt="" width="32" height="32"><span class="who"><span class="nm">Vildana Razumova</span><small id="t-crumb">Portfolio · Price revisions</small></span></a>
     <nav class="actions">
       <div class="lang" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="de">DE</button><button type="button" data-lang="ru">RU</button></div>
       <a class="btn" href="../portfolio.html">←<span id="t-back" class="hide-sm">&nbsp;Portfolio</span></a>
