@@ -6,6 +6,9 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'self'">
 <title>Portfolio — Vildana Razumova</title>
 <meta name="description" content="Demonstrations of Vildana Razumova's real projects on synthetic data: price revisions with comments, external market signals, assistants in Microsoft Teams.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/inter-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
   @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/inter-cyrillic-400-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
@@ -17,106 +20,140 @@
   @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/source-serif-4-cyrillic-500-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
   @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/source-serif-4-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
   @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/source-serif-4-cyrillic-600-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  /* Same palette as the start page: warm paper, her green and gold */
   :root {
-    --bg: #ffffff; --surface: #ffffff; --ink: #1d1d1f; --muted: #6e6e73; --faint: #86868b; --line: #d2d2d7;
-    --brand: #0071e3; --brand-ink: #0066cc; --brand-soft: #eaf2fd; --accent: #0071e3;
-    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
-    --radius: 14px;
+    --bg: #f6f4ee; --surface: #ffffff; --ink: #1a1f1c; --muted: #56615b; --faint: #68716c;
+    --line: #e4e0d6; --line-strong: #8a928d;
+    --brand: #2e7a63; --brand-ink: #1f5e4c; --brand-soft: #e4efe9; --on-brand: #ffffff;
+    --gold: #d4a92b;
+    --shadow: 0 1px 2px rgba(26, 31, 28, .04), 0 10px 30px rgba(26, 31, 28, .07);
     --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --serif: "Source Serif 4", Georgia, serif;
+    --page: 920px; color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #000000; --surface: #1d1d1f; --ink: #f5f5f7; --muted: #a1a1a6; --faint: #86868b;
-      --line: #424245; --brand: #2997ff; --brand-ink: #6fb5ff; --brand-soft: #14304d; --accent: #2997ff;
-      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+      --bg: #0d1210; --surface: #151b18; --ink: #edf1ed; --muted: #a9b4ae; --faint: #8f9a94;
+      --line: #253029; --line-strong: #5f6b64;
+      --brand: #5cc29c; --brand-ink: #86d6b8; --brand-soft: #16302a; --on-brand: #0b1411;
+      --gold: #e3bd52;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .35);
+      color-scheme: dark;
     }
   }
-
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body { background: var(--bg); color: var(--ink); font: 15.5px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
   a { color: var(--brand-ink); }
-  :root { --page: 1000px; }
+  :focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+
   .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 12px max(16px, calc((100% - var(--page)) / 2)); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; color: var(--ink); text-decoration: none; }
-  .who { display: flex; flex-direction: column; line-height: 1.15; }
-  .who small { font-weight: 500; font-size: 12.5px; color: var(--muted); }
-  .actions { display: flex; gap: 8px; align-items: center; }
-  .btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font: 500 14px var(--sans); cursor: pointer; white-space: nowrap; }
-  .btn:hover { border-color: var(--faint); }
-  .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
-  .btn[aria-disabled="true"] { opacity: .5; cursor: default; }
-  .lang { display: inline-flex; height: 36px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); overflow: hidden; }
-  .lang button { border: 0; background: none; padding: 0 11px; font: 600 12.5px var(--sans); letter-spacing: .04em; color: var(--muted); cursor: pointer; }
-  .lang button + button { border-left: 1px solid var(--line); }
-  .lang button[aria-pressed="true"] { background: var(--brand-soft); color: var(--brand-ink); }
-  main { max-width: calc(var(--page) + 40px); margin: 0 auto; padding: 40px 20px 96px; }
-  h1 { font: 600 clamp(28px, 4.4vw, 40px)/1.1 var(--serif); letter-spacing: -.02em; margin: 0 0 10px; text-wrap: balance; }
-  .lead { color: var(--muted); font-size: 17px; max-width: 64ch; margin: 0 0 24px; }
-  .pill { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border: 0; background: var(--chip, #f2f2f5); font: 500 12px/24px var(--sans); color: var(--muted); border-radius: 999px; white-space: nowrap; }
-  .tag { font: 500 12px var(--sans); color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
-  .small { color: var(--faint); font-size: 12.5px; }
-  @media (max-width: 640px) {
-    .top { padding: 10px 16px; } .who small { display: none; } .brand { font-size: 14px; }
-    .lang button { padding: 0 8px; } .btn { padding: 0 12px; } .hide-sm { display: none; }
-    main { padding: 24px 16px 64px; }
+    padding: 12px max(20px, calc((100% - var(--page)) / 2)); background: color-mix(in srgb, var(--bg) 93%, transparent);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; white-space: nowrap; color: var(--ink); text-decoration: none; }
+  .brand img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
+  .who { display: flex; flex-direction: column; line-height: 1.15; font-weight: 600; letter-spacing: -.01em; }
+  .who small { font-weight: 500; font-size: 12.5px; letter-spacing: 0; color: var(--muted); }
+  .actions { display: flex; gap: 6px; align-items: center; }
+  .lang { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--surface) 70%, transparent); }
+  .lang button { height: 30px; min-width: 36px; padding: 0 8px; border: 0; border-radius: 999px; background: none; font: 600 12px var(--sans); letter-spacing: .06em; color: var(--muted); cursor: pointer; }
+  .lang button:hover { color: var(--ink); }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--ink);
+    background: var(--ink); color: var(--bg); text-decoration: none; font: 500 14px var(--sans); white-space: nowrap; }
+  .btn:hover { background: color-mix(in srgb, var(--ink) 86%, var(--brand)); }
+  .btn .spark { width: 14px; height: 14px; fill: var(--gold); }
+
+  main { max-width: calc(var(--page) + 40px); margin: 0 auto; padding: 56px 20px 96px; }
+  h1 { font: 600 clamp(40px, 6vw, 64px)/1.02 var(--serif); letter-spacing: -.03em; margin: 0 0 14px; }
+  .lead { color: var(--muted); font-size: 17.5px; line-height: 1.55; max-width: 58ch; margin: 0; text-wrap: pretty; }
+
+  /* A section is an overline, not a heading block */
+  .section { margin-top: 56px; }
+  .section-h { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .section-h h2 { margin: 0; font: 600 11.5px/1.4 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+  .section-h p { margin: 0; font-size: 14px; color: var(--muted); }
+  .section-h p[hidden] { display: none; }
+
+  /* Projects: one calm row each — number, name, one paragraph, stack; status and arrow on the right */
+  .list { list-style: none; margin: 0; padding: 0; }
+  .row { position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto 44px; column-gap: 20px; align-items: start;
+    padding: 26px 0; border-bottom: 1px solid var(--line); }
+  .num { font: 500 15px/1 var(--serif); color: var(--faint); padding-top: 9px; font-variant-numeric: tabular-nums; }
+  .row h3 { margin: 0; font: 600 clamp(22px, 2.6vw, 27px)/1.2 var(--serif); letter-spacing: -.015em; }
+  .row h3 a { color: var(--ink); text-decoration: none; transition: color .2s; }
+  .row h3 a::after { content: ""; position: absolute; inset: 0; }   /* the whole row opens the demo */
+  .row:hover h3 a { color: var(--brand-ink); }
+  .row .d { margin: 8px 0 0; color: var(--muted); max-width: 60ch; text-wrap: pretty; }
+  .row .stack { margin: 12px 0 0; font-size: 12.5px; letter-spacing: .01em; color: var(--faint); }
+  .st { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 5px 11px 5px 9px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--surface); font: 500 12.5px/1.2 var(--sans); color: var(--muted); white-space: nowrap; }
+  .st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent); }
+  .st.pilot::before { background: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 22%, transparent); }
+  .go { width: 44px; height: 44px; margin-top: 2px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; color: var(--ink); background: var(--surface); transition: background .2s, color .2s, border-color .2s, transform .2s; }
+  .go svg { width: 18px; height: 18px; }
+  .row:hover .go { background: var(--brand); border-color: var(--brand); color: var(--on-brand); transform: rotate(-45deg); }
+  .row:has(a:focus-visible) { outline: 2px solid var(--brand); outline-offset: -2px; border-radius: 14px; }
+  .row a:focus-visible { outline: none; }
+  .row.soon .go { display: none; }
+  .row.soon .soon-note { margin: 10px 0 0; font-size: 14px; color: var(--faint); }
+
+  @media (prefers-reduced-motion: reduce) { .row h3 a, .go { transition: none; } .row:hover .go { transform: none; } }
+  @media (max-width: 720px) {
+    .top { padding: 10px 14px; }
+    .who { display: none; }
+    .lang button { min-width: 32px; padding: 0 6px; }
+    .btn { padding: 0 14px; }
+    main { padding: 32px 16px 64px; }
+    .lead { font-size: 16px; }
+    .section { margin-top: 44px; }
+    .row { grid-template-columns: minmax(0, 1fr) 40px; column-gap: 14px; padding: 22px 0; }
+    .num { display: none; }
+    .row .side { grid-column: 1; grid-row: 1; }
+    .row .main { grid-column: 1; grid-row: 2; }
+    .go { grid-column: 2; grid-row: 1; width: 40px; height: 40px; margin-top: 0; }
+    .st { margin: 0 0 12px; }
+    .row h3 { font-size: 22px; }
+    .row .d { font-size: 15px; }
   }
-
-  .section { margin-top: 44px; }
-  .section:first-of-type { margin-top: 8px; }
-  .section h2 { font: 600 26px/1.15 var(--sans); letter-spacing: -.015em; margin: 0; }
-  .section .lede { font-size: 16px; color: var(--muted); margin: 6px 0 0; max-width: 64ch; }
-  .grid { display: grid; gap: 20px; margin-top: 18px; }
-  .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .card { position: relative; display: flex; flex-direction: column; padding: 26px 26px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; transition: border-color .2s, box-shadow .2s; }
-  .card:hover { border-color: var(--faint); box-shadow: 0 8px 24px rgba(0, 0, 0, .06); }
-  .card .st { font: 600 12.5px/1.3 var(--sans); color: var(--muted); margin: 0 0 8px; letter-spacing: .01em; }
-  .card h3 { font: 600 21px/1.2 var(--sans); letter-spacing: -.015em; margin: 0; text-wrap: balance; }
-  .card p.d { font-size: 15.5px; line-height: 1.47; color: var(--muted); margin: 10px 0 0; }
-  .card .foot { margin-top: auto; padding-top: 22px; }
-  .card .stack { font-size: 13.5px; line-height: 1.45; color: var(--faint); margin: 0; }
-  .card a.open { display: inline-block; margin-top: 14px; font: 500 16px/1.2 var(--sans); color: var(--brand-ink); text-decoration: none; }
-  .card a.open::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }
-  .card a.open::after { content: "\203A"; display: inline-block; margin-left: 5px; transition: transform .2s; }
-  .card:hover a.open::after { transform: translateX(3px); }
-  .card:has(a.open:focus-visible) { outline: 2px solid var(--brand); outline-offset: 3px; }
-  .card a.open:focus-visible { outline: none; }
-  .card.soon, .card.soon:hover { background: color-mix(in srgb, var(--line) 35%, var(--bg)); border-color: transparent; box-shadow: none; }
-  .card .note { margin-top: 14px; font-size: 15px; color: var(--faint); }
-  @media (max-width: 1000px) { .grid.three { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid.three > :nth-child(3) { grid-column: 1 / -1; } }
-  @media (max-width: 720px) { .grid.two, .grid.three { grid-template-columns: 1fr; gap: 14px; } .grid.three > :nth-child(3) { grid-column: auto; } .card { padding: 22px 20px 20px; } .card h3 { font-size: 19px; } .section { margin-top: 36px; } }
-
 </style>
 </head>
 <body>
   <header class="top">
-    <a class="brand" href="./"><span class="who"><span class="nm">Vildana Razumova</span><small id="t-role">Data Scientist · AI Automation</small></span></a>
-    <nav class="actions"><div class="lang" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="de">DE</button><button type="button" data-lang="ru">RU</button></div><a class="btn" href="./">←<span id="t-back" class="hide-sm">&nbsp;Assistant</span></a></nav>
+    <a class="brand" href="./"><img src="photo.jpg" alt="" width="32" height="32"><span class="who"><span class="nm">Vildana Razumova</span><small id="t-role">Data Scientist · AI Automation</small></span></a>
+    <nav class="actions">
+      <div class="lang" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="de" lang="de">DE</button><button type="button" data-lang="ru" lang="ru">RU</button></div>
+      <a class="btn" href="./"><svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg><span id="t-back">Ask the assistant</span></a>
+    </nav>
   </header>
   <main>
     <h1 id="t-title">Portfolio</h1>
     <p class="lead" id="t-lead"></p>
-    <section class="section"><h2 id="s1-h"></h2><p class="lede" id="s1-l" hidden></p><div class="grid two" id="g1"></div></section>
-    <section class="section"><h2 id="s2-h"></h2><p class="lede" id="s2-l"></p><div class="grid three" id="g2"></div></section>
+    <section class="section" aria-labelledby="s1-h"><div class="section-h"><h2 id="s1-h"></h2><p id="s1-l" hidden></p></div><ol class="list" id="g1"></ol></section>
+    <section class="section" aria-labelledby="s2-h"><div class="section-h"><h2 id="s2-h"></h2><p id="s2-l" hidden></p></div><ol class="list" id="g2" start="3"></ol></section>
   </main>
 <script>
-  const T = {"en": {"role": "Data Scientist · AI Automation", "back": "← Assistant", "title": "Portfolio", "lead": "Demonstrations of real projects on synthetic data. Go into a project and see how they work.", "open": "Open the demo", "soon": "Demo in preparation", "s1": ["Pricing and demand", ""], "c1": [["Pilot", "Price revisions with comments", "A demonstration of a real project on synthetic data. The system proposes a price move for every segment and shows what it is made of.", "Python · LightGBM · ClickHouse · Airflow · n8n", "demos/revisions.html"], ["In production since March 2026", "External market signals", "Three flows collect external data for dynamic pricing: news (scored by a model), oil, exchange rate and weather, search interest. Every morning — one alert in Teams: what came in, what moved, what needs attention.", "n8n · Azure AI Foundry · ClickHouse · Microsoft Teams", "demos/news.html"]], "s2": ["Assistants in Microsoft Teams", "Used by the company's staff every day; here — copies on demo data."], "c2": [["In production since July 2026", "Payments assistant", "Answers managers' questions about payment status from the payment data and raises requests to accounting.", "Dify · Azure AI Foundry · ClickHouse · Jira", "demos/payments.html"], ["In production since May 2026", "AI sales analyst", "Posts a digest per destination to the channel every morning: bookings, plan by airport, hotels, critical flights.", "n8n · FastAPI · Azure AI Foundry · ClickHouse", "demos/sales-digest.html"], ["In production since May 2026", "System alerts", "The channel where every system reports after each run: what was done, which checks passed, where the data was incomplete.", "Airflow · n8n · Microsoft Teams", "demos/alerts.html"]]}, "de": {"role": "Data Scientist · KI-Automatisierung", "back": "← Assistent", "title": "Portfolio", "lead": "Demonstrationen realer Projekte auf synthetischen Daten. Gehen Sie in ein Projekt und sehen Sie, wie sie aufgebaut sind.", "open": "Demo öffnen", "soon": "Demo in Vorbereitung", "s1": ["Preise und Nachfrage", ""], "c1": [["Pilot", "Preisrevisionen mit Kommentaren", "Demonstration eines echten Projekts auf synthetischen Daten. Das System schlägt für jedes Segment eine Preisänderung vor und zeigt, woraus sie besteht.", "Python · LightGBM · ClickHouse · Airflow · n8n", "demos/revisions.html"], ["Im Einsatz seit März 2026", "Externe Marktsignale", "Drei Flows sammeln externe Daten für dynamische Preise: Nachrichten (von einem Modell bewertet), Öl, Wechselkurs und Wetter, Suchinteresse. Jeden Morgen — eine Meldung in Teams: was angekommen ist, was sich bewegt hat, was Aufmerksamkeit braucht.", "n8n · Azure AI Foundry · ClickHouse · Microsoft Teams", "demos/news.html"]], "s2": ["Assistenten in Microsoft Teams", "Im Unternehmen täglich in Gebrauch; hier — Kopien auf Demo-Daten."], "c2": [["Im Einsatz seit Juli 2026", "Zahlungsassistent", "Beantwortet Fragen der Manager zum Zahlungsstatus aus den Zahlungsdaten und stellt Anfragen an die Buchhaltung.", "Dify · Azure AI Foundry · ClickHouse · Jira", "demos/payments.html"], ["Im Einsatz seit Mai 2026", "KI-Verkaufsanalyst", "Postet jeden Morgen eine Übersicht pro Reiseziel in den Kanal: Buchungen, Plan nach Abflughafen, Hotels, kritische Flüge.", "n8n · FastAPI · Azure AI Foundry · ClickHouse", "demos/sales-digest.html"], ["Im Einsatz seit Mai 2026", "Systemmeldungen", "Der Kanal, in dem jedes System nach jedem Lauf berichtet: was getan wurde, welche Prüfungen bestanden sind, wo Daten unvollständig waren.", "Airflow · n8n · Microsoft Teams", "demos/alerts.html"]]}, "ru": {"role": "Дата-сайентист · ИИ-автоматизация", "back": "← Ассистент", "title": "Портфолио", "lead": "Демонстрации реальных проектов на синтетических данных. Переходите в проект и посмотрите, как они устроены.", "open": "Открыть демо", "soon": "Демо готовится", "s1": ["Ценообразование и спрос", ""], "c1": [["Пилот", "Ревизии цен с комментариями", "Демонстрация реального проекта на синтетических данных. Система предлагает изменение цены по каждому сегменту и показывает, из чего оно сложилось.", "Python · LightGBM · ClickHouse · Airflow · n8n", "demos/revisions.html"], ["В эксплуатации с марта 2026", "Внешние сигналы рынка", "Три флоу собирают внешние данные для динамического ценообразования: новости (их оценивает модель), нефть, курс и погоду, поисковый интерес. Каждое утро — один алерт в Teams: что собрано, что сдвинулось, что требует внимания.", "n8n · Azure AI Foundry · ClickHouse · Microsoft Teams", "demos/news.html"]], "s2": ["Помощники в Microsoft Teams", "Ими пользуются сотрудники компании; здесь — копии на демо-данных."], "c2": [["В эксплуатации с июля 2026", "Помощник по платежам", "Отвечает менеджерам о статусе оплаты из данных о платежах и отправляет запросы в бухгалтерию.", "Dify · Azure AI Foundry · ClickHouse · Jira", "demos/payments.html"], ["В эксплуатации с мая 2026", "AI-аналитик по продажам", "Каждое утро публикует в канал сводку по направлению: бронирования, план по вылетам, отели, критичные рейсы.", "n8n · FastAPI · Azure AI Foundry · ClickHouse", "demos/sales-digest.html"], ["В эксплуатации с мая 2026", "Алерты систем", "Канал, где каждая система отчитывается после запуска: что сделано, какие проверки пройдены, где неполные данные.", "Airflow · n8n · Microsoft Teams", "demos/alerts.html"]]}};
+  const T = {"en": {"role": "Data Scientist · AI Automation", "back": "Ask the assistant", "title": "Portfolio", "lead": "Demonstrations of real projects on synthetic data. Open a project to see how it works.", "open": "Open the demo", "soon": "Demo in preparation", "s1": ["Pricing and demand", ""], "c1": [["Pilot", "Price revisions with comments", "The system proposes a price move for every segment and shows what it is made of.", "Python · LightGBM · ClickHouse · Airflow · n8n", "demos/revisions.html"], ["In production since March 2026", "External market signals", "Three flows collect external data for dynamic pricing: news (scored by a model), oil, exchange rate and weather, search interest. Every morning — one alert in Teams: what came in, what moved, what needs attention.", "n8n · Azure AI Foundry · ClickHouse · Microsoft Teams", "demos/news.html"]], "s2": ["Assistants in Microsoft Teams", "Used by the company's staff every day; here — copies on demo data."], "c2": [["In production since July 2026", "Payments assistant", "Answers managers' questions about payment status from the payment data and raises requests to accounting.", "Dify · Azure AI Foundry · ClickHouse · Jira", "demos/payments.html"], ["In production since May 2026", "AI sales analyst", "Posts a digest per destination to the channel every morning: bookings, plan by airport, hotels, critical flights.", "n8n · FastAPI · Azure AI Foundry · ClickHouse", "demos/sales-digest.html"], ["In production since May 2026", "System alerts", "The channel where every system reports after each run: what was done, which checks passed, where the data was incomplete.", "Airflow · n8n · Microsoft Teams", "demos/alerts.html"]]}, "de": {"role": "Data Scientist · KI-Automatisierung", "back": "Assistenten fragen", "title": "Portfolio", "lead": "Demonstrationen realer Projekte auf synthetischen Daten. Öffnen Sie ein Projekt und sehen Sie, wie es funktioniert.", "open": "Demo öffnen", "soon": "Demo in Vorbereitung", "s1": ["Preise und Nachfrage", ""], "c1": [["Pilot", "Preisrevisionen mit Kommentaren", "Das System schlägt für jedes Segment eine Preisänderung vor und zeigt, woraus sie besteht.", "Python · LightGBM · ClickHouse · Airflow · n8n", "demos/revisions.html"], ["Im Einsatz seit März 2026", "Externe Marktsignale", "Drei Flows sammeln externe Daten für dynamische Preise: Nachrichten (von einem Modell bewertet), Öl, Wechselkurs und Wetter, Suchinteresse. Jeden Morgen — eine Meldung in Teams: was angekommen ist, was sich bewegt hat, was Aufmerksamkeit braucht.", "n8n · Azure AI Foundry · ClickHouse · Microsoft Teams", "demos/news.html"]], "s2": ["Assistenten in Microsoft Teams", "Im Unternehmen täglich in Gebrauch; hier — Kopien auf Demo-Daten."], "c2": [["Im Einsatz seit Juli 2026", "Zahlungsassistent", "Beantwortet Fragen der Manager zum Zahlungsstatus aus den Zahlungsdaten und stellt Anfragen an die Buchhaltung.", "Dify · Azure AI Foundry · ClickHouse · Jira", "demos/payments.html"], ["Im Einsatz seit Mai 2026", "KI-Verkaufsanalyst", "Postet jeden Morgen eine Übersicht pro Reiseziel in den Kanal: Buchungen, Plan nach Abflughafen, Hotels, kritische Flüge.", "n8n · FastAPI · Azure AI Foundry · ClickHouse", "demos/sales-digest.html"], ["Im Einsatz seit Mai 2026", "Systemmeldungen", "Der Kanal, in dem jedes System nach jedem Lauf berichtet: was getan wurde, welche Prüfungen bestanden sind, wo Daten unvollständig waren.", "Airflow · n8n · Microsoft Teams", "demos/alerts.html"]]}, "ru": {"role": "Дата-сайентист · ИИ-автоматизация", "back": "Спросить ассистента", "title": "Портфолио", "lead": "Демонстрации реальных проектов на синтетических данных. Откройте проект и посмотрите, как он устроен.", "open": "Открыть демо", "soon": "Демо готовится", "s1": ["Ценообразование и спрос", ""], "c1": [["Пилот", "Ревизии цен с комментариями", "Система предлагает изменение цены по каждому сегменту и показывает, из чего оно сложилось.", "Python · LightGBM · ClickHouse · Airflow · n8n", "demos/revisions.html"], ["В эксплуатации с марта 2026", "Внешние сигналы рынка", "Три флоу собирают внешние данные для динамического ценообразования: новости (их оценивает модель), нефть, курс и погоду, поисковый интерес. Каждое утро — один алерт в Teams: что собрано, что сдвинулось, что требует внимания.", "n8n · Azure AI Foundry · ClickHouse · Microsoft Teams", "demos/news.html"]], "s2": ["Помощники в Microsoft Teams", "Ими пользуются сотрудники компании; здесь — копии на демо-данных."], "c2": [["В эксплуатации с июля 2026", "Помощник по платежам", "Отвечает менеджерам о статусе оплаты из данных о платежах и отправляет запросы в бухгалтерию.", "Dify · Azure AI Foundry · ClickHouse · Jira", "demos/payments.html"], ["В эксплуатации с мая 2026", "AI-аналитик по продажам", "Каждое утро публикует в канал сводку по направлению: бронирования, план по вылетам, отели, критичные рейсы.", "n8n · FastAPI · Azure AI Foundry · ClickHouse", "demos/sales-digest.html"], ["В эксплуатации с мая 2026", "Алерты систем", "Канал, где каждая система отчитывается после запуска: что сделано, какие проверки пройдены, где неполные данные.", "Airflow · n8n · Microsoft Teams", "demos/alerts.html"]]}};
   const NAME = { en: "Vildana Razumova", de: "Vildana Razumova", ru: "Вильдана Разумова" };
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-  function cards(list, d) {
-    return list.map(([st, h, desc, stack, href, label]) => `<article class="card ${href ? "" : "soon"}"><p class="st">${esc(st)}</p><h3>${esc(h)}</h3><p class="d">${esc(desc)}</p>
-      <div class="foot"><p class="stack">${esc(stack)}</p>${href ? `<a class="open" href="${href}" aria-label="${esc(label || d.open)} — ${esc(h)}">${esc(label || d.open)}</a>` : `<p class="note">${esc(d.soon)}</p>`}</div></article>`).join("");
+  const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  function rows(list, d, from) {
+    return list.map(([st, h, desc, stack, href, label], i) => {
+      const n = String(from + i).padStart(2, "0"), pilot = from + i === 1;
+      const title = href ? `<a href="${href}" aria-label="${esc(label || d.open)}: ${esc(h)}">${esc(h)}</a>` : esc(h);
+      return `<li class="row${href ? "" : " soon"}"><span class="num" aria-hidden="true">${n}</span>
+        <div class="main"><h3>${title}</h3><p class="d">${esc(desc)}</p><p class="stack">${esc(stack)}</p>${href ? "" : `<p class="soon-note">${esc(d.soon)}</p>`}</div>
+        <div class="side"><span class="st${pilot ? " pilot" : ""}">${esc(st)}</span></div>
+        <span class="go" aria-hidden="true">${ARROW}</span></li>`;
+    }).join("");
   }
   function setLang(l) {
     if (!T[l]) l = "en"; const d = T[l]; document.documentElement.lang = l;
-    $("t-role").textContent = d.role; $("t-back").textContent = d.back.replace(/^←\s*/, "\u00a0"); $("t-title").textContent = d.title; $("t-lead").textContent = d.lead;
+    $("t-role").textContent = d.role; $("t-back").textContent = d.back; $("t-title").textContent = d.title; $("t-lead").textContent = d.lead;
     document.title = d.title + " — " + NAME[l]; document.querySelectorAll(".nm").forEach((e) => { e.textContent = NAME[l]; });
-    $("s1-h").textContent = d.s1[0]; $("s1-l").textContent = d.s1[1]; $("s1-l").hidden = !d.s1[1]; $("g1").innerHTML = cards(d.c1, d);
-    $("s2-h").textContent = d.s2[0]; $("s2-l").textContent = d.s2[1]; $("s2-l").hidden = !d.s2[1]; $("g2").innerHTML = cards(d.c2, d);
+    $("s1-h").textContent = d.s1[0]; $("s1-l").textContent = d.s1[1]; $("s1-l").hidden = !d.s1[1]; $("g1").innerHTML = rows(d.c1, d, 1);
+    $("s2-h").textContent = d.s2[0]; $("s2-l").textContent = d.s2[1]; $("s2-l").hidden = !d.s2[1]; $("g2").innerHTML = rows(d.c2, d, 1 + d.c1.length);
     document.querySelectorAll("#lang button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.lang === l)));
     try { localStorage.setItem("lang", l); } catch (e) {}
   }
