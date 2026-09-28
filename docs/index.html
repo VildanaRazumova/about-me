@@ -181,7 +181,7 @@
   .nudge[hidden] { display: none; }
 
   /* Composer */
-  .composer-wrap { position: sticky; bottom: 0; padding: 12px 20px calc(14px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 30%); }
+  .composer-wrap { position: sticky; bottom: 0; padding: 12px 20px calc(14px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 12px); }   /* opaque under the chips, a short fade above */
   .composer { max-width: 720px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 8px 8px 8px 16px; box-shadow: var(--shadow); }
   .composer:focus-within { border-color: var(--brand); }
   textarea { flex: 1; border: 0; outline: 0; resize: none; background: transparent; color: var(--ink); font: 15.5px/1.5 var(--sans); padding: 7px 0; max-height: 180px; }
@@ -196,19 +196,20 @@
   .note a { color: var(--muted); text-decoration: underline; }
   .legal { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: grid; place-items: center; padding: 20px; z-index: 30; }
   .legal[hidden] { display: none; }
-  .legal-box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; max-width: 560px; max-height: 85vh; overflow: auto; font-size: 14px; }
+  .legal-box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; max-width: 560px; max-height: min(85vh, calc(100dvh - 40px)); overflow: auto; overscroll-behavior: contain; font-size: 14px; }
   .legal-box h2 { margin: 0 0 10px; font: 600 18px var(--sans); }
   .legal-box p { margin: 0 0 10px; color: var(--muted); }
   .legal-box .btn { margin-top: 6px; }
   /* "About the assistant": five steps instead of prose */
   .legal-box.wide { max-width: 760px; }
-  .bp-steps { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 12px; }
-  .bp-step { display: flex; align-items: center; gap: 14px; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
-  .bp-num { width: 32px; height: 32px; border-radius: 50%; background: var(--brand); color: #fff; font: 600 15px var(--sans); display: grid; place-items: center; flex: none; }
+  .legal-box.wide { scrollbar-width: thin; }
+  .bp-steps { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 12px; }
+  .bp-step { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; }
+  .bp-num { width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: #fff; font: 600 13px var(--sans); display: grid; place-items: center; flex: none; }
   .bp-txt { flex: 1; min-width: 0; }
-  .bp-txt b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
-  .bp-txt span { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
-  .bp-tag { flex: none; font: 500 12.5px var(--sans); color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 5px 10px; white-space: nowrap; }
+  .bp-txt b { display: block; font-size: 14.5px; line-height: 1.3; font-weight: 600; color: var(--ink); }
+  .bp-txt span { font-size: 13px; color: var(--muted); line-height: 1.35; }
+  .bp-tag { flex: none; font: 500 12px var(--sans); color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
   .bp-data { border: 1px dashed var(--faint); border-radius: 12px; padding: 10px 14px; font-size: 13.5px; color: var(--muted); line-height: 1.45; margin: 0 0 10px; }
   .bp-data b, .bp-foot b { color: var(--ink); font-weight: 600; }
   .bp-foot { font-size: 13.5px; color: var(--muted); margin: 0 0 12px; }
@@ -301,7 +302,7 @@
     <div class="log" id="log" aria-live="polite"></div>
   </main>
 
-  <div class="composer-wrap">
+  <div class="composer-wrap" id="composer-wrap">
     <div class="followups" id="followups" aria-label="Follow-up questions"></div>
     <form class="composer" id="form">
       <label for="input" class="sr-only">Your message</label>
@@ -404,8 +405,8 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
           lead: "<strong>10 years in banking risk and analytics, now the only data scientist at a tour operator:</strong> price recommendations, competitor price monitoring, an LLM assistant in Teams — from as-is analysis to production.",
           ask: "Don't read the CV — ask her AI assistant.", jd: ["Paste a job description →", "Check her against this job description:\n\n"],
           strip: ["Portfolio", "Demonstrations of real projects on synthetic data. Go into a project and see how they work.", "Open the demo", "Open the flow"],
-          cards: [["Pilot", "Price revisions with comments"], ["In production since March 2026", "News → impact on demand"], ["In production since July 2026", "Payments assistant"], ["In production since May 2026", "AI sales analyst"], ["In production since May 2026", "System alerts"]],
-          wait: [["Page · GitHub Pages", "question sent"], ["n8n · Railway", "language and limits · question {n} of 20"], ["n8n · Railway", "knowledge base and rules · prompt cache"], ["Anthropic API", "Claude is writing the answer…"], ["n8n → page", "checking and cleaning the answer"]],
+          cards: [["Pilot", "Price revisions with comments"], ["In production since March 2026", "External market signals"], ["In production since July 2026", "Payments assistant"], ["In production since May 2026", "AI sales analyst"], ["In production since May 2026", "System alerts"]],
+          wait: [["Page · GitHub Pages", "question sent"], ["n8n · Railway", "language and limits check"], ["n8n · Railway", "knowledge base and rules · prompt cache"], ["Anthropic API", "Claude is writing the answer…"], ["n8n → page", "checking and cleaning the answer"]],
           meta: ["{s} s", "prompt cache ✓", "prompt cache –", "{n} tokens"], nudge: "Talk to Vildana →",
           reset: "New conversation",
           ph: "Ask about her experience and projects…", phShort: "Ask about her work…", note: "AI answers based on Vildana's profile. Please confirm important details with her directly.",
@@ -420,8 +421,8 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
           lead: "<strong>10 Jahre Risikomanagement und Analytik in der Bank, heute die einzige Data Scientistin bei einem Reiseveranstalter:</strong> Preisempfehlungen, Preismonitoring der Wettbewerber, ein LLM-Assistent in Teams — von der Ist-Analyse bis zur Produktion.",
           ask: "Lesen Sie nicht den Lebenslauf — fragen Sie ihren KI-Assistenten.", jd: ["Stellenbeschreibung einfügen →", "Prüfen Sie sie anhand dieser Stellenbeschreibung:\n\n"],
           strip: ["Portfolio", "Demonstrationen realer Projekte auf synthetischen Daten. Gehen Sie in ein Projekt und sehen Sie, wie sie aufgebaut sind.", "Demo öffnen", "Ablauf öffnen"],
-          cards: [["Pilot", "Preisrevisionen mit Kommentaren"], ["Im Einsatz seit März 2026", "Nachrichten → Wirkung auf die Nachfrage"], ["Im Einsatz seit Juli 2026", "Zahlungsassistent"], ["Im Einsatz seit Mai 2026", "KI-Verkaufsanalyst"], ["Im Einsatz seit Mai 2026", "Systemmeldungen"]],
-          wait: [["Seite · GitHub Pages", "Frage gesendet"], ["n8n · Railway", "Sprache und Limits · Frage {n} von 20"], ["n8n · Railway", "Wissensbasis und Regeln · Prompt-Cache"], ["Anthropic API", "Claude schreibt die Antwort …"], ["n8n → Seite", "Antwort wird geprüft und bereinigt"]],
+          cards: [["Pilot", "Preisrevisionen mit Kommentaren"], ["Im Einsatz seit März 2026", "Externe Marktsignale"], ["Im Einsatz seit Juli 2026", "Zahlungsassistent"], ["Im Einsatz seit Mai 2026", "KI-Verkaufsanalyst"], ["Im Einsatz seit Mai 2026", "Systemmeldungen"]],
+          wait: [["Seite · GitHub Pages", "Frage gesendet"], ["n8n · Railway", "Sprache und Limits prüfen"], ["n8n · Railway", "Wissensbasis und Regeln · Prompt-Cache"], ["Anthropic API", "Claude schreibt die Antwort …"], ["n8n → Seite", "Antwort wird geprüft und bereinigt"]],
           meta: ["{s} s", "Prompt-Cache ✓", "Prompt-Cache –", "{n} Tokens"], nudge: "Mit Vildana sprechen →",
           reset: "Neues Gespräch",
           ph: "Fragen Sie nach ihrer Erfahrung und ihren Projekten …", phShort: "Fragen zu ihrer Arbeit …", note: "KI-Antworten auf Basis von Vildanas Profil. Bitte klären Sie wichtige Details direkt mit ihr.",
@@ -436,8 +437,8 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
           lead: "<strong>10 лет в банковском риск-менеджменте и аналитике, сейчас — единственный дата-сайентист у туроператора:</strong> рекомендации цен, мониторинг цен конкурентов, LLM-ассистент в Teams — от анализа as-is до продакшена.",
           ask: "Не читайте резюме — спросите её ИИ-ассистента.", jd: ["Вставьте описание вакансии →", "Проверь её по этой вакансии:\n\n"],
           strip: ["Портфолио", "Демонстрации реальных проектов на синтетических данных. Переходите в проект и посмотрите, как они устроены.", "Открыть демо", "Открыть схему"],
-          cards: [["Пилот", "Ревизии цен с комментариями"], ["В эксплуатации с марта 2026", "Новости → влияние на спрос"], ["В эксплуатации с июля 2026", "Помощник по платежам"], ["В эксплуатации с мая 2026", "AI-аналитик по продажам"], ["В эксплуатации с мая 2026", "Алерты систем"]],
-          wait: [["Страница · GitHub Pages", "вопрос отправлен"], ["n8n · Railway", "язык и лимиты · вопрос {n} из 20"], ["n8n · Railway", "база знаний и правила · кэш промпта"], ["Anthropic API", "Claude пишет ответ…"], ["n8n → страница", "проверка и очистка ответа"]],
+          cards: [["Пилот", "Ревизии цен с комментариями"], ["В эксплуатации с марта 2026", "Внешние сигналы рынка"], ["В эксплуатации с июля 2026", "Помощник по платежам"], ["В эксплуатации с мая 2026", "AI-аналитик по продажам"], ["В эксплуатации с мая 2026", "Алерты систем"]],
+          wait: [["Страница · GitHub Pages", "вопрос отправлен"], ["n8n · Railway", "проверка языка и лимитов"], ["n8n · Railway", "база знаний и правила · кэш промпта"], ["Anthropic API", "Claude пишет ответ…"], ["n8n → страница", "проверка и очистка ответа"]],
           meta: ["{s} с", "кэш промпта ✓", "кэш промпта –", "{n} токенов"], nudge: "Поговорить с Вильданой →",
           reset: "Новый разговор",
           ph: "Спросите о её опыте и проектах…", phShort: "Спросите о её работе…", note: "Ответы ИИ на основе профиля Вильданы. Важные детали уточняйте у неё напрямую.",
@@ -511,7 +512,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     $("t-role").textContent = d.role; $("t-hrole").textContent = d.role;
     $("jd-chip").textContent = d.jd[0]; $("nudge").textContent = d.nudge;
     $("t-strip-h").textContent = d.strip[0]; $("t-strip-sub").textContent = d.strip[1];
-    $("strip-cards").innerHTML = d.cards.map(([st, h], i) => `<article class="card"><p class="st">${esc(st)}</p><h3>${esc(h)}</h3><a href="${STRIP_HREF[i]}" aria-label="${esc(i === 1 ? d.strip[3] : d.strip[2])} — ${esc(h)}">${esc(i === 1 ? d.strip[3] : d.strip[2])}</a></article>`).join("");
+    $("strip-cards").innerHTML = d.cards.map(([st, h], i) => `<article class="card"><p class="st">${esc(st)}</p><h3>${esc(h)}</h3><a href="${STRIP_HREF[i]}" aria-label="${esc(d.strip[2])} — ${esc(h)}">${esc(d.strip[2])}</a></article>`).join("");
     document.querySelectorAll(".steps").forEach((el) => renderSteps(el, +el.dataset.on, +el.dataset.n)); $("t-talk").textContent = d.talk; $("t-examples").textContent = d.examples; $("t-examples-link").textContent = d.examples;
     $("t-li").textContent = d.menu[0]; $("t-tg").textContent = d.menu[1]; $("t-em").textContent = d.menu[2]; $("t-cv").textContent = d.menu[3]; $("t-cv-s").textContent = d.menu[4];
     input.placeholder = matchMedia("(max-width: 640px)").matches ? d.phShort : d.ph;
@@ -543,8 +544,8 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   $("t-privacy-link").addEventListener("click", (e) => { e.preventDefault(); $("privacy").hidden = false; $("privacy-close").focus(); });
   $("privacy-close").addEventListener("click", () => { $("privacy").hidden = true; });
   $("privacy").addEventListener("click", (e) => { if (e.target === $("privacy")) $("privacy").hidden = true; });
-  $("built-btn").addEventListener("click", () => { $("built").hidden = false; $("built-close").focus(); });
-  $("t-built-link").addEventListener("click", (e) => { e.preventDefault(); $("built").hidden = false; $("built-close").focus(); });
+  $("built-btn").addEventListener("click", () => { $("built").hidden = false; $("built").querySelector(".legal-box").scrollTop = 0; $("built-close").focus({ preventScroll: true }); });   // open at the top: focusing Close must not scroll the heading away
+  $("t-built-link").addEventListener("click", (e) => { e.preventDefault(); $("built").hidden = false; $("built").querySelector(".legal-box").scrollTop = 0; $("built-close").focus({ preventScroll: true }); });
   $("built-close").addEventListener("click", () => { $("built").hidden = true; });
   $("built").addEventListener("click", (e) => { if (e.target === $("built")) $("built").hidden = true; });
   $("built-ask").addEventListener("click", () => { $("built").hidden = true; ask(BUILT_LABEL[pageLang][3]); });
@@ -578,6 +579,8 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
       col.appendChild(tag); col.appendChild(body); row.appendChild(col);
     } else row.appendChild(body);
     log.appendChild(row);
+    // keep the new message clear of the sticky composer (its height changes with the follow-up chips)
+    row.style.scrollMarginBottom = ($("composer-wrap").offsetHeight + 16) + "px";
     row.scrollIntoView({ behavior: "smooth", block: "end" });
     return body;
   }
@@ -585,12 +588,13 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   async function ask(text) {
     document.body.classList.add("chatting");
     asked.add(text);
-    $("followups").querySelectorAll(".chip").forEach((c) => { c.disabled = true; });
+    $("followups").innerHTML = "";   // no chips while waiting: they would cover the live steps
     add("user", text);
     const body = add("bot", '<div class="steps" data-on="0" data-n="1"></div>');
     const stepsEl = body.querySelector(".steps"); const qn = asked.size;
     const t0 = performance.now();
     renderSteps(stepsEl, 1, qn);
+    requestAnimationFrame(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" }));   // the steps are now rendered: show all of them above the composer
     const timers = [setTimeout(() => renderSteps(stepsEl, 2, qn), 350), setTimeout(() => renderSteps(stepsEl, 3, qn), 700)];
     const tick = setInterval(() => { const t = stepsEl.querySelector(".tick"); if (t) t.textContent = fmtS(performance.now() - t0) + (pageLang === "en" ? " s" : pageLang === "de" ? " s" : " с"); }, 200);
     const stop = () => { timers.forEach(clearTimeout); clearInterval(tick); };
