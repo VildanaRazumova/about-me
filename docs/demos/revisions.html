@@ -37,8 +37,9 @@
   html, body { margin: 0; }
   body { background: var(--bg); color: var(--ink); font: 15.5px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
   a { color: var(--brand-ink); }
+  :root { --page: 1000px; }
   .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 12px max(16px, calc((100vw - 1040px) / 2)); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    padding: 12px max(16px, calc((100% - var(--page)) / 2)); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
   .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; color: var(--ink); text-decoration: none; }
   .who { display: flex; flex-direction: column; line-height: 1.15; }
   .who small { font-weight: 500; font-size: 12.5px; color: var(--muted); }
@@ -51,93 +52,244 @@
   .lang button { border: 0; background: none; padding: 0 11px; font: 600 12.5px var(--sans); letter-spacing: .04em; color: var(--muted); cursor: pointer; }
   .lang button + button { border-left: 1px solid var(--line); }
   .lang button[aria-pressed="true"] { background: var(--brand-soft); color: var(--brand-ink); }
-  main { max-width: 1040px; margin: 0 auto; padding: 34px 20px 56px; }
+  main { max-width: calc(var(--page) + 40px); margin: 0 auto; padding: 40px 20px 96px; }
   h1 { font: 600 clamp(28px, 4.4vw, 40px)/1.1 var(--serif); letter-spacing: -.02em; margin: 0 0 10px; text-wrap: balance; }
   .lead { color: var(--muted); font-size: 17px; max-width: 64ch; margin: 0 0 24px; }
-  .pill { display: inline-flex; align-items: center; gap: 6px; font: 500 12.5px var(--sans); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
-  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #2fb36f; }
-  .pill .dot.grey { background: var(--faint); }
+  .pill { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border: 0; background: var(--chip, #f2f2f5); font: 500 12px/24px var(--sans); color: var(--muted); border-radius: 999px; white-space: nowrap; }
   .tag { font: 500 12px var(--sans); color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
   .small { color: var(--faint); font-size: 12.5px; }
   @media (max-width: 640px) {
     .top { padding: 10px 16px; } .who small { display: none; } .brand { font-size: 14px; }
     .lang button { padding: 0 8px; } .btn { padding: 0 12px; } .hide-sm { display: none; }
-    main { padding: 24px 16px 40px; }
+    main { padding: 24px 16px 64px; }
   }
 
-  main { max-width: 1140px; }
-  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  /* ── flow tokens ── */
+  :root { --canvas: #f5f5f7; --dot: rgba(0,0,0,.08); --edge: #aeaeb2; --node: #fff; --chip: #f2f2f5;
+    --r-user: #1d1d1f; --r-user-bg: #ededf0; --r-flow: #0071e3; --r-flow-bg: #e8f1fc; --r-ai: #8944ab; --r-ai-bg: #f3eafa; --r-data: #0b7285; --r-data-bg: #e1f2f5;
+    --ok: #1f7a4d; --warn: #b25000; --err: #c0392b; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --canvas: #161617; --dot: rgba(255,255,255,.07); --edge: #636366; --node: #1d1d1f; --chip: #2c2c2e;
+    --r-user: #f5f5f7; --r-user-bg: #3a3a3c; --r-flow: #2997ff; --r-flow-bg: #14304d; --r-ai: #bf5af2; --r-ai-bg: #35203f; --r-data: #5ac8e0; --r-data-bg: #0f3038;
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; } }
+  :root[data-theme="dark"] { --canvas: #161617; --dot: rgba(255,255,255,.07); --edge: #636366; --node: #1d1d1f; --chip: #2c2c2e;
+    --r-user: #f5f5f7; --r-user-bg: #3a3a3c; --r-flow: #2997ff; --r-flow-bg: #14304d; --r-ai: #bf5af2; --r-ai-bg: #35203f; --r-data: #5ac8e0; --r-data-bg: #0f3038;
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; }
+  /* ── level rows ── */
+  .meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 32px 0 12px; }
+  .eyebrow { display: flex; align-items: center; gap: 8px; margin: 0; font: 600 13px/1 var(--sans); color: var(--muted); }
+  .lvl { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font: 600 11px/1 var(--sans); color: var(--ink); }
+  .pill { height: 24px; padding: 0 10px; border: 0; background: var(--chip); font: 500 12px/24px var(--sans); color: var(--muted); border-radius: 999px; white-space: nowrap; }
+  /* ── section ── */
+  .how { margin-top: 72px; scroll-margin-top: 80px; }
+  .how-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 16px; }
+  .how h2 { font: 600 26px/1.15 var(--sans); letter-spacing: -.015em; margin: 10px 0 0; text-wrap: balance; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; padding: 0; list-style: none; font: 12.5px/1 var(--sans); color: var(--muted); }
+  .legend li { display: flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 4px; background: var(--rb); box-shadow: inset 0 0 0 1.5px var(--r); }
+  .legend .dash { width: 18px; height: 0; border-radius: 0; background: none; box-shadow: none; border-top: 1.5px dashed var(--edge); }
+  /* ── canvas ── */
+  .canvas { position: relative; border: 1px solid var(--line); border-radius: 18px; padding: 44px 24px 40px;
+    background: radial-gradient(circle, var(--dot) 1px, transparent 1.5px) 0 0 / 16px 16px, var(--canvas); }
+  .wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: visible; }
+  .wires path { fill: none; stroke: var(--edge); stroke-width: 1.5; }
+  .wires .dash { stroke-dasharray: 4 4; }
+  .wires text { font: 500 11px var(--sans); fill: var(--muted); paint-order: stroke; stroke: var(--canvas); stroke-width: 5px; stroke-linejoin: round; }
+  .flow { --gap: 44px; position: relative; z-index: 1; display: grid; align-items: center; row-gap: 56px; grid-template-columns: repeat(4, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
+  .flow[data-n="4"] { grid-template-columns: repeat(3, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
+  .flow[data-n="6"] { --gap: 32px; grid-template-columns: repeat(5, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
+  .node { --r: var(--r-flow); --rb: var(--r-flow-bg); position: relative; min-width: 0; min-height: 124px; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px;
+    background: var(--node); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .node[data-role="user"] { --r: var(--r-user); --rb: var(--r-user-bg); }
+  .node[data-role="ai"] { --r: var(--r-ai); --rb: var(--r-ai-bg); }
+  .node[data-role="data"] { --r: var(--r-data); --rb: var(--r-data-bg); }
+  .n-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+  .n-ico { width: 28px; height: 28px; flex: none; border-radius: 8px; display: grid; place-items: center; background: var(--rb); color: var(--r); }
+  .n-ico svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .n-demo { font: 500 11.5px/1 var(--sans); color: var(--brand-ink); text-decoration: none; white-space: nowrap; }
+  .n-demo:hover { text-decoration: underline; }
+  .n-br { font: 600 10.5px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); white-space: nowrap; }
+  .n-title { font: 600 14px/1.3 var(--sans); letter-spacing: -.005em; }
+  .n-sub { font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+  .n-tech { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; padding-top: 6px; }
+  .n-tech span { font: 500 11px/20px var(--sans); padding: 0 7px; border-radius: 6px; background: var(--chip); color: var(--muted); white-space: nowrap; }
+  .node.stack { box-shadow: 4px 4px 0 -1px var(--node), 4px 4px 0 0 var(--line), 8px 8px 0 -1px var(--node), 8px 8px 0 0 var(--line); }
+  .ports { list-style: none; margin: 2px -14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .ports li { position: relative; padding-right: 14px; text-align: right; font: 500 11.5px/20px var(--sans); color: var(--muted); white-space: nowrap; }
+  .ports li::after { content: ""; position: absolute; right: -5px; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: var(--node); box-shadow: 0 0 0 1.5px var(--r); }
+  .ports li.ok { color: var(--ok); } .ports li.ok::after { background: var(--ok); box-shadow: none; }
+  .ports li.warn { color: var(--warn); } .ports li.warn::after { background: var(--warn); box-shadow: none; }
+  .ports li.err { color: var(--err); } .ports li.err::after { background: var(--err); box-shadow: none; }
+  .edge { position: relative; align-self: stretch; }
+  .edge::before { content: ""; position: absolute; left: 3px; right: 5px; top: 50%; height: 1.5px; margin-top: -.75px; background: var(--edge); }
+  .edge::after { content: ""; position: absolute; right: 5px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border: solid var(--edge); border-width: 1.5px 1.5px 0 0; transform: rotate(45deg); }
+  .edge.dash::before { background: repeating-linear-gradient(90deg, var(--edge) 0 4px, transparent 4px 8px); }
+  .edge.js::before, .edge.js::after { display: none; }
+  .e-lbl { position: absolute; left: 50%; bottom: calc(50% + 6px); transform: translateX(-50%); font: 500 11px/1 var(--sans); color: var(--muted); white-space: nowrap; }
+  .group { display: grid; grid-template-columns: subgrid; align-items: center; position: relative; margin: -34px -12px -12px; padding: 34px 12px 12px; border: 1px dashed var(--edge); border-radius: 20px; }
+  .g-lbl { position: absolute; top: 11px; left: 14px; display: flex; align-items: center; gap: 6px; font: 500 12px/1 var(--sans); color: var(--muted); }
+  .g-lbl svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  @media (max-width: 760px) {
+    .how { margin-top: 48px; } .how h2 { font-size: 21px; }
+    .canvas { padding: 16px 12px; background: var(--canvas); }
+    .wires { display: none; }
+    .flow, .flow[data-n] { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+    .group { display: flex; flex-direction: column; align-items: stretch; margin: 0; padding: 36px 10px 10px; }
+    .node { min-height: 0; }
+    .ports { margin: 4px 0 0; } .ports li { text-align: left; padding: 0 0 0 16px; } .ports li::after { right: auto; left: 0; }
+    .edge { height: 28px; flex: none; }
+    .edge::before { left: 28px; right: auto; top: 3px; bottom: 5px; width: 1.5px; height: auto; margin: 0; }
+    .edge::after { left: 25px; right: auto; top: auto; bottom: 5px; margin: 0; transform: rotate(135deg); }
+    .edge.dash::before { background: repeating-linear-gradient(180deg, var(--edge) 0 4px, transparent 4px 8px); }
+    .edge.js::before, .edge.js::after { display: block; }
+    .e-lbl { left: 44px; bottom: auto; top: 50%; transform: translateY(-50%); }
+    .flow > .node.br { margin-top: 28px; border-style: dashed; }
+  }
+
+  :root { --page: 1100px; }
+  h1 { margin: 0 0 12px; }
+  .lead { font-size: 17px; line-height: 1.47; max-width: 60ch; margin: 0; text-wrap: pretty; }
   .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; align-items: center; }
   .filters label { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 0 12px; height: 34px; font-size: 13px; color: var(--muted); background: var(--surface); }
-  .filters select, .filters input { border: 0; background: transparent; color: var(--ink); font: 500 13.5px var(--sans); outline: 0; max-width: 150px; }
-  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted); margin: 0 0 12px; align-items: center; }
-  .legend i { display: inline-block; width: 13px; height: 13px; border-radius: 4px; vertical-align: -2px; margin-right: 5px; }
-  .legend .sum { margin-left: auto; color: var(--ink); font-weight: 500; }
-  .twrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+  .filters select { border: 0; background: transparent; color: var(--ink); font: 500 13.5px var(--sans); outline: 0; max-width: 150px; }
+  .legend-t { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted); margin: 0 0 10px; align-items: center; }
+  .legend-t i { display: inline-block; width: 13px; height: 13px; border-radius: 4px; vertical-align: -2px; margin-right: 5px; }
+  .legend-t .sum { margin-left: auto; color: var(--ink); font-weight: 500; }
+  .twrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); scroll-margin-top: 80px; }
   table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 900px; }
   th { text-align: left; font: 600 11px var(--sans); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
   td { padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; font-variant-numeric: tabular-nums; }
   tr:last-child td { border-bottom: 0; }
-  tr.sel td { background: var(--brand-soft); }
+  tr.sel td { background: color-mix(in srgb, var(--brand-soft) 45%, var(--surface)); }
+  tr.sel td:first-child { box-shadow: inset 3px 0 0 var(--brand); }
+  tr.detail > td { padding: 8px 12px 16px; white-space: normal; background: var(--surface); }
   .lf { background: color-mix(in srgb, var(--line) 60%, var(--surface)); border-radius: 6px; padding: 2px 6px; font-weight: 600; }
   .p { display: inline-block; border-radius: 8px; padding: 3px 8px; font-weight: 600; font-size: 12.5px; cursor: pointer; border: 1px solid transparent; }
   .p.down { background: #fbe9e7; color: #a83a2a; } .p.deep { background: #c0392b; color: #fff; } .p.up { background: #e6f4ec; color: #1f7a4d; } .p.zero { border-color: var(--line); color: var(--faint); }
   .p.on { outline: 2px solid var(--brand); }
   .dash { color: var(--faint); }
   .dec { font-size: 12.5px; color: var(--muted); }
-  .drawer { display: none; border: 1.5px solid var(--brand); border-radius: 14px; padding: 16px 18px; margin-top: 14px; background: color-mix(in srgb, var(--brand-soft) 40%, var(--surface)); grid-template-columns: 1.1fr 1fr; gap: 22px; }
+  /* ── breakdown panel ── */
+  .drawer { display: none; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: 0 8px 24px rgba(0,0,0,.06); padding: 20px 24px; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; margin-top: 14px; font-size: 13.5px; scroll-margin-top: 80px; }
+  tr.detail .drawer { margin-top: 4px; box-shadow: none; }
   .drawer.open { display: grid; }
-  .drawer h3 { margin: 0 0 4px; font: 600 16px var(--sans); }
-  .sec { font: 600 11.5px var(--sans); letter-spacing: .05em; text-transform: uppercase; color: var(--brand-ink); margin: 12px 0 6px; }
-  .sec.grey { color: var(--faint); }
-  .k { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
-  .k b { font-weight: 600; white-space: nowrap; }
-  .k.total { border-bottom: 0; font-weight: 600; }
-  .pos { color: #1f7a4d; }
-  .acts { display: flex; gap: 8px; margin: 6px 0 14px; }
-  .cmt { border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; color: var(--muted); margin-bottom: 8px; background: var(--surface); }
+  .drawer > :last-child { border-left: 1px solid var(--line); padding-left: 32px; min-width: 0; }
+  .d-amt { font: 600 28px/1.1 var(--sans); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .d-amt.down, .d-amt.deep { color: #a83a2a; } .d-amt.up { color: #1f7a4d; } .d-amt.zero { color: var(--muted); }
+  .d-title { font: 600 15px/1.3 var(--sans); margin-top: 4px; }
+  .d-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .sec { font: 600 11px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); margin: 20px 0 8px; }
+  .k { display: grid; grid-template-columns: 1fr 64px 76px; column-gap: 12px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .k .pct { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .k .usd { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .k.total { border-top: 1px solid var(--ink); border-bottom: 0; margin-top: -1px; padding-top: 9px; font-weight: 600; }
+  .k.total .usd { font-size: 17px; }
+  .mk { display: grid; grid-template-columns: 1fr 64px 76px 72px; column-gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .mk span:not(:first-child) { text-align: right; } .mk b { text-align: right; font-weight: 600; }
+  .mk.head { font: 600 11px/1 var(--sans); letter-spacing: .04em; text-transform: uppercase; color: var(--faint); padding-bottom: 6px; }
+  .you { display: flex; align-items: center; gap: 8px; margin: 10px 0 12px; font-size: 13px; color: var(--muted); }
+  .you input { border: 1px solid var(--line); border-radius: 999px; padding: 0 12px; height: 32px; width: 130px; font: 500 13.5px var(--sans); color: var(--ink); background: var(--surface); outline: 0; }
+  .you input:focus { border-color: var(--brand); }
+  .acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 320px; margin: 0 0 4px; }
+  .acts .btn { height: 40px; justify-content: center; }
+  .acts .btn.yes-on { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .acts .btn.no-on { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .cmt { border-top: 1px solid var(--line); padding: 10px 0; color: var(--muted); }
   .cmt b { color: var(--ink); }
-  textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font: 13.5px var(--sans); background: var(--surface); color: var(--ink); resize: vertical; min-height: 60px; }
-  .how { margin-top: 26px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
-  .how summary { font-weight: 600; cursor: pointer; }
-  .steps { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-  .step { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
-  .num { width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 600; display: grid; place-items: center; flex: none; font-size: 14px; }
-  .step .txt { flex: 1; min-width: 0; } .step .txt b { display: block; font-size: 14.5px; } .step .txt span { color: var(--muted); font-size: 13px; }
-  @media (max-width: 760px) { .drawer { grid-template-columns: 1fr; } .step { flex-wrap: wrap; } .step .txt { flex: 1 1 150px; } .step .tag { margin-left: 40px; } }
+  .cmt:first-child { border-top: 0; padding-top: 0; }
+  textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; font: 13.5px var(--sans); background: var(--surface); color: var(--ink); resize: vertical; min-height: 72px; margin-top: 8px; }
+  textarea:focus { outline: 0; border-color: var(--brand); }
+  .send { display: flex; justify-content: flex-end; margin-top: 8px; }
+  .send .btn:disabled { opacity: .4; cursor: default; }
+  @media (max-width: 960px) { .drawer { grid-template-columns: 1fr; gap: 20px; } .drawer > :last-child { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 20px; } }
+  @media (max-width: 640px) { .drawer { padding: 16px; } .k { grid-template-columns: 1fr 56px 70px; } .mk { grid-template-columns: 1fr 52px 60px 60px; font-size: 12.5px; } .meta { margin-top: 24px; } }
 
 </style>
 </head>
 <body>
   <header class="top">
-    <a class="brand" href="../"><span class="who"><span>Vildana Razumova</span><small id="t-crumb">Live examples · Price revisions</small></span></a>
+    <a class="brand" href="../"><span class="who"><span>Vildana Razumova</span><small id="t-crumb">Portfolio · Price revisions</small></span></a>
     <nav class="actions">
       <div class="lang" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="de">DE</button><button type="button" data-lang="ru">RU</button></div>
-      <a class="btn" href="../examples.html">←<span id="t-back" class="hide-sm">&nbsp;All examples</span></a>
+      <a class="btn" href="../portfolio.html">←<span id="t-back" class="hide-sm">&nbsp;Portfolio</span></a>
       <a class="btn hide-sm" href="#how" id="t-howbtn">How it works</a>
     </nav>
   </header>
   <span id="t-role" hidden></span>
   <main>
-    <div class="head">
-      <div><h1 id="t-title"></h1><p class="lead" id="t-lead" style="margin:0"></p></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill"><span class="dot"></span><span id="t-run"></span></span><span id="t-proto" hidden></span></div>
-    </div>
+    <h1 id="t-title"></h1>
+    <p class="lead" id="t-lead"></p>
+    <div class="meta"><p class="eyebrow"><span class="lvl">1</span><span id="t-lvl1"></span></p><span class="pill" id="t-pill"></span></div>
     <div class="filters">
       <label><span id="l-dir"></span><select id="f-dir"></select></label>
       <label><span id="l-city"></span><select id="f-city"></select></label>
       <label><span id="l-air"></span><select id="f-air"></select></label>
       <label><span id="l-grp"></span><select id="f-grp"></select></label>
-      <label><span id="l-who"></span><input id="f-who" maxlength="24" style="width:90px"></label>
     </div>
-    <div class="legend"><span><i style="background:#e6f4ec"></i><span id="leg1"></span></span><span><i style="background:#fbe9e7"></i><span id="leg2"></span></span><span><i style="background:#c0392b"></i><span id="leg3"></span></span><span><i style="border:1px dashed var(--line)"></i><span id="leg4"></span></span><span class="sum" id="sum"></span></div>
-    <div class="twrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+    <div class="legend-t"><span><i style="background:#e6f4ec"></i><span id="leg1"></span></span><span><i style="background:#fbe9e7"></i><span id="leg2"></span></span><span><i style="background:#c0392b"></i><span id="leg3"></span></span><span><i style="border:1px dashed var(--line)"></i><span id="leg4"></span></span><span class="sum" id="sum"></span></div>
+    <div class="twrap" id="demo"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
     <div class="drawer" id="drawer"></div>
-    <details class="how" id="how"><summary id="t-how">How it works</summary><div class="steps" id="steps"></div></details>
+    <section class="how" id="how">
+      <header class="how-head">
+        <div><p class="eyebrow"><span class="lvl">2</span><span id="t-how"></span></p><h2 id="how-h"></h2></div>
+        <ul class="legend" id="legend"></ul>
+      </header>
+      <div class="canvas" id="canvas"></div>
+    </section>
   </main>
 <script>
 
-  const T = {"en": {"role": "Data Scientist · AI Automation", "crumb": "Live examples · Price revisions", "back": "← All examples", "how": "How it works", "title": "Price revisions: destination “Sunny Coast”", "lead": "A synthetic tour operator. The system recalculates recommendations three times a day; each can be accepted or rejected with a comment.", "run": "run", "proto": "prototype · demo data", "f": {"dir": "Destination", "city": "Departure city", "air": "Airline", "grp": "Hotel group", "who": "Who are you", "all": "all"}, "dirs": ["Sunny Coast", "Azure Bay"], "cities": ["City A", "City B"], "grps": ["Group A", "Group B"], "leg": ["price up", "price down", "deep discount (from $120)", "no change"], "sum": ["accepted", "rejected", "waiting"], "th": ["Date", "Airline", "Flight", "Block", "Sold", "Left", "Load", "4 nights", "5", "6", "7", "8", "Decision"], "stim": "sales stimulus — the flight is not selling yet", "wait": "waiting", "acc": "accepted", "rej": "rejected", "d": {"ctx": "{d} days to departure · load {lf}% (plan {plan}%)", "calc": "Revision calculation", "s1": "Base revision — managers' historical decision", "s2": "Load and pace of the flight — towards the lower historical price", "s3": "Demand for the destination this week", "total": "Total per person", "same": "No change since the last run.", "mkt": "Market · for reference", "ours": "ours", "comp": "competitor", "sales": "No sales in the last 3 days", "sales2": "Sales in the last 3 days: {n}", "q": "Do you agree with the recommendation?", "yes": "👍 Agree", "no": "👎 Disagree", "cmts": "Comments", "ph": "Your comment…", "send": "Send", "agreed": "agrees", "disagreed": "disagrees", "nights": "nights"}, "steps": [["Demo data", "all data is generated for the demonstration", "Python"], ["Model and rules", "flight load forecast and a calculation layer: every signal is converted into dollars per person", "LightGBM · Python"], ["Three runs a day", "recalculation, data checks, saving the result and a health alert", "n8n · Railway · PostgreSQL"], ["This page", "the revisions table, the breakdown of each recommendation, the market for reference", "HTML/JS · GitHub Pages"], ["Managers' decisions", "“agree / disagree” and comments go to the database; the next run takes them into account", "webhook · n8n · PostgreSQL"]]}, "de": {"role": "Data Scientist · KI-Automatisierung", "crumb": "Live-Beispiele · Preisrevisionen", "back": "← Alle Beispiele", "how": "So funktioniert es", "title": "Preisrevisionen: Ziel „Sonnenküste“", "lead": "Ein synthetischer Reiseveranstalter. Das System berechnet die Empfehlungen dreimal täglich neu; jede kann mit Kommentar angenommen oder abgelehnt werden.", "run": "Lauf", "proto": "Prototyp · Demo-Daten", "f": {"dir": "Ziel", "city": "Abflughafen", "air": "Airline", "grp": "Hotelgruppe", "who": "Wer sind Sie", "all": "alle"}, "dirs": ["Sonnenküste", "Azurbucht"], "cities": ["Stadt A", "Stadt B"], "grps": ["Gruppe A", "Gruppe B"], "leg": ["Preis rauf", "Preis runter", "tiefer Rabatt (ab $120)", "keine Änderung"], "sum": ["angenommen", "abgelehnt", "offen"], "th": ["Datum", "Airline", "Flug", "Block", "Verkauft", "Rest", "Auslastung", "4 Nächte", "5", "6", "7", "8", "Entscheidung"], "stim": "Verkaufsanreiz — der Flug verkauft sich noch nicht", "wait": "offen", "acc": "angenommen", "rej": "abgelehnt", "d": {"ctx": "{d} Tage bis Abflug · Auslastung {lf} % (Plan {plan} %)", "calc": "Berechnung der Revision", "s1": "Basisrevision — historische Entscheidung der Manager", "s2": "Auslastung und Tempo des Flugs — Richtung unterer historischer Preis", "s3": "Nachfrage nach dem Ziel in dieser Woche", "total": "Gesamt pro Person", "same": "Keine Änderung seit dem letzten Lauf.", "mkt": "Markt · zur Information", "ours": "wir", "comp": "Wettbewerber", "sales": "Keine Verkäufe in den letzten 3 Tagen", "sales2": "Verkäufe in den letzten 3 Tagen: {n}", "q": "Stimmen Sie der Empfehlung zu?", "yes": "👍 Zustimmen", "no": "👎 Ablehnen", "cmts": "Kommentare", "ph": "Ihr Kommentar …", "send": "Senden", "agreed": "stimmt zu", "disagreed": "lehnt ab", "nights": "Nächte"}, "steps": [["Demo-Daten", "alle Daten sind für die Demonstration generiert", "Python"], ["Modell und Regeln", "Prognose der Flugauslastung und eine Berechnungsschicht: jedes Signal wird in Dollar pro Person übersetzt", "LightGBM · Python"], ["Drei Läufe am Tag", "Neuberechnung, Datenprüfungen, Speichern des Ergebnisses und eine Zustandsmeldung", "n8n · Railway · PostgreSQL"], ["Diese Seite", "Tabelle der Revisionen, Aufschlüsselung jeder Empfehlung, Markt zur Information", "HTML/JS · GitHub Pages"], ["Entscheidungen der Manager", "„zustimmen / ablehnen“ und Kommentare gehen in die Datenbank; der nächste Lauf berücksichtigt sie", "Webhook · n8n · PostgreSQL"]]}, "ru": {"role": "Дата-сайентист · ИИ-автоматизация", "crumb": "Живые примеры · Ревизии цен", "back": "← Все примеры", "how": "Как это работает", "title": "Ревизии цен: направление «Солнечный берег»", "lead": "Синтетический туроператор. Система пересчитывает рекомендации три раза в день; каждую можно принять или отклонить с комментарием.", "run": "прогон", "proto": "прототип · демо-данные", "f": {"dir": "Направление", "city": "Город вылета", "air": "Авиакомпания", "grp": "Группа отелей", "who": "Кто вы", "all": "все"}, "dirs": ["Солнечный берег", "Лазурная бухта"], "cities": ["Город A", "Город B"], "grps": ["Группа A", "Группа B"], "leg": ["цена вверх", "цена вниз", "глубокая скидка (от $120)", "без изменений"], "sum": ["принято", "отклонено", "ждут"], "th": ["Дата", "Авиакомпания", "Рейс", "Блок", "Продано", "Остаток", "Загрузка", "4 ночи", "5", "6", "7", "8", "Решение"], "stim": "стимул продаж — рейс ещё не продаётся", "wait": "ждёт", "acc": "принято", "rej": "отклонено", "d": {"ctx": "За {d} дн. до вылета · загружено {lf} % (план {plan} %)", "calc": "Расчёт ревизии", "s1": "Базовая ревизия — историческое решение менеджеров", "s2": "Загрузка и темп рейса — к нижней исторической цене", "s3": "Спрос по направлению за неделю", "total": "Итого на человека", "same": "Без изменений с прошлого прогона.", "mkt": "Рынок · справочно", "ours": "у нас", "comp": "конкурент", "sales": "Продаж за последние 3 дня нет", "sales2": "Продаж за последние 3 дня: {n}", "q": "Согласны с рекомендацией?", "yes": "👍 Согласен", "no": "👎 Не согласен", "cmts": "Комментарии", "ph": "Ваш комментарий…", "send": "Отправить", "agreed": "согласие", "disagreed": "несогласие", "nights": "ночей"}, "steps": [["Демо-данные", "все данные сгенерированы для демонстрации", "Python"], ["Модель и правила", "прогноз загрузки рейса и слой расчёта: каждый сигнал переводится в доллары на человека", "LightGBM · Python"], ["Прогон три раза в день", "пересчёт, проверки данных, запись результата и алерт о состоянии", "n8n · Railway · PostgreSQL"], ["Эта страница", "таблица ревизий, разбор каждой рекомендации, рынок справочно", "HTML/JS · GitHub Pages"], ["Решения менеджеров", "«согласен / не согласен» и комментарии уходят в базу; следующий прогон их учитывает", "webhook · n8n · PostgreSQL"]]}};
+  const ICONS = {"msg": "<path d=\"M4 5.5h16v10.5H10l-4.5 3.5V16H4z\"/>", "spark": "<path d=\"M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z\"/>", "branch": "<path d=\"M4 12h5M9 12c3 0 3-6 6-6h5M9 12c3 0 3 6 6 6h5M9 12h11\"/>", "db": "<ellipse cx=\"12\" cy=\"6\" rx=\"7\" ry=\"2.8\"/><path d=\"M5 6v12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6M5 12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8\"/>", "card": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2.5\"/><path d=\"M7 10h10M7 14h6\"/>", "ticket": "<path d=\"M4 7.5h16v3a1.8 1.8 0 000 3.6v3H4v-3a1.8 1.8 0 000-3.6z\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 8v4.5l3 2\"/>", "loop": "<path d=\"M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4\"/>", "send": "<path d=\"M4 11.5L20 4l-6.5 16-2.7-6.8z\"/>", "shield": "<path d=\"M12 3.5l7 2.8v5.4c0 4.1-2.9 7.4-7 8.8-4.1-1.4-7-4.7-7-8.8V6.3z M9 12l2 2 4-4\"/>", "trend": "<path d=\"M4 17l5-5 3.5 3L20 7.5M15 7.5h5v5\"/>", "doc": "<path d=\"M7 3.5h7l4 4v13H7z M14 3.5v4h4 M10 12h5M10 15.5h5\"/>", "n8n": "<circle cx=\"5.5\" cy=\"12\" r=\"2\"/><circle cx=\"18.5\" cy=\"6\" r=\"2\"/><circle cx=\"18.5\" cy=\"18\" r=\"2\"/><path d=\"M7.5 12h2c3 0 3-6 7-6M9.5 12c3 0 3 6 7 6\"/>", "bell": "<path d=\"M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5h4\"/>", "window": "<rect x=\"3.5\" y=\"4.5\" width=\"17\" height=\"15\" rx=\"2.5\"/><path d=\"M3.5 9h17\"/>", "rss": "<path d=\"M5 5a14 14 0 0 1 14 14M5 10.5a8.5 8.5 0 0 1 8.5 8.5\"/><circle cx=\"6.2\" cy=\"17.8\" r=\"1.4\"/>", "filter": "<path d=\"M4 5h16l-6.5 8v5.5l-3 1.5V13z\"/>"};
+  const ico = (n) => `<svg viewBox="0 0 24 24">${ICONS[n] || ""}</svg>`;
+  function nodeHTML(n) {
+    const slot = n.demo ? `<a class="n-demo" href="${n.demo[1]}">${esc(n.demo[0])}</a>` : n.br ? `<span class="n-br">${esc(n.br)}</span>` : "";
+    const body = n.ports ? `<b class="n-title">${esc(n.title)}</b><ul class="ports">${n.ports.map((p) => `<li class="${p[2] || ""}" data-id="${p[0]}">${esc(p[1])}</li>`).join("")}</ul>`
+                         : `<b class="n-title">${esc(n.title)}</b><span class="n-sub">${esc(n.sub || "")}</span>`;
+    const tech = n.tech && n.tech.length ? `<div class="n-tech">${n.tech.map((t) => `<span>${esc(t)}</span>`).join("")}</div>` : "";
+    return `<div class="node${n.stack ? " stack" : ""}${n.area ? " br" : ""}" data-role="${n.role}"${n.id ? ` data-id="${n.id}"` : ""} role="listitem"${n.area ? ` style="grid-area:${n.area}"` : ""}><div class="n-top"><span class="n-ico">${ico(n.icon)}</span>${slot}</div>${body}${tech}</div>`;
+  }
+  function itemsHTML(list) {
+    return list.map((it) => {
+      if (it === "->") return `<div class="edge" aria-hidden="true"></div>`;
+      if (it === "-->") return `<div class="edge dash" aria-hidden="true"></div>`;
+      if (it.edge) return `<div class="edge${it.edge.js ? " js" : ""}${it.edge.dash ? " dash" : ""}" aria-hidden="true">${it.edge.label ? `<span class="e-lbl">${esc(it.edge.label)}</span>` : ""}</div>`;
+      if (it.group) return `<div class="group" style="grid-column:${it.group.cols}"><span class="g-lbl">${ico(it.group.icon)}${esc(it.group.label)}</span>${itemsHTML(it.group.items)}</div>`;
+      return nodeHTML(it);
+    }).join("");
+  }
+  const DIR = { l: [-1, 0], r: [1, 0], t: [0, -1], b: [0, 1] };
+  function drawWires(cv) {
+    const svg = cv.querySelector(".wires");
+    if (!svg || !cv.dataset.wires || getComputedStyle(svg).display === "none") return;
+    const c = cv.getBoundingClientRect(), NS = "http://www.w3.org/2000/svg", marker = svg.querySelector("marker").id;
+    const at = (ref) => { const [id, s] = ref.trim().split(":"), el = cv.querySelector(`[data-id="${id}"]`); if (!el) return null; const r = el.getBoundingClientRect();
+      return { x: (s === "l" ? r.left : s === "r" ? r.right : r.left + r.width / 2) - c.left, y: (s === "t" ? r.top : s === "b" ? r.bottom : r.top + r.height / 2) - c.top, d: DIR[s] }; };
+    svg.querySelectorAll(".w").forEach((n) => n.remove());
+    for (const spec of cv.dataset.wires.split(";")) {
+      if (!spec.trim()) continue;
+      const [def, label] = spec.split("|"), [ends, style = ""] = def.trim().split(/\s+/), [a, b] = ends.split(">").map(at);
+      if (!a || !b) continue;
+      const k = Math.min(80, Math.max(24, Math.hypot(b.x - a.x, b.y - a.y) * 0.45));
+      const c1 = [a.x + a.d[0] * k, a.y + a.d[1] * k], c2 = [b.x + b.d[0] * k, b.y + b.d[1] * k];
+      const p = document.createElementNS(NS, "path");
+      p.setAttribute("d", `M${a.x},${a.y} C${c1} ${c2} ${b.x},${b.y}`); p.setAttribute("class", "w " + style); p.setAttribute("marker-end", `url(#${marker})`); svg.append(p);
+      if (label) { const t = document.createElementNS(NS, "text"); t.setAttribute("x", (a.x + 3 * c1[0] + 3 * c2[0] + b.x) / 8); t.setAttribute("y", (a.y + 3 * c1[1] + 3 * c2[1] + b.y) / 8 + 4);
+        t.setAttribute("text-anchor", "middle"); t.setAttribute("class", "w"); t.textContent = label.trim(); svg.append(t); }
+    }
+  }
+  function renderHow(f, u) {
+    $("how-h").textContent = f.heading;
+    $("legend").innerHTML = [["user", u.legend[0]], ["flow", u.legend[1]], ["ai", u.legend[2]], ["data", u.legend[3]]].map(([r, l]) => `<li><i style="--r:var(--r-${r});--rb:var(--r-${r}-bg)"></i>${esc(l)}</li>`).join("") + `<li><i class="dash"></i>${esc(u.legend[4])}</li>`;
+    const cv = $("canvas");
+    cv.innerHTML = `<svg class="wires" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M2 1.5L9 5L2 8.5" style="stroke-dasharray:none;stroke-width:1.5"/></marker></defs></svg><div class="flow" data-n="${f.n}" role="list">${itemsHTML(f.items)}</div>`;
+    cv.dataset.wires = f.wires || ""; cv.style.paddingBottom = f.pad || "";
+    if (!cv.__ro) { cv.__ro = new ResizeObserver(() => drawWires(cv)); cv.__ro.observe(cv); }
+    document.fonts.ready.then(() => drawWires(cv)); drawWires(cv);
+  }
+
+
+  const T = {"en": {"role": "Data Scientist · AI Automation", "crumb": "Portfolio · Price revisions", "back": "← Portfolio", "title": "Price revisions: destination “Sunny Coast”", "lead": "The system recalculates price recommendations three times a day; a manager accepts or rejects each one with a comment.", "pill": "Demo data · run {date}, 14:30", "f": {"dir": "Destination", "city": "Departure city", "air": "Airline", "grp": "Hotel group", "all": "all"}, "dirs": ["Sunny Coast", "Azure Bay"], "cities": ["City A", "City B"], "grps": ["Group A", "Group B"], "leg": ["price up", "price down", "deep discount (from $120)", "no change"], "sum": ["accepted", "rejected", "waiting"], "th": ["Date", "Airline", "Flight", "Block", "Sold", "Left", "Load", "4 nights", "5", "6", "7", "8", "Decision"], "stim": "sales stimulus — the flight is not selling yet", "wait": "waiting", "acc": "accepted", "rej": "rejected", "seed": {"m": "Mary", "k": "Marat", "c1": "A group request for 12 seats is in progress on this flight; confirmation expected tomorrow.", "c2": "The request was not confirmed — lowering the price."}, "d": {"ctx": "{days} to departure · load {lf}% (plan {plan}%)", "ctx0": "departs today · load {lf}% (plan {plan}%)", "day": ["day", "days"], "calc": "Revision calculation", "s1": "Base revision — managers' historical decision", "s2": "Load and pace of the flight — towards the lower historical price", "s3": "Demand for the destination this week", "total": "Total per person", "same": "No change since the last run.", "mkt": "Market · for reference", "mk": ["hotel", "ours", "competitor", "difference"], "sales": "No sales in the last 3 days", "sales2": "Sales in the last 3 days: {n}", "q": "Do you agree with the recommendation?", "now": "Now: {dec} · {who}, {when}", "none": "No decision yet", "you": "You:", "yes": "Agree", "no": "Disagree", "cmts": "Comments", "ph": "Your comment…", "send": "Send", "agreed": "agrees", "disagreed": "disagrees", "nights": "nights"}}, "de": {"role": "Data Scientist · KI-Automatisierung", "crumb": "Portfolio · Preisrevisionen", "back": "← Portfolio", "title": "Preisrevisionen: Ziel „Sonnenküste“", "lead": "Das System berechnet die Preisempfehlungen dreimal täglich neu; ein Manager nimmt jede mit Kommentar an oder lehnt sie ab.", "pill": "Demo-Daten · Lauf {date}, 14:30", "f": {"dir": "Ziel", "city": "Abflughafen", "air": "Airline", "grp": "Hotelgruppe", "all": "alle"}, "dirs": ["Sonnenküste", "Azurbucht"], "cities": ["Stadt A", "Stadt B"], "grps": ["Gruppe A", "Gruppe B"], "leg": ["Preis rauf", "Preis runter", "tiefer Rabatt (ab $120)", "keine Änderung"], "sum": ["angenommen", "abgelehnt", "offen"], "th": ["Datum", "Airline", "Flug", "Block", "Verkauft", "Rest", "Auslastung", "4 Nächte", "5", "6", "7", "8", "Entscheidung"], "stim": "Verkaufsanreiz — der Flug verkauft sich noch nicht", "wait": "offen", "acc": "angenommen", "rej": "abgelehnt", "seed": {"m": "Mary", "k": "Marat", "c1": "Für diesen Flug läuft eine Gruppenanfrage über 12 Plätze; Bestätigung morgen erwartet.", "c2": "Die Anfrage wurde nicht bestätigt — wir senken den Preis."}, "d": {"ctx": "{days} bis Abflug · Auslastung {lf} % (Plan {plan} %)", "ctx0": "Abflug heute · Auslastung {lf} % (Plan {plan} %)", "day": ["Tag", "Tage"], "calc": "Berechnung der Revision", "s1": "Basisrevision — historische Entscheidung der Manager", "s2": "Auslastung und Tempo des Flugs — Richtung unterer historischer Preis", "s3": "Nachfrage nach dem Ziel in dieser Woche", "total": "Gesamt pro Person", "same": "Keine Änderung seit dem letzten Lauf.", "mkt": "Markt · zur Information", "mk": ["Hotel", "wir", "Wettbewerber", "Differenz"], "sales": "Keine Verkäufe in den letzten 3 Tagen", "sales2": "Verkäufe in den letzten 3 Tagen: {n}", "q": "Stimmen Sie der Empfehlung zu?", "now": "Jetzt: {dec} · {who}, {when}", "none": "Noch keine Entscheidung", "you": "Sie:", "yes": "Zustimmen", "no": "Ablehnen", "cmts": "Kommentare", "ph": "Ihr Kommentar …", "send": "Senden", "agreed": "stimmt zu", "disagreed": "lehnt ab", "nights": "Nächte"}}, "ru": {"role": "Дата-сайентист · ИИ-автоматизация", "crumb": "Портфолио · Ревизии цен", "back": "← Портфолио", "title": "Ревизии цен: направление «Солнечный берег»", "lead": "Система пересчитывает рекомендации по ценам три раза в день; менеджер принимает или отклоняет каждую с комментарием.", "pill": "Демо-данные · прогон {date}, 14:30", "f": {"dir": "Направление", "city": "Город вылета", "air": "Авиакомпания", "grp": "Группа отелей", "all": "все"}, "dirs": ["Солнечный берег", "Лазурная бухта"], "cities": ["Город A", "Город B"], "grps": ["Группа A", "Группа B"], "leg": ["цена вверх", "цена вниз", "глубокая скидка (от $120)", "без изменений"], "sum": ["принято", "отклонено", "ждут"], "th": ["Дата", "Авиакомпания", "Рейс", "Блок", "Продано", "Остаток", "Загрузка", "4 ночи", "5", "6", "7", "8", "Решение"], "stim": "стимул продаж — рейс ещё не продаётся", "wait": "ждёт", "acc": "принято", "rej": "отклонено", "seed": {"m": "Мэри", "k": "Марат", "c1": "По этому рейсу идёт групповая заявка на 12 мест, завтра подтвердят.", "c2": "Заявка не подтвердилась, снижаем."}, "d": {"ctx": "За {days} до вылета · загружено {lf} % (план {plan} %)", "ctx0": "вылет сегодня · загружено {lf} % (план {plan} %)", "day": ["день", "дня", "дней"], "calc": "Расчёт ревизии", "s1": "Базовая ревизия — историческое решение менеджеров", "s2": "Загрузка и темп рейса — к нижней исторической цене", "s3": "Спрос по направлению за неделю", "total": "Итого на человека", "same": "Без изменений с прошлого прогона.", "mkt": "Рынок · справочно", "mk": ["отель", "у нас", "конкурент", "разница"], "sales": "Продаж за последние 3 дня нет", "sales2": "Продаж за последние 3 дня: {n}", "q": "Согласны с рекомендацией?", "now": "Сейчас: {dec} · {who}, {when}", "none": "Решения пока нет", "you": "Вы:", "yes": "Согласен", "no": "Не согласен", "cmts": "Комментарии", "ph": "Ваш комментарий…", "send": "Отправить", "agreed": "согласие", "disagreed": "несогласие", "nights": "ночей"}}};
+  const HOW = {"en": {"lvl1": "What the manager sees", "lvl2": "How it works", "legend": ["What the user sees", "Logic", "AI model", "Data", "Branch"]}, "de": {"lvl1": "Was der Manager sieht", "lvl2": "So funktioniert es", "legend": ["Sieht der Nutzer", "Logik", "KI-Modell", "Daten", "Zweig"]}, "ru": {"lvl1": "Что видит менеджер", "lvl2": "Как устроено", "legend": ["Видит пользователь", "Логика", "ИИ-модель", "Данные", "Ветка"]}};
+  const FLOW = {"en": {"heading": "How a run goes and where the decisions go", "n": 5, "wires": "run:b>al:t; page:b>n8:t; n8:l>chd:r; chd:l>calc:b dash|into the next run", "items": [{"role": "flow", "icon": "clock", "title": "Run 3 times a day", "tech": ["Airflow", "Docker"], "sub": "on schedule, in a container", "id": "run"}, "->", {"role": "flow", "icon": "shield", "title": "Data checks", "tech": ["SQL"], "sub": "incomplete data — the calculation does not start"}, "->", {"role": "ai", "icon": "trend", "title": "Forecast and rules", "tech": ["LightGBM", "SHAP"], "sub": "flight load → signals → $ per person", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Recommendations", "tech": ["ClickHouse"], "sub": "the run's result in the database"}, "->", {"role": "user", "icon": "window", "title": "Managers' page", "tech": ["HTML", "JS"], "sub": "table, breakdown, agree / disagree", "id": "page", "demo": ["in the demo ↑", "#demo"]}, {"role": "user", "icon": "bell", "title": "Alert in Teams", "tech": ["Teams"], "sub": "how the run went", "id": "al", "area": "2 / 1", "demo": ["demo →", "alerts.html"]}, {"role": "flow", "icon": "n8n", "title": "Decision intake", "tech": ["n8n"], "sub": "the button and the comment from the page", "id": "n8", "area": "2 / 9"}, {"role": "data", "icon": "db", "title": "Decisions in the database", "tech": ["ClickHouse"], "sub": "the decision and the comment for each recommendation", "id": "chd", "area": "2 / 7", "br": "feedback"}]}, "de": {"heading": "Wie ein Lauf abläuft und wohin die Entscheidungen gehen", "n": 5, "wires": "run:b>al:t; page:b>n8:t; n8:l>chd:r; chd:l>calc:b dash|in den nächsten Lauf", "items": [{"role": "flow", "icon": "clock", "title": "Lauf 3-mal am Tag", "tech": ["Airflow", "Docker"], "sub": "nach Zeitplan, im Container", "id": "run"}, "->", {"role": "flow", "icon": "shield", "title": "Datenprüfungen", "tech": ["SQL"], "sub": "unvollständige Daten — die Berechnung startet nicht"}, "->", {"role": "ai", "icon": "trend", "title": "Prognose und Regeln", "tech": ["LightGBM", "SHAP"], "sub": "Auslastung → Signale → $ pro Person", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Empfehlungen", "tech": ["ClickHouse"], "sub": "das Ergebnis des Laufs in der Datenbank"}, "->", {"role": "user", "icon": "window", "title": "Seite der Manager", "tech": ["HTML", "JS"], "sub": "Tabelle, Aufschlüsselung, zustimmen / ablehnen", "id": "page", "demo": ["in der Demo ↑", "#demo"]}, {"role": "user", "icon": "bell", "title": "Meldung in Teams", "tech": ["Teams"], "sub": "wie der Lauf gelaufen ist", "id": "al", "area": "2 / 1", "demo": ["Demo →", "alerts.html"]}, {"role": "flow", "icon": "n8n", "title": "Entscheidung entgegennehmen", "tech": ["n8n"], "sub": "Button und Kommentar von der Seite", "id": "n8", "area": "2 / 9"}, {"role": "data", "icon": "db", "title": "Entscheidungen in der Datenbank", "tech": ["ClickHouse"], "sub": "Entscheidung und Kommentar zu jeder Empfehlung", "id": "chd", "area": "2 / 7", "br": "Rückkopplung"}]}, "ru": {"heading": "Как проходит прогон и куда уходят решения", "n": 5, "wires": "run:b>al:t; page:b>n8:t; n8:l>chd:r; chd:l>calc:b dash|в следующий прогон", "items": [{"role": "flow", "icon": "clock", "title": "Прогон 3 раза в день", "tech": ["Airflow", "Docker"], "sub": "по расписанию, в контейнере", "id": "run"}, "->", {"role": "flow", "icon": "shield", "title": "Проверки данных", "tech": ["SQL"], "sub": "неполные данные — расчёт не стартует"}, "->", {"role": "ai", "icon": "trend", "title": "Прогноз и правила", "tech": ["LightGBM", "SHAP"], "sub": "загрузка рейса → сигналы → $ на человека", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Рекомендации", "tech": ["ClickHouse"], "sub": "результат прогона в базе"}, "->", {"role": "user", "icon": "window", "title": "Страница менеджеров", "tech": ["HTML", "JS"], "sub": "таблица, разбор, согласен / не согласен", "id": "page", "demo": ["в демо ↑", "#demo"]}, {"role": "user", "icon": "bell", "title": "Алерт в Teams", "tech": ["Teams"], "sub": "как прошёл прогон", "id": "al", "area": "2 / 1", "demo": ["демо →", "alerts.html"]}, {"role": "flow", "icon": "n8n", "title": "Приём решения", "tech": ["n8n"], "sub": "кнопка и комментарий со страницы", "id": "n8", "area": "2 / 9"}, {"role": "data", "icon": "db", "title": "Решения в базе", "tech": ["ClickHouse"], "sub": "решение и комментарий к каждой рекомендации", "id": "chd", "area": "2 / 7", "br": "обратная связь"}]}};
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   const fmt = (n) => (n < 0 ? "−" : "+") + "$" + Math.abs(n);
@@ -176,16 +328,24 @@
     }
   }
   // ── Decisions and comments live in this browser only (prototype) ──
-  const iso = (d) => d.toISOString().slice(0, 10);
   const first = rows.find((r) => r.day === 0 && r.air === "Sky A"), deep = rows.find((r) => r.day === 4 && r.air === "Sky A");
   const SEED = {};
-  SEED[first.id] = { decision: "acc", who: "Мэри", comments: [{ who: "Мэри", when: "27.09, 09:12", dec: "acc", text: "" }] };
-  SEED[deep.id] = { decision: "rej", who: "Марат", comments: [{ who: "Марат", when: "01.10, 09:12", dec: "rej", text: "По этому рейсу идёт групповая заявка на 12 мест, завтра подтвердят." }, { who: "Мэри", when: "01.10, 11:40", dec: null, text: "Заявка не подтвердилась, снижаем." }] };
-  let store = {}; try { store = Object.assign({}, SEED, JSON.parse(localStorage.getItem("rev-demo") || "{}")); } catch (e) { store = Object.assign({}, SEED); }
-  const save = () => { try { localStorage.setItem("rev-demo", JSON.stringify(store)); } catch (e) {} };
-  let lang = "en", sel = null;
+  // Seeded names, dates and comment texts are placeholders ("@m", "@t1", "@c1") resolved in the current language at render time
+  SEED[first.id] = { decision: "acc", who: "@m", comments: [{ who: "@m", when: "@t1", dec: "acc", text: "" }] };
+  SEED[deep.id] = { decision: "rej", who: "@k", comments: [{ who: "@k", when: "@t1", dec: "rej", text: "@c1" }, { who: "@m", when: "@t2", dec: null, text: "@c2" }] };
+  let store = {}; try { store = Object.assign({}, SEED, JSON.parse(localStorage.getItem("rev-demo-v2") || "{}")); } catch (e) { store = Object.assign({}, SEED); }
+  const save = () => { try { localStorage.setItem("rev-demo-v2", JSON.stringify(store)); } catch (e) {} };
+  let lang = "en", sel = null, who = "";
+  try { who = localStorage.getItem("rev-who") || ""; } catch (e) {}
   const L = () => T[lang];
-  const fmtDate = (d) => d.toLocaleDateString(lang === "en" ? "en-GB" : lang === "de" ? "de-DE" : "ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const loc = () => (lang === "en" ? "en-GB" : lang === "de" ? "de-DE" : "ru-RU");
+  const dm = (d) => d.toLocaleDateString(loc(), { day: "2-digit", month: "2-digit" });
+  const nm = (s) => { if (typeof s !== "string" || s[0] !== "@") return s; const k = s.slice(1); if (k === "t1") return dm(today) + ", 09:12"; if (k === "t2") return dm(today) + ", 11:40"; return L().seed[k] || s; };
+  const fmtDate = (d) => d.toLocaleDateString(loc(), { day: "2-digit", month: "2-digit", year: "numeric" });
+  const num1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1).replace(".", lang === "en" ? "." : ",");   // one decimal, real minus sign
+  const pct = (v) => num1(v / 10) + (lang === "en" ? "%" : " %");
+  const daysStr = (n) => { const w = L().d.day; if (lang === "ru") { const a = n % 10, b = n % 100; return `${n} ${a === 1 && b !== 11 ? w[0] : a >= 2 && a <= 4 && (b < 12 || b > 14) ? w[1] : w[2]}`; } return `${n} ${n === 1 ? w[0] : w[1]}`; };
+  const desktop = () => window.matchMedia("(min-width: 961px)").matches;
   function cls(v) { return v === 0 ? "zero" : v <= -120 ? "deep" : v < 0 ? "down" : "up"; }
   function decisionOf(id) { const s = store[id]; return s && s.decision ? s.decision : null; }
   function render() {
@@ -195,69 +355,78 @@
     for (const r of list) { const d = decisionOf(r.id); if (d === "acc") acc++; else if (d === "rej") rej++; else wait++; }
     $("sum").textContent = `${t.sum[0]} ${acc} · ${t.sum[1]} ${rej} · ${t.sum[2]} ${wait}`;
     $("thead").innerHTML = "<tr>" + t.th.map((h) => `<th>${esc(h)}</th>`).join("") + "</tr>";
+    const inTable = sel && desktop() && list.some((r) => r.id === sel.id);
     $("tbody").innerHTML = list.map((r) => {
-      const d = decisionOf(r.id); const who = store[r.id] && store[r.id].who;
-      const dec = d === "acc" ? `${t.acc}${who ? " · " + esc(who) : ""}` : d === "rej" ? `${t.rej}${who ? " · " + esc(who) : ""}` : t.wait;
+      const d = decisionOf(r.id); const w = nm(store[r.id] && store[r.id].who);
+      const dec = d === "acc" ? `${t.acc}${w ? " · " + esc(w) : ""}` : d === "rej" ? `${t.rej}${w ? " · " + esc(w) : ""}` : t.wait;
       let cells;
       if (r.stim) cells = `<td colspan="5"><span class="p zero" data-id="${r.id}" data-n="8">−$300</span> <span class="dash">${esc(t.stim)}</span></td>`;
       else cells = [4, 5, 6, 7, 8].map((n) => { const c = r.cells[n]; return c ? `<td><span class="p ${cls(c.total)}" data-id="${r.id}" data-n="${n}">${c.total === 0 ? "$0" : fmt(c.total)}</span></td>` : '<td class="dash">—</td>'; }).join("");
-      return `<tr data-id="${r.id}" class="${sel && sel.id === r.id ? "sel" : ""}"><td>${fmtDate(r.date)}</td><td>${r.air}</td><td><b>${r.fl}</b></td><td>${r.block}</td><td>${r.sold}</td><td>${r.remain}</td><td><span class="lf">${r.lf.toFixed(1).replace(".", lang === "en" ? "." : ",")}&nbsp;%</span></td>${cells}<td class="dec">${dec}</td></tr>`;
+      const row = `<tr data-id="${r.id}" class="${sel && sel.id === r.id ? "sel" : ""}"><td>${fmtDate(r.date)}</td><td>${r.air}</td><td><b>${r.fl}</b></td><td>${r.block}</td><td>${r.sold}</td><td>${r.remain}</td><td><span class="lf">${num1(r.lf)}&nbsp;%</span></td>${cells}<td class="dec">${dec}</td></tr>`;
+      return row + (inTable && sel.id === r.id ? `<tr class="detail"><td colspan="13"><div class="drawer open" id="dwr"></div></td></tr>` : "");
     }).join("");
     document.querySelectorAll(".p[data-id]").forEach((p) => p.addEventListener("click", () => open(p.dataset.id, +p.dataset.n)));
     if (sel) { const p = document.querySelector(`.p[data-id="${sel.id}"][data-n="${sel.n}"]`); if (p) p.classList.add("on"); }
+    $("drawer").classList.toggle("open", !!sel && !inTable);
+    if (sel) fillDrawer(inTable ? $("dwr") : $("drawer"));
   }
-  function open(id, n) {
-    sel = { id, n }; const r = rows.find((x) => x.id === id); const t = L(), d = t.d;
+  function fillDrawer(box) {
+    const { id, n } = sel; const r = rows.find((x) => x.id === id); const t = L(), d = t.d;
     const c = r.stim ? { base: -300, pace: 0, dem: 0, total: -300, sales3: 0 } : r.cells[n];
-    const days = r.day; const s = store[id] || {};
-    const mkt = HOTELS.map(([h, ours, comp]) => `<div class="k"><span>${esc(h)} — ${d.ours} $${ours} / ${d.comp} $${comp}</span><b class="pos">+$${ours - comp}</b></div>`).join("");
-    const cmts = (s.comments || []).map((x) => `<div class="cmt"><b>${esc(x.who)} · ${esc(x.when)}${x.dec ? " · " + (x.dec === "acc" ? d.agreed : d.disagreed) : ""}</b><br>${esc(x.text)}</div>`).join("");
-    $("drawer").innerHTML = `
-      <div><h3>${fmt(c.total)} · ${r.fl} · ${fmtDate(r.date)} · ${n} ${d.nights}</h3>
-        <div class="small">${d.ctx.replace("{d}", days).replace("{lf}", r.lf).replace("{plan}", r.plan)}</div>
+    const s = store[id] || {}; const dec = s.decision || null;
+    const ctx = (r.day === 0 ? d.ctx0 : d.ctx.replace("{days}", daysStr(r.day))).replace("{lf}", num1(r.lf)).replace("{plan}", r.plan);
+    const k = (label, v) => `<div class="k"><span>${esc(label)}</span><span class="pct">${pct(v)}</span><span class="usd">${fmt(v)}</span></div>`;
+    const mkt = `<div class="mk head"><span>${esc(d.mk[0])}</span><span>${esc(d.mk[1])}</span><span>${esc(d.mk[2])}</span><span>${esc(d.mk[3])}</span></div>` +
+      HOTELS.map(([h, ours, comp]) => `<div class="mk"><span>${esc(h)}</span><span>$${ours}</span><span>$${comp}</span><b>${fmt(ours - comp)}</b></div>`).join("");
+    const last = (s.comments || []).filter((x) => x.dec).slice(-1)[0];
+    const now = dec && last ? d.now.replace("{dec}", dec === "acc" ? t.acc : t.rej).replace("{who}", nm(last.who)).replace("{when}", nm(last.when)) : d.none;
+    const cmts = (s.comments || []).map((x) => `<div class="cmt"><b>${esc(nm(x.who))} · ${esc(nm(x.when))}${x.dec ? " · " + (x.dec === "acc" ? d.agreed : d.disagreed) : ""}</b>${x.text ? "<br>" + esc(nm(x.text)) : ""}</div>`).join("");
+    box.innerHTML = `
+      <div><div class="d-amt ${cls(c.total)}">${fmt(c.total)}</div>
+        <div class="d-title">${r.fl} · ${fmtDate(r.date)} · ${n} ${esc(d.nights)}</div>
+        <div class="d-sub">${esc(ctx)}</div>
         <div class="sec">${esc(d.calc)}</div>
-        <div class="k"><span>${esc(d.s1)}</span><b>${(c.base / 10).toFixed(1).replace(".", lang === "en" ? "." : ",")} % · ${fmt(c.base)}</b></div>
-        <div class="k"><span>${esc(d.s2)}</span><b>${(c.pace / 10).toFixed(1).replace(".", lang === "en" ? "." : ",")} % · ${fmt(c.pace)}</b></div>
-        <div class="k"><span>${esc(d.s3)}</span><b>${(c.dem / 10).toFixed(1).replace(".", lang === "en" ? "." : ",")} % · ${fmt(c.dem)}</b></div>
-        <div class="k total"><span>${esc(d.total)}</span><b>${fmt(c.total)}</b></div>
-        <div class="small" style="margin:6px 0 2px">${esc(d.same)}</div>
-        <div class="sec grey">${esc(d.mkt)}</div>${mkt}
-        <div class="small" style="margin-top:8px">${c.sales3 ? d.sales2.replace("{n}", c.sales3) : d.sales}</div></div>
-      <div><h3>${esc(d.q)}</h3>
-        <div class="acts"><button class="btn primary" id="b-yes">${esc(d.yes)}</button><button class="btn" id="b-no">${esc(d.no)}</button></div>
-        <h3 style="font-size:15px">${esc(d.cmts)}</h3><div id="cmts">${cmts}</div>
+        ${k(d.s1, c.base)}${k(d.s2, c.pace)}${k(d.s3, c.dem)}
+        <div class="k total"><span>${esc(d.total)}</span><span></span><span class="usd">${fmt(c.total)}</span></div>
+        <div class="d-sub" style="margin-top:8px">${esc(d.same)}</div>
+        <div class="sec">${esc(d.mkt)}</div>${mkt}
+        <div class="d-sub" style="margin-top:10px">${esc(c.sales3 ? d.sales2.replace("{n}", c.sales3) : d.sales)}</div></div>
+      <div><div class="sec" style="margin-top:0">${esc(d.q)}</div>
+        <div class="d-sub">${esc(now)}</div>
+        <div class="you"><label for="f-who">${esc(d.you)}</label><input id="f-who" maxlength="24" value="${esc(who)}"></div>
+        <div class="acts"><button type="button" class="btn ${dec === "acc" ? "yes-on" : ""}" id="b-yes">${esc(d.yes)}</button><button type="button" class="btn ${dec === "rej" ? "no-on" : ""}" id="b-no">${esc(d.no)}</button></div>
+        <div class="sec">${esc(d.cmts)}</div><div id="cmts">${cmts}</div>
         <textarea id="cmt" placeholder="${esc(d.ph)}"></textarea>
-        <div class="acts" style="margin-top:8px"><button class="btn" id="b-send">${esc(d.send)}</button></div></div>`;
-    $("drawer").classList.add("open");
-    const decide = (dec) => { const who = $("f-who").value.trim() || "—"; const text = $("cmt").value.trim(); const when = new Date().toLocaleString(lang === "en" ? "en-GB" : lang === "de" ? "de-DE" : "ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
-      store[id] = store[id] || { comments: [] }; if (dec) { store[id].decision = dec; store[id].who = who; } if (text || dec) store[id].comments.push({ who, when, dec, text }); save(); render(); open(id, n); };
+        <div class="send"><button type="button" class="btn primary" id="b-send" disabled>${esc(d.send)}</button></div></div>`;
+    const decide = (dc) => { who = $("f-who").value.trim(); try { localStorage.setItem("rev-who", who); } catch (e) {} const w = who || "—"; const text = $("cmt").value.trim();
+      const when = new Date().toLocaleString(loc(), { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+      store[id] = store[id] || { comments: [] }; if (dc) { store[id].decision = dc; store[id].who = w; } if (text || dc) store[id].comments.push({ who: w, when, dec: dc, text }); save(); render(); };
     $("b-yes").addEventListener("click", () => decide("acc")); $("b-no").addEventListener("click", () => decide("rej")); $("b-send").addEventListener("click", () => decide(null));
-    render(); $("drawer").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    $("cmt").addEventListener("input", () => { $("b-send").disabled = !$("cmt").value.trim(); });
+    $("f-who").addEventListener("change", () => { who = $("f-who").value.trim(); try { localStorage.setItem("rev-who", who); } catch (e) {} });
   }
+  function open(id, n) { sel = { id, n }; render(); const box = document.querySelector("tr.detail .drawer") || $("drawer"); box.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
   function fill(sel, items, allLabel) { const cur = sel.value; sel.innerHTML = (allLabel ? `<option value="all">${esc(allLabel)}</option>` : "") + items.map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join(""); if ([...sel.options].some((o) => o.value === cur)) sel.value = cur; }
   function setLang(l) {
-    if (!T[l]) l = "en"; lang = l; const t = T[l]; document.documentElement.lang = l;
-    $("t-role").textContent = t.role; $("t-crumb").textContent = t.crumb; $("t-back").textContent = t.back.replace(/^←\s*/, "\u00a0"); $("t-howbtn").textContent = t.how; $("t-how").textContent = t.how;
-    $("t-title").textContent = t.title; $("t-lead").textContent = t.lead; $("t-proto").textContent = t.proto; document.title = t.title + " — Vildana Razumova";
-    $("t-run").textContent = `${t.run} ${fmtDate(today)}, 14:30`;
-    $("l-dir").textContent = t.f.dir; $("l-city").textContent = t.f.city; $("l-air").textContent = t.f.air; $("l-grp").textContent = t.f.grp; $("l-who").textContent = t.f.who;
+    if (!T[l]) l = "en"; lang = l; const t = T[l], h = HOW[l]; document.documentElement.lang = l;
+    $("t-role").textContent = t.role; $("t-crumb").textContent = t.crumb; $("t-back").textContent = t.back.replace(/^←\s*/, " "); $("t-howbtn").textContent = h.lvl2; $("t-how").textContent = h.lvl2; $("t-lvl1").textContent = h.lvl1;
+    $("t-title").textContent = t.title; $("t-lead").textContent = t.lead; document.title = t.title + " — Vildana Razumova";
+    $("t-pill").textContent = t.pill.replace("{date}", dm(today));
+    $("l-dir").textContent = t.f.dir; $("l-city").textContent = t.f.city; $("l-air").textContent = t.f.air; $("l-grp").textContent = t.f.grp;
     fill($("f-dir"), t.dirs.map((x, i) => [i, x])); fill($("f-city"), t.cities.map((x, i) => [i, x]), t.f.all); fill($("f-air"), AIR.map(([a]) => [a, a]), t.f.all); fill($("f-grp"), t.grps.map((x, i) => [i, x]), t.f.all);
     ["leg1", "leg2", "leg3", "leg4"].forEach((id, i) => { $(id).textContent = t.leg[i]; });
-    $("steps").innerHTML = t.steps.map(([a, b, c], i) => `<div class="step"><div class="num">${i + 1}</div><div class="txt"><b>${esc(a)}</b><span>${esc(b)}</span></div><span class="tag">${esc(c)}</span></div>`).join("");
     document.querySelectorAll("#lang button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.lang === l)));
+    const defaults = Object.values(T).map((x) => x.seed.m); if (!who || defaults.includes(who)) who = t.seed.m;
     try { localStorage.setItem("lang", l); } catch (e) {}
-    render(); if (sel) open(sel.id, sel.n);
+    render(); renderHow(FLOW[l], h);
   }
   let initial = null; try { initial = localStorage.getItem("lang"); } catch (e) {}
   if (!initial) { const nav = (navigator.language || "en").slice(0, 2).toLowerCase(); initial = T[nav] ? nav : "en"; }
-  $("f-who").value = "Мэри";
   setLang(initial);
-  $("f-grp").value = "0"; render();
-  open(deep.id, 8); window.scrollTo(0, 0);
+  $("f-grp").value = "0"; sel = { id: deep.id, n: 8 }; render(); window.scrollTo(0, 0);
   document.querySelectorAll("#lang button").forEach((x) => x.addEventListener("click", () => setLang(x.dataset.lang)));
   ["f-dir", "f-city", "f-air", "f-grp"].forEach((id) => $(id).addEventListener("change", render));
-  $("t-howbtn").addEventListener("click", (e) => { e.preventDefault(); $("how").open = true; $("how").scrollIntoView({ behavior: "smooth" }); });
-  if (location.hash === "#how") { $("how").open = true; setTimeout(() => $("how").scrollIntoView(), 50); }
+  let wasDesktop = desktop(); window.addEventListener("resize", () => { if (desktop() !== wasDesktop) { wasDesktop = desktop(); render(); } });
 
 </script>
 </body>

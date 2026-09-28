@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'self'">
+<title>System alerts — Vildana Razumova</title>
+<meta name="description" content="Prototype on generated data: a Microsoft Teams channel where every pipeline reports its own health after each run.">
+<style>
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(../fonts/inter-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(../fonts/inter-cyrillic-400-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/inter-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/inter-cyrillic-500-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/inter-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/inter-cyrillic-600-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/source-serif-4-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/source-serif-4-cyrillic-500-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/source-serif-4-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/source-serif-4-cyrillic-600-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+  :root {
+    --bg: #ffffff; --surface: #ffffff; --ink: #1d1d1f; --muted: #6e6e73; --faint: #86868b; --line: #d2d2d7;
+    --brand: #0071e3; --brand-ink: #0066cc; --brand-soft: #eaf2fd; --accent: #0071e3;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+    --radius: 14px;
+    --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: "Source Serif 4", Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000; --surface: #1d1d1f; --ink: #f5f5f7; --muted: #a1a1a6; --faint: #86868b;
+      --line: #424245; --brand: #2997ff; --brand-ink: #6fb5ff; --brand-soft: #14304d; --accent: #2997ff;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 15.5px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: var(--brand-ink); }
+  :root { --page: 1000px; }
+  .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px max(16px, calc((100% - var(--page)) / 2)); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; color: var(--ink); text-decoration: none; }
+  .who { display: flex; flex-direction: column; line-height: 1.15; }
+  .who small { font-weight: 500; font-size: 12.5px; color: var(--muted); }
+  .actions { display: flex; gap: 8px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font: 500 14px var(--sans); cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: var(--faint); }
+  .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .btn[aria-disabled="true"] { opacity: .5; cursor: default; }
+  .lang { display: inline-flex; height: 36px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); overflow: hidden; }
+  .lang button { border: 0; background: none; padding: 0 11px; font: 600 12.5px var(--sans); letter-spacing: .04em; color: var(--muted); cursor: pointer; }
+  .lang button + button { border-left: 1px solid var(--line); }
+  .lang button[aria-pressed="true"] { background: var(--brand-soft); color: var(--brand-ink); }
+  main { max-width: calc(var(--page) + 40px); margin: 0 auto; padding: 40px 20px 96px; }
+  h1 { font: 600 clamp(28px, 4.4vw, 40px)/1.1 var(--serif); letter-spacing: -.02em; margin: 0 0 10px; text-wrap: balance; }
+  .lead { color: var(--muted); font-size: 17px; max-width: 64ch; margin: 0 0 24px; }
+  .pill { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border: 0; background: var(--chip, #f2f2f5); font: 500 12px/24px var(--sans); color: var(--muted); border-radius: 999px; white-space: nowrap; }
+  .tag { font: 500 12px var(--sans); color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
+  .small { color: var(--faint); font-size: 12.5px; }
+  @media (max-width: 640px) {
+    .top { padding: 10px 16px; } .who small { display: none; } .brand { font-size: 14px; }
+    .lang button { padding: 0 8px; } .btn { padding: 0 12px; } .hide-sm { display: none; }
+    main { padding: 24px 16px 64px; }
+  }
+
+  /* ── flow tokens ── */
+  :root { --canvas: #f5f5f7; --dot: rgba(0,0,0,.08); --edge: #aeaeb2; --node: #fff; --chip: #f2f2f5;
+    --r-user: #1d1d1f; --r-user-bg: #ededf0; --r-flow: #0071e3; --r-flow-bg: #e8f1fc; --r-ai: #8944ab; --r-ai-bg: #f3eafa; --r-data: #0b7285; --r-data-bg: #e1f2f5;
+    --ok: #1f7a4d; --warn: #b25000; --err: #c0392b; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --canvas: #161617; --dot: rgba(255,255,255,.07); --edge: #636366; --node: #1d1d1f; --chip: #2c2c2e;
+    --r-user: #f5f5f7; --r-user-bg: #3a3a3c; --r-flow: #2997ff; --r-flow-bg: #14304d; --r-ai: #bf5af2; --r-ai-bg: #35203f; --r-data: #5ac8e0; --r-data-bg: #0f3038;
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; } }
+  :root[data-theme="dark"] { --canvas: #161617; --dot: rgba(255,255,255,.07); --edge: #636366; --node: #1d1d1f; --chip: #2c2c2e;
+    --r-user: #f5f5f7; --r-user-bg: #3a3a3c; --r-flow: #2997ff; --r-flow-bg: #14304d; --r-ai: #bf5af2; --r-ai-bg: #35203f; --r-data: #5ac8e0; --r-data-bg: #0f3038;
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; }
+  /* ── level rows ── */
+  .meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 32px 0 12px; }
+  .eyebrow { display: flex; align-items: center; gap: 8px; margin: 0; font: 600 13px/1 var(--sans); color: var(--muted); }
+  .lvl { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font: 600 11px/1 var(--sans); color: var(--ink); }
+  .pill { height: 24px; padding: 0 10px; border: 0; background: var(--chip); font: 500 12px/24px var(--sans); color: var(--muted); border-radius: 999px; white-space: nowrap; }
+  /* ── section ── */
+  .how { margin-top: 72px; scroll-margin-top: 80px; }
+  .how-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 16px; }
+  .how h2 { font: 600 26px/1.15 var(--sans); letter-spacing: -.015em; margin: 10px 0 0; text-wrap: balance; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; padding: 0; list-style: none; font: 12.5px/1 var(--sans); color: var(--muted); }
+  .legend li { display: flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 4px; background: var(--rb); box-shadow: inset 0 0 0 1.5px var(--r); }
+  .legend .dash { width: 18px; height: 0; border-radius: 0; background: none; box-shadow: none; border-top: 1.5px dashed var(--edge); }
+  /* ── canvas ── */
+  .canvas { position: relative; border: 1px solid var(--line); border-radius: 18px; padding: 44px 24px 40px;
+    background: radial-gradient(circle, var(--dot) 1px, transparent 1.5px) 0 0 / 16px 16px, var(--canvas); }
+  .wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: visible; }
+  .wires path { fill: none; stroke: var(--edge); stroke-width: 1.5; }
+  .wires .dash { stroke-dasharray: 4 4; }
+  .wires text { font: 500 11px var(--sans); fill: var(--muted); paint-order: stroke; stroke: var(--canvas); stroke-width: 5px; stroke-linejoin: round; }
+  .flow { --gap: 44px; position: relative; z-index: 1; display: grid; align-items: center; row-gap: 56px; grid-template-columns: repeat(4, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
+  .flow[data-n="4"] { grid-template-columns: repeat(3, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
+  .flow[data-n="6"] { --gap: 32px; grid-template-columns: repeat(5, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
+  .node { --r: var(--r-flow); --rb: var(--r-flow-bg); position: relative; min-width: 0; min-height: 124px; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px;
+    background: var(--node); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .node[data-role="user"] { --r: var(--r-user); --rb: var(--r-user-bg); }
+  .node[data-role="ai"] { --r: var(--r-ai); --rb: var(--r-ai-bg); }
+  .node[data-role="data"] { --r: var(--r-data); --rb: var(--r-data-bg); }
+  .n-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+  .n-ico { width: 28px; height: 28px; flex: none; border-radius: 8px; display: grid; place-items: center; background: var(--rb); color: var(--r); }
+  .n-ico svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .n-demo { font: 500 11.5px/1 var(--sans); color: var(--brand-ink); text-decoration: none; white-space: nowrap; }
+  .n-demo:hover { text-decoration: underline; }
+  .n-br { font: 600 10.5px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); white-space: nowrap; }
+  .n-title { font: 600 14px/1.3 var(--sans); letter-spacing: -.005em; }
+  .n-sub { font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+  .n-tech { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; padding-top: 6px; }
+  .n-tech span { font: 500 11px/20px var(--sans); padding: 0 7px; border-radius: 6px; background: var(--chip); color: var(--muted); white-space: nowrap; }
+  .node.stack { box-shadow: 4px 4px 0 -1px var(--node), 4px 4px 0 0 var(--line), 8px 8px 0 -1px var(--node), 8px 8px 0 0 var(--line); }
+  .ports { list-style: none; margin: 2px -14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .ports li { position: relative; padding-right: 14px; text-align: right; font: 500 11.5px/20px var(--sans); color: var(--muted); white-space: nowrap; }
+  .ports li::after { content: ""; position: absolute; right: -5px; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: var(--node); box-shadow: 0 0 0 1.5px var(--r); }
+  .ports li.ok { color: var(--ok); } .ports li.ok::after { background: var(--ok); box-shadow: none; }
+  .ports li.warn { color: var(--warn); } .ports li.warn::after { background: var(--warn); box-shadow: none; }
+  .ports li.err { color: var(--err); } .ports li.err::after { background: var(--err); box-shadow: none; }
+  .edge { position: relative; align-self: stretch; }
+  .edge::before { content: ""; position: absolute; left: 3px; right: 5px; top: 50%; height: 1.5px; margin-top: -.75px; background: var(--edge); }
+  .edge::after { content: ""; position: absolute; right: 5px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border: solid var(--edge); border-width: 1.5px 1.5px 0 0; transform: rotate(45deg); }
+  .edge.dash::before { background: repeating-linear-gradient(90deg, var(--edge) 0 4px, transparent 4px 8px); }
+  .edge.js::before, .edge.js::after { display: none; }
+  .e-lbl { position: absolute; left: 50%; bottom: calc(50% + 6px); transform: translateX(-50%); font: 500 11px/1 var(--sans); color: var(--muted); white-space: nowrap; }
+  .group { display: grid; grid-template-columns: subgrid; align-items: center; position: relative; margin: -34px -12px -12px; padding: 34px 12px 12px; border: 1px dashed var(--edge); border-radius: 20px; }
+  .g-lbl { position: absolute; top: 11px; left: 14px; display: flex; align-items: center; gap: 6px; font: 500 12px/1 var(--sans); color: var(--muted); }
+  .g-lbl svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  @media (max-width: 760px) {
+    .how { margin-top: 48px; } .how h2 { font-size: 21px; }
+    .canvas { padding: 16px 12px; background: var(--canvas); }
+    .wires { display: none; }
+    .flow, .flow[data-n] { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+    .group { display: flex; flex-direction: column; align-items: stretch; margin: 0; padding: 36px 10px 10px; }
+    .node { min-height: 0; }
+    .ports { margin: 4px 0 0; } .ports li { text-align: left; padding: 0 0 0 16px; } .ports li::after { right: auto; left: 0; }
+    .edge { height: 28px; flex: none; }
+    .edge::before { left: 28px; right: auto; top: 3px; bottom: 5px; width: 1.5px; height: auto; margin: 0; }
+    .edge::after { left: 25px; right: auto; top: auto; bottom: 5px; margin: 0; transform: rotate(135deg); }
+    .edge.dash::before { background: repeating-linear-gradient(180deg, var(--edge) 0 4px, transparent 4px 8px); }
+    .edge.js::before, .edge.js::after { display: block; }
+    .e-lbl { left: 44px; bottom: auto; top: 50%; transform: translateY(-50%); }
+    .flow > .node.br { margin-top: 28px; border-style: dashed; }
+  }
+
+  :root { --page: 1100px; }
+  h1 { margin: 0 0 12px; }
+  .lead { font-size: 17px; line-height: 1.47; max-width: 60ch; margin: 0; text-wrap: pretty; }
+  /* ── Teams-like frame (kept light on purpose: it is a picture of another app) ── */
+  .frame { border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #f5f5f5; color: #242424; color-scheme: light; font-size: 13.5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 16px 40px rgba(0,0,0,.08); scroll-margin-top: 80px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .frame { border-color: #424245; box-shadow: none; } }
+  :root[data-theme="dark"] .frame { border-color: #424245; box-shadow: none; }
+  .tbar { height: 32px; background: #ebebeb; display: flex; align-items: center; justify-content: center; padding: 0 14px; border-bottom: 1px solid #ddd; }
+  .search { width: min(320px, 40%); height: 22px; border-radius: 6px; background: #fff; border: 1px solid #d6d6d6; color: #8a8a8a; font-size: 12px; display: flex; align-items: center; padding: 0 10px; gap: 8px; }
+  .fbody { display: grid; grid-template-columns: 64px 248px 1fr; height: clamp(520px, calc(100svh - 300px), 600px); }
+  .rail { background: #ebebeb; border-right: 1px solid #ddd; display: flex; flex-direction: column; align-items: center; padding-top: 10px; gap: 4px; }
+  .rail div { width: 54px; padding: 7px 0 5px; border-radius: 6px; font-size: 10px; color: #616161; text-align: center; }
+  .rail div svg { width: 20px; height: 20px; display: block; margin: 0 auto 3px; stroke: #616161; fill: none; stroke-width: 1.6; }
+  .rail div.on { color: #5b5fc7; } .rail div.on svg { stroke: #5b5fc7; }
+  .list { background: #f5f5f5; border-right: 1px solid #ddd; padding: 12px 8px; overflow: hidden; }
+  .list h3 { margin: 2px 8px 12px; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; }
+  .list h3 span { font-weight: 400; color: #616161; font-size: 13px; }
+  .list .grp { font-size: 11.5px; color: #616161; margin: 10px 8px 6px; }
+  .li { display: flex; gap: 10px; align-items: center; padding: 8px 8px; border-radius: 6px; color: inherit; text-decoration: none; cursor: default; }
+  .li.on { background: #fff; box-shadow: 0 0 0 1px #e0e0e0; }
+  a.li:hover { background: #ebebeb; cursor: pointer; }
+  .li b { font-size: 13px; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 176px; }
+  .li small { color: #616161; font-size: 11.5px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 176px; }
+  .li .ch { width: 32px; text-align: center; color: #616161; font-size: 15px; flex: none; }
+  .av { width: 32px; height: 32px; border-radius: 50%; background: #5b5fc7; color: #fff; font-size: 12px; font-weight: 600; display: grid; place-items: center; flex: none; }
+  .av.red { background: #c4314b; } .av.violet { background: #6264a7; } .av.orange { background: #ff8c00; } .av.teal { background: #0f7b6c; } .av.grey { background: #8a8a8a; }
+  .pane { background: #fff; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .hdr { display: flex; align-items: center; gap: 12px; padding: 10px 20px; border-bottom: 1px solid #e5e5e5; }
+  .hdr .av { width: 34px; height: 34px; }
+  .hdr b { font-size: 15px; display: block; } .hdr small { color: #616161; font-size: 12px; }
+  .tabs { margin-left: auto; display: flex; gap: 18px; font-size: 13px; color: #616161; white-space: nowrap; }
+  .tabs span.on { color: #242424; font-weight: 500; border-bottom: 2px solid #5b5fc7; padding-bottom: 4px; }
+  .filterbar { display: flex; gap: 6px; padding: 8px 20px; border-bottom: 1px solid #ebebeb; overflow-x: auto; scrollbar-width: none; }
+  .filterbar button { flex: none; height: 26px; padding: 0 10px; border-radius: 999px; border: 1px solid #d6d6d6; background: #fff; color: #3b3b3b; font: 500 12px/1 var(--sans); cursor: pointer; }
+  .filterbar button.on { background: #5b5fc7; border-color: #5b5fc7; color: #fff; }
+  .msgs { position: relative; flex: 1; min-height: 0; padding: 16px 22px 6px; overflow-y: auto; mask-image: linear-gradient(to bottom, transparent 0, #000 16px); }
+  .day { text-align: center; color: #8a8a8a; font-size: 11.5px; margin: 6px 0 12px; }
+  .me { margin: 0 0 12px auto; width: fit-content; max-width: 70%; background: #e8ebfa; border-radius: 8px; padding: 8px 12px; }
+  .bot { display: flex; gap: 10px; margin-bottom: 14px; }
+  .bot .av { width: 28px; height: 28px; font-size: 10px; margin-top: 3px; }
+  .bot .b { max-width: 560px; min-width: 0; } .bot .when { font-size: 11.5px; color: #616161; margin-bottom: 4px; } .bot .when b { color: #242424; font-weight: 500; margin-right: 6px; }
+  .bot .txt { background: #f5f5f5; border-radius: 8px; padding: 9px 12px; }
+  .post .txt { background: #fff; border: 1px solid #e5e5e5; cursor: pointer; }
+  .post .txt.static { cursor: default; }
+  .card { background: #fff; border: 1px solid #e1e1e1; border-radius: 8px; padding: 11px 14px; margin-top: 8px; width: 420px; max-width: 100%; }
+  .card h4 { margin: 0 0 8px; font-size: 13.5px; font-weight: 600; }
+  .card h5 { margin: 10px 0 3px; font-size: 13px; font-weight: 600; }
+  .card ul { margin: 0; padding-left: 16px; } .card li { margin: 2px 0; }
+  .kv { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
+  .kv b { font-weight: 600; text-align: right; }
+  .ok { color: #107c10; font-weight: 600; } .warn { color: #c50f1f; font-weight: 600; } .info { color: #5b5fc7; font-weight: 600; } .att { color: #b8860b; font-weight: 600; }
+  .cb { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; } .cb span { border: 1px solid #c7c7c7; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; background: #fff; }
+  .compose { padding: 8px 22px 14px; border-top: 1px solid #f0f0f0; }
+  .chips { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+  .chips .lbl { font: 500 12px/1 var(--sans); color: #616161; margin-right: 2px; }
+  .chips button { height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid #c5c7ef; background: #f5f5fd; color: #464ab0; font: 500 12.5px/1 var(--sans); cursor: pointer; white-space: nowrap; }
+  .chips button:hover { background: #ebecfa; border-color: #a9abe6; }
+  .chips button.done { background: #fff; border-color: #e0e0e0; color: #8a8a8a; }
+  .box { border: 1px solid #e5e5e5; border-radius: 6px; background: #f5f5f5; padding: 10px 12px; color: #9e9e9e; display: flex; justify-content: space-between; align-items: center; cursor: default; }
+  .box svg { width: 18px; height: 18px; stroke: #c7c7c7; fill: none; stroke-width: 1.8; }
+  .details { margin-top: 8px; background: #fafafa; border: 1px dashed #d6d6d6; border-radius: 6px; padding: 8px 10px; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #3b3b3b; white-space: pre-wrap; }
+  .more { margin-top: 6px; font-size: 12px; color: #8a8a8a; }
+  /* news: placeholder instead of the frame */
+  .soon-panel { border: 1px solid transparent; border-radius: 18px; background: color-mix(in srgb, var(--line) 35%, var(--bg)); padding: 28px 30px; scroll-margin-top: 80px; }
+  .soon-panel h3 { margin: 0 0 8px; font: 600 19px/1.2 var(--sans); letter-spacing: -.01em; }
+  .soon-panel p { margin: 0; color: var(--muted); font-size: 15.5px; line-height: 1.5; max-width: 64ch; }
+  @media (max-width: 860px) { .tbar { display: none; } .fbody { grid-template-columns: 1fr; height: min(560px, 75svh); } .rail, .list, .tabs { display: none; } .frame { border-radius: 14px; } .card { width: 100%; } .me { max-width: 90%; } }
+  @media (max-width: 640px) {
+    .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -22px 10px; padding: 0 22px; scroll-snap-type: x proximity; }
+    .chips button { flex: none; scroll-snap-align: start; } .chips .lbl { display: none; }
+    .meta { margin-top: 24px; } .soon-panel { padding: 22px 20px; }
+  }
+
+</style>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="../"><span class="who"><span>Vildana Razumova</span><small id="t-crumb">Portfolio</small></span></a>
+    <nav class="actions">
+      <div class="lang" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="de">DE</button><button type="button" data-lang="ru">RU</button></div>
+      <a class="btn" href="../portfolio.html">←<span id="t-back" class="hide-sm">&nbsp;Portfolio</span></a>
+      <a class="btn hide-sm" href="#how" id="t-howbtn">How it works</a>
+    </nav>
+  </header>
+  <span id="t-role" hidden></span>
+  <main>
+    <h1 id="t-title"></h1>
+    <p class="lead" id="t-lead"></p>
+    <div class="meta"><p class="eyebrow"><span class="lvl">1</span><span id="t-lvl1"></span></p><span class="pill" id="t-pill"></span></div>
+    <div class="frame" id="demo"></div>
+    <section class="how" id="how">
+      <header class="how-head">
+        <div><p class="eyebrow"><span class="lvl">2</span><span id="t-how"></span></p><h2 id="how-h"></h2></div>
+        <ul class="legend" id="legend"></ul>
+      </header>
+      <div class="canvas" id="canvas"></div>
+    </section>
+  </main>
+<script>
+  const RAIL = ["<svg viewBox=\"0 0 24 24\"><path d=\"M6 8a6 6 0 0 1 12 0v5l2 3H4l2-3z\"/><path d=\"M10 19a2 2 0 0 0 4 0\"/></svg>", "<svg viewBox=\"0 0 24 24\"><path d=\"M4 5h16v11H9l-5 4z\"/></svg>", "<svg viewBox=\"0 0 24 24\"><circle cx=\"9\" cy=\"8\" r=\"3\"/><circle cx=\"17\" cy=\"9\" r=\"2.5\"/><path d=\"M3 19a6 6 0 0 1 12 0M14 18a4 4 0 0 1 7 0\"/></svg>", "<svg viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/></svg>", "<svg viewBox=\"0 0 24 24\"><path d=\"M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z\"/></svg>", "<svg viewBox=\"0 0 24 24\"><path d=\"M4 6h6l2 2h8v11H4z\"/></svg>"];
+  const SEND = "<svg viewBox=\"0 0 24 24\"><path d=\"M4 12l16-8-6 16-2-6z\"/></svg>";
+  const UI = {"en": {"rail": ["Activity", "Chat", "Teams", "Calendar"], "search": "Search", "today": "Today", "ro": "In the demo — ready-made questions only ↑", "roCh": "Read-only in the demo", "pinned": "Pinned", "recent": "Recent", "chat": "Chat", "teams": "Teams", "team": "Destinations", "channels": ["General", "Sales · Sunny Coast", "System alerts"], "chats": [["Payments assistant", "Yes, two payments of $920…"], ["AI sales analyst", "Sales digest for {d-1}"], ["Mary", "did the group on SA103 confirm?"], ["Sales team", "Marat: closed 3 bookings on…"], ["System alerts", "✔ Run finished · 14:31"]], "tabsChat": ["Chat", "About", "Files"], "tabsCh": ["Posts", "Files"], "try": "Try:", "back": "← Portfolio", "role": "Data Scientist · AI Automation", "details": "details"}, "de": {"rail": ["Aktivität", "Chat", "Teams", "Kalender"], "search": "Suchen", "today": "Heute", "ro": "In der Demo — nur vorbereitete Fragen ↑", "roCh": "In der Demo nur zum Lesen", "pinned": "Angeheftet", "recent": "Zuletzt", "chat": "Chat", "teams": "Teams", "team": "Reiseziele", "channels": ["Allgemein", "Verkauf · Sonnenküste", "Systemmeldungen"], "chats": [["Zahlungsassistent", "Ja, zwei Zahlungen über $920…"], ["KI-Verkaufsanalyst", "Verkaufsübersicht {d-1}"], ["Mary", "hat die Gruppe auf SA103 bestätigt?"], ["Vertrieb", "Marat: 3 Buchungen abgeschlossen…"], ["Systemmeldungen", "✔ Lauf abgeschlossen · 14:31"]], "tabsChat": ["Chat", "Info", "Dateien"], "tabsCh": ["Beiträge", "Dateien"], "try": "Probieren Sie:", "back": "← Portfolio", "role": "Data Scientist · KI-Automatisierung", "details": "Details"}, "ru": {"rail": ["Действия", "Чат", "Команды", "Календарь"], "search": "Поиск", "today": "Сегодня", "ro": "В демо — только готовые вопросы ↑", "roCh": "В демо — только чтение", "pinned": "Закреплённые", "recent": "Недавние", "chat": "Чат", "teams": "Команды", "team": "Направления", "channels": ["Общий", "Продажи · Солнечный берег", "Алерты систем"], "chats": [["Помощник по платежам", "Да, два платежа по $920…"], ["AI-аналитик по продажам", "Сводка продаж за {d-1}"], ["Мэри", "по SA103 подтвердили группу?"], ["Отдел продаж", "Марат: закрыли 3 брони по…"], ["Алерты систем", "✔ Прогон завершён · 14:31"]], "tabsChat": ["Чат", "Сведения", "Файлы"], "tabsCh": ["Публикации", "Файлы"], "try": "Попробуйте:", "back": "← Портфолио", "role": "Дата-сайентист · ИИ-автоматизация", "details": "подробнее"}};
+  const T = {"en": {"crumb": "Portfolio · System alerts", "title": "System alerts in Microsoft Teams", "lead": "After every run a system writes to the shared channel what was done, which checks passed and where the data was incomplete — a failure is visible before it shows in the numbers.", "pill": "Demo data · 1 day", "chan": "System alerts", "sub": "channel · pipeline health", "all": "All", "sys": {"pr": "Pricing", "mon": "Price monitoring", "news": "News flow", "chk": "Data checks", "pay": "Payments assistant", "an": "AI analyst"}, "feed": [["06:05", "news", "ok", "✔ News flow finished", [["Items collected", "142"], ["New after deduplication", "37"], ["Scored by the model", "37"], ["Duration", "2 min 40 s"]], "sources: 4 RSS queries · duplicates by URL: 61 · by title: 44\nknown titles skipped: 0 · relevance ≥ 0.6: 9 · written: 37 rows"], ["07:31", "pr", "ok", "✔ Run finished · morning", [["Segments recalculated", "1,284"], ["Recommendations down / up", "212 / 96"], ["Deep discounts", "38"], ["Data checks", "12 / 12 passed", "ok"], ["Duration", "4 min 12 s"]], "load forecast: 17 flights · 145 hotels · 5 stay lengths\nregression against the frozen run: identical\nresult written · managers' page updated"], ["08:00", "an", "ok", "✔ Digest sent · 2 destinations", [["Sunny Coast", "47 bookings · posted 08:00"], ["Azure Bay", "31 bookings · posted 08:00"], ["Queries", "9 · 1.8 s"]], "numbers in the text checked against the query result: 24 / 24 match"], ["09:05", "mon", "att", "⚠ Incomplete data", [["Competitors received", "7 of 8"], ["Missing", "Competitor D — API timeout"], ["Action", "retry in 30 min"]], "GET /prices?dest=SC — 504 Gateway Timeout after 30 s (3 attempts)\nthe 11:30 pricing run will use yesterday's prices for Competitor D if the retry fails"], ["09:35", "mon", "ok", "✔ Retry done · 8 of 8", [["Competitors received", "8 of 8"], ["Offers collected", "3,912"], ["Duration", "1 min 05 s"]], "Competitor D responded in 2.1 s · price changes since yesterday: 214 offers"], ["11:31", "pr", "ok", "✔ Run finished · midday", [["Segments recalculated", "1,284"], ["Recommendations down / up", "205 / 101"], ["Changed since the morning", "63"], ["Data checks", "12 / 12 passed", "ok"], ["Duration", "4 min 05 s"]], "63 recommendations changed; 41 of them because of Competitor D's updated prices"], ["12:10", "chk", "warn", "✖ Check failed: duplicate bookings", [["Check", "duplicates in yesterday's bookings"], ["Found", "14 rows"], ["Action", "the 14:30 run is on hold until the source is fixed"]], "SELECT booking_id, COUNT(*) … HAVING COUNT(*) > 1 → 14 rows\nsource: the booking export ran twice at 03:10 and 03:25\nnotified: data team"], ["13:05", "chk", "ok", "✔ Duplicates fixed at the source · check passed", [["Check", "duplicates in yesterday's bookings"], ["Found", "0 rows"], ["Action", "the 14:30 run is released"]], "the second export was removed by the data team at 12:52 · re-check: 0 duplicates"], ["14:31", "pr", "ok", "✔ Run finished · afternoon", [["Segments recalculated", "1,284"], ["Recommendations down / up", "212 / 96"], ["Deep discounts", "38"], ["Data checks", "12 / 12 passed", "ok"], ["Duration", "4 min 12 s"]], "result written · managers' page updated · 14 recommendations waiting for a decision"], ["18:00", "pay", "info", "ℹ Weekly usage", [["Questions this week", "72"], ["Requests to accounting", "5"], ["Average answer time", "3.1 s"]], "top intents: payment status 41 · payment by amount 18 · open requests 8 · other 5"]]}, "de": {"crumb": "Portfolio · Systemmeldungen", "title": "Systemmeldungen in Microsoft Teams", "lead": "Nach jedem Lauf schreibt das System in den gemeinsamen Kanal, was getan wurde, welche Prüfungen bestanden sind und wo Daten unvollständig waren — ein Fehler ist sichtbar, bevor er sich in den Zahlen zeigt.", "pill": "Demo-Daten · 1 Tag", "chan": "Systemmeldungen", "sub": "Kanal · Zustand der Pipelines", "all": "Alle", "sys": {"pr": "Preisbildung", "mon": "Preisbeobachtung", "news": "Nachrichten-Flow", "chk": "Datenprüfungen", "pay": "Zahlungsassistent", "an": "KI-Analyst"}, "feed": [["06:05", "news", "ok", "✔ Nachrichten-Flow abgeschlossen", [["Gesammelt", "142"], ["Neu nach Deduplizierung", "37"], ["Vom Modell bewertet", "37"], ["Dauer", "2 Min 40 s"]], "Quellen: 4 RSS-Abfragen · Dubletten nach URL: 61 · nach Titel: 44\nbekannte Titel übersprungen: 0 · Relevanz ≥ 0,6: 9 · geschrieben: 37 Zeilen"], ["07:31", "pr", "ok", "✔ Lauf abgeschlossen · morgens", [["Segmente neu berechnet", "1.284"], ["Empfehlungen runter / rauf", "212 / 96"], ["Tiefe Rabatte", "38"], ["Datenprüfungen", "12 / 12 bestanden", "ok"], ["Dauer", "4 Min 12 s"]], "Auslastungsprognose: 17 Flüge · 145 Hotels · 5 Aufenthaltsdauern\nRegression gegen den eingefrorenen Lauf: identisch\nErgebnis gespeichert · Manager-Seite aktualisiert"], ["08:00", "an", "ok", "✔ Übersicht gesendet · 2 Reiseziele", [["Sonnenküste", "47 Buchungen · 08:00"], ["Azurbucht", "31 Buchungen · 08:00"], ["Abfragen", "9 · 1,8 s"]], "Zahlen im Text gegen das Abfrageergebnis geprüft: 24 / 24 stimmen"], ["09:05", "mon", "att", "⚠ Unvollständige Daten", [["Wettbewerber erhalten", "7 von 8"], ["Fehlt", "Wettbewerber D — API-Timeout"], ["Aktion", "Wiederholung in 30 Min"]], "GET /prices?dest=SC — 504 Gateway Timeout nach 30 s (3 Versuche)\nder Lauf um 11:30 nutzt für Wettbewerber D die Preise von gestern, falls die Wiederholung fehlschlägt"], ["09:35", "mon", "ok", "✔ Wiederholung erfolgreich · 8 von 8", [["Wettbewerber erhalten", "8 von 8"], ["Angebote gesammelt", "3.912"], ["Dauer", "1 Min 05 s"]], "Wettbewerber D antwortete in 2,1 s · Preisänderungen seit gestern: 214 Angebote"], ["11:31", "pr", "ok", "✔ Lauf abgeschlossen · mittags", [["Segmente neu berechnet", "1.284"], ["Empfehlungen runter / rauf", "205 / 101"], ["Geändert seit dem Morgen", "63"], ["Datenprüfungen", "12 / 12 bestanden", "ok"], ["Dauer", "4 Min 05 s"]], "63 Empfehlungen geändert; 41 davon wegen der aktualisierten Preise von Wettbewerber D"], ["12:10", "chk", "warn", "✖ Prüfung fehlgeschlagen: doppelte Buchungen", [["Prüfung", "Dubletten in den Buchungen von gestern"], ["Gefunden", "14 Zeilen"], ["Aktion", "der Lauf um 14:30 wartet, bis die Quelle korrigiert ist"]], "SELECT booking_id, COUNT(*) … HAVING COUNT(*) > 1 → 14 Zeilen\nUrsache: der Buchungsexport lief zweimal, 03:10 und 03:25\nbenachrichtigt: Datenteam"], ["13:05", "chk", "ok", "✔ Dubletten an der Quelle behoben · Prüfung bestanden", [["Prüfung", "Dubletten in den Buchungen von gestern"], ["Gefunden", "0 Zeilen"], ["Aktion", "der Lauf um 14:30 ist freigegeben"]], "der zweite Export wurde vom Datenteam um 12:52 entfernt · erneute Prüfung: 0 Dubletten"], ["14:31", "pr", "ok", "✔ Lauf abgeschlossen · nachmittags", [["Segmente neu berechnet", "1.284"], ["Empfehlungen runter / rauf", "212 / 96"], ["Tiefe Rabatte", "38"], ["Datenprüfungen", "12 / 12 bestanden", "ok"], ["Dauer", "4 Min 12 s"]], "Ergebnis gespeichert · Manager-Seite aktualisiert · 14 Empfehlungen warten auf eine Entscheidung"], ["18:00", "pay", "info", "ℹ Nutzung diese Woche", [["Fragen diese Woche", "72"], ["Anfragen an die Buchhaltung", "5"], ["Mittlere Antwortzeit", "3,1 s"]], "häufigste Absichten: Zahlungsstatus 41 · Zahlung nach Betrag 18 · offene Anfragen 8 · sonstiges 5"]]}, "ru": {"crumb": "Портфолио · Алерты систем", "title": "Алерты систем в Microsoft Teams", "lead": "После каждого запуска система пишет в общий канал, что сделано, какие проверки пройдены и где данные неполные, — сбой виден раньше, чем по цифрам.", "pill": "Демо-данные · 1 день", "chan": "Алерты систем", "sub": "канал · состояние пайплайнов", "all": "Все", "sys": {"pr": "Ценообразование", "mon": "Мониторинг цен", "news": "Поток новостей", "chk": "Проверки данных", "pay": "Помощник по платежам", "an": "AI-аналитик"}, "feed": [["06:05", "news", "ok", "✔ Поток новостей завершён", [["Собрано", "142"], ["Новых после дедупликации", "37"], ["Оценено моделью", "37"], ["Длительность", "2 мин 40 с"]], "источники: 4 RSS-запроса · дубли по URL: 61 · по заголовку: 44\nизвестных заголовков пропущено: 0 · релевантность ≥ 0,6: 9 · записано: 37 строк"], ["07:31", "pr", "ok", "✔ Прогон завершён · утро", [["Сегментов пересчитано", "1 284"], ["Рекомендаций вниз / вверх", "212 / 96"], ["Глубоких скидок", "38"], ["Проверки данных", "12 / 12 пройдены", "ok"], ["Длительность", "4 мин 12 с"]], "прогноз загрузки: 17 рейсов · 145 отелей · 5 длительностей\nрегрессия против замороженного прогона: совпадает\nрезультат записан · страница менеджеров обновлена"], ["08:00", "an", "ok", "✔ Сводка отправлена · 2 направления", [["Солнечный берег", "47 бронирований · 08:00"], ["Лазурная бухта", "31 бронирование · 08:00"], ["Запросов", "9 · 1,8 с"]], "цифры в тексте сверены с результатом запросов: 24 / 24 совпадают"], ["09:05", "mon", "att", "⚠ Неполные данные", [["Конкурентов получено", "7 из 8"], ["Пропущен", "Конкурент D — таймаут API"], ["Действие", "повтор через 30 мин"]], "GET /prices?dest=SC — 504 Gateway Timeout после 30 с (3 попытки)\nпрогон 11:30 возьмёт вчерашние цены конкурента D, если повтор не удастся"], ["09:35", "mon", "ok", "✔ Повтор выполнен · 8 из 8", [["Конкурентов получено", "8 из 8"], ["Предложений собрано", "3 912"], ["Длительность", "1 мин 05 с"]], "конкурент D ответил за 2,1 с · изменений цен со вчера: 214 предложений"], ["11:31", "pr", "ok", "✔ Прогон завершён · день", [["Сегментов пересчитано", "1 284"], ["Рекомендаций вниз / вверх", "205 / 101"], ["Изменилось с утра", "63"], ["Проверки данных", "12 / 12 пройдены", "ok"], ["Длительность", "4 мин 05 с"]], "изменились 63 рекомендации; 41 из них — из-за обновлённых цен конкурента D"], ["12:10", "chk", "warn", "✖ Проверка не пройдена: дубли бронирований", [["Проверка", "дубли в бронированиях за вчера"], ["Найдено", "14 строк"], ["Действие", "прогон 14:30 отложен до исправления источника"]], "SELECT booking_id, COUNT(*) … HAVING COUNT(*) > 1 → 14 строк\nпричина: выгрузка бронирований отработала дважды, 03:10 и 03:25\nуведомлена: команда данных"], ["13:05", "chk", "ok", "✔ Дубли устранены источником · проверка пройдена", [["Проверка", "дубли в бронированиях за вчера"], ["Найдено", "0 строк"], ["Действие", "прогон 14:30 разрешён"]], "вторая выгрузка удалена командой данных в 12:52 · повторная проверка: 0 дублей"], ["14:31", "pr", "ok", "✔ Прогон завершён · вечер", [["Сегментов пересчитано", "1 284"], ["Рекомендаций вниз / вверх", "212 / 96"], ["Глубоких скидок", "38"], ["Проверки данных", "12 / 12 пройдены", "ok"], ["Длительность", "4 мин 12 с"]], "результат записан · страница менеджеров обновлена · 14 рекомендаций ждут решения"], ["18:00", "pay", "info", "ℹ Использование за неделю", [["Вопросов за неделю", "72"], ["Запросов в бухгалтерию", "5"], ["Среднее время ответа", "3,1 с"]], "частые намерения: статус оплаты 41 · платёж по сумме 18 · открытые запросы 8 · прочее 5"]]}};
+  const HOW = {"en": {"lvl1": "What the manager sees", "lvl2": "How it works", "legend": ["What the user sees", "Logic", "AI model", "Data", "Branch"]}, "de": {"lvl1": "Was der Manager sieht", "lvl2": "So funktioniert es", "legend": ["Sieht der Nutzer", "Logik", "KI-Modell", "Daten", "Zweig"]}, "ru": {"lvl1": "Что видит менеджер", "lvl2": "Как устроено", "legend": ["Видит пользователь", "Логика", "ИИ-модель", "Данные", "Ветка"]}};
+  const FLOW = {"en": {"heading": "Where every alert comes from", "n": 6, "pad": "64px", "wires": "chk:b>rep:b dash|check failed → calculation skipped; s1:r>tm:l; s2:r>tm:l; s3:r>tm:l", "items": [{"group": {"cols": "1 / 8", "icon": "clock", "label": "every pipeline run · Airflow", "items": [{"role": "flow", "icon": "shield", "title": "Data checks", "tech": ["SQL"], "sub": "freshness, duplicates, ranges", "id": "chk"}, "->", {"role": "ai", "icon": "trend", "title": "Calculation", "tech": ["Python"], "sub": "the model or the system's rules"}, "->", {"role": "data", "icon": "db", "title": "Write", "tech": ["ClickHouse"], "sub": "the result goes to the database"}, "->", {"role": "flow", "icon": "doc", "title": "Status report", "tech": ["Python"], "sub": "what was done, how much, how long", "id": "rep"}]}}, "->", {"role": "flow", "icon": "n8n", "title": "Level", "tech": ["n8n"], "ports": [["s1", "✔ success", "ok"], ["s2", "⚠ attention", "warn"], ["s3", "✖ failure", "err"]]}, {"edge": {"js": true}}, {"role": "user", "icon": "bell", "title": "Teams channel", "tech": ["Teams"], "sub": "one feed for managers and the developer", "id": "tm", "demo": ["in the demo ↑", "#demo"]}]}, "de": {"heading": "Woher jede Meldung kommt", "n": 6, "pad": "64px", "wires": "chk:b>rep:b dash|Prüfung fehlgeschlagen → Berechnung übersprungen; s1:r>tm:l; s2:r>tm:l; s3:r>tm:l", "items": [{"group": {"cols": "1 / 8", "icon": "clock", "label": "jeder Pipeline-Lauf · Airflow", "items": [{"role": "flow", "icon": "shield", "title": "Datenprüfungen", "tech": ["SQL"], "sub": "Aktualität, Dubletten, Wertebereiche", "id": "chk"}, "->", {"role": "ai", "icon": "trend", "title": "Berechnung", "tech": ["Python"], "sub": "das Modell oder die Regeln des Systems"}, "->", {"role": "data", "icon": "db", "title": "Speichern", "tech": ["ClickHouse"], "sub": "das Ergebnis in die Datenbank"}, "->", {"role": "flow", "icon": "doc", "title": "Zustandsbericht", "tech": ["Python"], "sub": "was getan wurde, wie viel, wie lange", "id": "rep"}]}}, "->", {"role": "flow", "icon": "n8n", "title": "Stufe", "tech": ["n8n"], "ports": [["s1", "✔ Erfolg", "ok"], ["s2", "⚠ Achtung", "warn"], ["s3", "✖ Fehler", "err"]]}, {"edge": {"js": true}}, {"role": "user", "icon": "bell", "title": "Teams-Kanal", "tech": ["Teams"], "sub": "ein Feed für Manager und Entwicklerin", "id": "tm", "demo": ["in der Demo ↑", "#demo"]}]}, "ru": {"heading": "Откуда берётся каждый алерт", "n": 6, "pad": "64px", "wires": "chk:b>rep:b dash|проверка не прошла → расчёт пропущен; s1:r>tm:l; s2:r>tm:l; s3:r>tm:l", "items": [{"group": {"cols": "1 / 8", "icon": "clock", "label": "каждый запуск пайплайна · Airflow", "items": [{"role": "flow", "icon": "shield", "title": "Проверки данных", "tech": ["SQL"], "sub": "свежесть, дубли, диапазоны", "id": "chk"}, "->", {"role": "ai", "icon": "trend", "title": "Расчёт", "tech": ["Python"], "sub": "модель или правила системы"}, "->", {"role": "data", "icon": "db", "title": "Запись", "tech": ["ClickHouse"], "sub": "результат в базу"}, "->", {"role": "flow", "icon": "doc", "title": "Отчёт о состоянии", "tech": ["Python"], "sub": "что сделано, сколько, как долго", "id": "rep"}]}}, "->", {"role": "flow", "icon": "n8n", "title": "Уровень", "tech": ["n8n"], "ports": [["s1", "✔ успех", "ok"], ["s2", "⚠ внимание", "warn"], ["s3", "✖ сбой", "err"]]}, {"edge": {"js": true}}, {"role": "user", "icon": "bell", "title": "Канал Teams", "tech": ["Teams"], "sub": "одна лента для менеджеров и разработчика", "id": "tm", "demo": ["в демо ↑", "#demo"]}]}};
+
+  const ICONS = {"msg": "<path d=\"M4 5.5h16v10.5H10l-4.5 3.5V16H4z\"/>", "spark": "<path d=\"M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z\"/>", "branch": "<path d=\"M4 12h5M9 12c3 0 3-6 6-6h5M9 12c3 0 3 6 6 6h5M9 12h11\"/>", "db": "<ellipse cx=\"12\" cy=\"6\" rx=\"7\" ry=\"2.8\"/><path d=\"M5 6v12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6M5 12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8\"/>", "card": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2.5\"/><path d=\"M7 10h10M7 14h6\"/>", "ticket": "<path d=\"M4 7.5h16v3a1.8 1.8 0 000 3.6v3H4v-3a1.8 1.8 0 000-3.6z\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 8v4.5l3 2\"/>", "loop": "<path d=\"M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4\"/>", "send": "<path d=\"M4 11.5L20 4l-6.5 16-2.7-6.8z\"/>", "shield": "<path d=\"M12 3.5l7 2.8v5.4c0 4.1-2.9 7.4-7 8.8-4.1-1.4-7-4.7-7-8.8V6.3z M9 12l2 2 4-4\"/>", "trend": "<path d=\"M4 17l5-5 3.5 3L20 7.5M15 7.5h5v5\"/>", "doc": "<path d=\"M7 3.5h7l4 4v13H7z M14 3.5v4h4 M10 12h5M10 15.5h5\"/>", "n8n": "<circle cx=\"5.5\" cy=\"12\" r=\"2\"/><circle cx=\"18.5\" cy=\"6\" r=\"2\"/><circle cx=\"18.5\" cy=\"18\" r=\"2\"/><path d=\"M7.5 12h2c3 0 3-6 7-6M9.5 12c3 0 3 6 7 6\"/>", "bell": "<path d=\"M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5h4\"/>", "window": "<rect x=\"3.5\" y=\"4.5\" width=\"17\" height=\"15\" rx=\"2.5\"/><path d=\"M3.5 9h17\"/>", "rss": "<path d=\"M5 5a14 14 0 0 1 14 14M5 10.5a8.5 8.5 0 0 1 8.5 8.5\"/><circle cx=\"6.2\" cy=\"17.8\" r=\"1.4\"/>", "filter": "<path d=\"M4 5h16l-6.5 8v5.5l-3 1.5V13z\"/>"};
+  const ico = (n) => `<svg viewBox="0 0 24 24">${ICONS[n] || ""}</svg>`;
+  function nodeHTML(n) {
+    const slot = n.demo ? `<a class="n-demo" href="${n.demo[1]}">${esc(n.demo[0])}</a>` : n.br ? `<span class="n-br">${esc(n.br)}</span>` : "";
+    const body = n.ports ? `<b class="n-title">${esc(n.title)}</b><ul class="ports">${n.ports.map((p) => `<li class="${p[2] || ""}" data-id="${p[0]}">${esc(p[1])}</li>`).join("")}</ul>`
+                         : `<b class="n-title">${esc(n.title)}</b><span class="n-sub">${esc(n.sub || "")}</span>`;
+    const tech = n.tech && n.tech.length ? `<div class="n-tech">${n.tech.map((t) => `<span>${esc(t)}</span>`).join("")}</div>` : "";
+    return `<div class="node${n.stack ? " stack" : ""}${n.area ? " br" : ""}" data-role="${n.role}"${n.id ? ` data-id="${n.id}"` : ""} role="listitem"${n.area ? ` style="grid-area:${n.area}"` : ""}><div class="n-top"><span class="n-ico">${ico(n.icon)}</span>${slot}</div>${body}${tech}</div>`;
+  }
+  function itemsHTML(list) {
+    return list.map((it) => {
+      if (it === "->") return `<div class="edge" aria-hidden="true"></div>`;
+      if (it === "-->") return `<div class="edge dash" aria-hidden="true"></div>`;
+      if (it.edge) return `<div class="edge${it.edge.js ? " js" : ""}${it.edge.dash ? " dash" : ""}" aria-hidden="true">${it.edge.label ? `<span class="e-lbl">${esc(it.edge.label)}</span>` : ""}</div>`;
+      if (it.group) return `<div class="group" style="grid-column:${it.group.cols}"><span class="g-lbl">${ico(it.group.icon)}${esc(it.group.label)}</span>${itemsHTML(it.group.items)}</div>`;
+      return nodeHTML(it);
+    }).join("");
+  }
+  const DIR = { l: [-1, 0], r: [1, 0], t: [0, -1], b: [0, 1] };
+  function drawWires(cv) {
+    const svg = cv.querySelector(".wires");
+    if (!svg || !cv.dataset.wires || getComputedStyle(svg).display === "none") return;
+    const c = cv.getBoundingClientRect(), NS = "http://www.w3.org/2000/svg", marker = svg.querySelector("marker").id;
+    const at = (ref) => { const [id, s] = ref.trim().split(":"), el = cv.querySelector(`[data-id="${id}"]`); if (!el) return null; const r = el.getBoundingClientRect();
+      return { x: (s === "l" ? r.left : s === "r" ? r.right : r.left + r.width / 2) - c.left, y: (s === "t" ? r.top : s === "b" ? r.bottom : r.top + r.height / 2) - c.top, d: DIR[s] }; };
+    svg.querySelectorAll(".w").forEach((n) => n.remove());
+    for (const spec of cv.dataset.wires.split(";")) {
+      if (!spec.trim()) continue;
+      const [def, label] = spec.split("|"), [ends, style = ""] = def.trim().split(/\s+/), [a, b] = ends.split(">").map(at);
+      if (!a || !b) continue;
+      const k = Math.min(80, Math.max(24, Math.hypot(b.x - a.x, b.y - a.y) * 0.45));
+      const c1 = [a.x + a.d[0] * k, a.y + a.d[1] * k], c2 = [b.x + b.d[0] * k, b.y + b.d[1] * k];
+      const p = document.createElementNS(NS, "path");
+      p.setAttribute("d", `M${a.x},${a.y} C${c1} ${c2} ${b.x},${b.y}`); p.setAttribute("class", "w " + style); p.setAttribute("marker-end", `url(#${marker})`); svg.append(p);
+      if (label) { const t = document.createElementNS(NS, "text"); t.setAttribute("x", (a.x + 3 * c1[0] + 3 * c2[0] + b.x) / 8); t.setAttribute("y", (a.y + 3 * c1[1] + 3 * c2[1] + b.y) / 8 + 4);
+        t.setAttribute("text-anchor", "middle"); t.setAttribute("class", "w"); t.textContent = label.trim(); svg.append(t); }
+    }
+  }
+  function renderHow(f, u) {
+    $("how-h").textContent = f.heading;
+    $("legend").innerHTML = [["user", u.legend[0]], ["flow", u.legend[1]], ["ai", u.legend[2]], ["data", u.legend[3]]].map(([r, l]) => `<li><i style="--r:var(--r-${r});--rb:var(--r-${r}-bg)"></i>${esc(l)}</li>`).join("") + `<li><i class="dash"></i>${esc(u.legend[4])}</li>`;
+    const cv = $("canvas");
+    cv.innerHTML = `<svg class="wires" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M2 1.5L9 5L2 8.5" style="stroke-dasharray:none;stroke-width:1.5"/></marker></defs></svg><div class="flow" data-n="${f.n}" role="list">${itemsHTML(f.items)}</div>`;
+    cv.dataset.wires = f.wires || ""; cv.style.paddingBottom = f.pad || "";
+    if (!cv.__ro) { cv.__ro = new ResizeObserver(() => drawWires(cv)); cv.__ro.observe(cv); }
+    document.fonts.ready.then(() => drawWires(cv)); drawWires(cv);
+  }
+
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const bold = (s) => esc(s).replace(/&lt;b&gt;/g, "<b>").replace(/&lt;\/b&gt;/g, "</b>");   // only <b> is allowed through
+  let lang = "en";
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const loc = () => (lang === "en" ? "en-GB" : lang === "de" ? "de-DE" : "ru-RU");
+  const dm = (off) => { const d = new Date(today); d.setDate(d.getDate() + off); return d.toLocaleDateString(loc(), { day: "2-digit", month: "2-digit" }); };
+  const dates = (s) => String(s).replace(/\{d([+-]\d+)?\}/g, (m, o) => dm(o ? parseInt(o, 10) : 0));
+  const kv = (r) => `<div class="kv"><span>${esc(dates(r[0]))}</span><b class="${r[2] || ""}">${esc(dates(r[1]))}</b></div>`;
+  const card = (c) => c ? `<div class="card"><h4>${esc(dates(c.h))}</h4>${c.r.map(kv).join("")}${c.b ? `<div class="cb">${c.b.map((x) => `<span>${esc(x)}</span>`).join("")}</div>` : ""}</div>` : "";
+  function frame(u, mode, active) {
+    const rail = u.rail.map((l, i) => `<div class="${(mode === "chat" ? i === 1 : i === 2) ? "on" : ""}">${RAIL[i]}${esc(l)}</div>`).join("");
+    let list;
+    if (mode === "chat") {
+      const it = (i, av, cls, href) => { const c = u.chats[i]; const tag = href && active !== i ? `a href="${href}"` : "div"; return `<${tag} class="li ${active === i ? "on" : ""}"><div class="av ${cls}">${av}</div><div><b>${esc(c[0])}</b><small>${esc(dates(c[1]))}</small></div></${href && active !== i ? "a" : "div"}>`; };
+      list = `<h3>${esc(u.chat)} <span>⋯ &nbsp;✎</span></h3><div class="grp">${esc(u.pinned)}</div>${it(0, "$", "", "payments.html")}${it(1, "AI", "violet", "sales-digest.html")}<div class="grp">${esc(u.recent)}</div>${it(2, "M", "red")}${it(3, "S", "orange")}${it(4, "⚙", "grey", "alerts.html")}`;
+    } else {
+      const hrefs = [null, "sales-digest.html", "alerts.html"];
+      list = `<h3>${esc(u.teams)} <span>⋯</span></h3><div class="li"><div class="av teal">D</div><div><b>${esc(u.team)}</b></div></div>` + u.channels.map((c, i) => { const h = hrefs[i] && active !== i; return `<${h ? `a href="${hrefs[i]}"` : "div"} class="li ${active === i ? "on" : ""}" style="padding-left:18px"><span class="ch">#</span><div><b>${esc(c)}</b></div></${h ? "a" : "div"}>`; }).join("");
+    }
+    return `<div class="tbar"><div class="search">🔍&nbsp; ${esc(u.search)}</div></div>
+      <div class="fbody"><div class="rail">${rail}</div><div class="list">${list}</div>
+      <div class="pane"><div class="hdr" id="hdr"></div><div class="filterbar" id="fbar" hidden></div><div class="msgs" id="msgs"></div><div class="compose" id="compose"></div></div></div>`;
+  }
+  function common(u, t) {
+    document.documentElement.lang = lang; const h = HOW[lang];
+    $("t-role").textContent = u.role; $("t-crumb").textContent = t.crumb; $("t-back").textContent = u.back.replace(/^←\s*/, " "); $("t-howbtn").textContent = h.lvl2; $("t-how").textContent = h.lvl2; $("t-lvl1").textContent = h.lvl1;
+    $("t-title").textContent = t.title; $("t-lead").textContent = t.lead; $("t-pill").textContent = t.pill;
+    document.title = t.title + " — Vildana Razumova";
+    document.querySelectorAll("#lang button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.lang === lang)));
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+    renderHow(FLOW[lang], h);
+  }
+  function scrollToLast(sel) { const m = $("msgs"), all = m.querySelectorAll(sel), el = all[all.length - 1]; m.scrollTop = el ? Math.max(0, el.offsetTop - 12) : 0; }
+  function boot(setLang) {
+    let initial = null; try { initial = localStorage.getItem("lang"); } catch (e) {}
+    if (!initial) { const nav = (navigator.language || "en").slice(0, 2).toLowerCase(); initial = T[nav] ? nav : "en"; }
+    setLang(initial);
+    document.querySelectorAll("#lang button").forEach((x) => x.addEventListener("click", () => setLang(x.dataset.lang)));
+  }
+
+  let filter = "all", opened = new Set([3]);   // the "incomplete data" post is expanded on load
+  const AV = { pr: ["₽", ""], mon: ["👁", "grey"], news: ["N", "teal"], chk: ["✓", "orange"], pay: ["$", ""], an: ["AI", "violet"] };
+  function render() {
+    const u = UI[lang], t = T[lang];
+    $("hdr").innerHTML = `<span class="ch" style="font-size:20px;color:#616161">#</span><div><b>${esc(t.chan)}</b><small>${esc(t.sub)}</small></div><div class="tabs">${u.tabsCh.map((x, i) => `<span class="${i === 0 ? "on" : ""}">${esc(x)}</span>`).join("")}</div>`;
+    const keys = ["all", "pr", "mon", "news", "chk", "pay", "an"], count = (k) => k === "all" ? t.feed.length : t.feed.filter((p) => p[1] === k).length;
+    const fb = $("fbar"); fb.hidden = false;
+    fb.innerHTML = keys.map((k) => `<button type="button" data-k="${k}" class="${filter === k ? "on" : ""}">${esc(k === "all" ? t.all : t.sys[k])} · ${count(k)}</button>`).join("");
+    fb.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { filter = b.dataset.k; render(); }));
+    let h = `<div class="day">${esc(u.today)}</div>`;
+    t.feed.forEach((p, i) => {
+      if (filter !== "all" && p[1] !== filter) return;
+      const [av, cls] = AV[p[1]];
+      h += `<div class="bot post" data-i="${i}"><div class="av ${cls}">${av}</div><div class="b"><div class="when"><b>${esc(t.sys[p[1]])}</b>${p[0]}</div><div class="txt"><span class="${p[2]}">${esc(p[3])}</span><div class="card">${p[4].map(kv).join("")}</div>${opened.has(i) ? `<div class="details">${esc(p[5])}</div>` : `<div class="more">${esc(u.details)} ↓</div>`}</div></div></div>`;
+    });
+    $("msgs").innerHTML = h;
+    document.querySelectorAll(".post .txt").forEach((el) => el.addEventListener("click", () => { const i = +el.closest(".post").dataset.i; opened.has(i) ? opened.delete(i) : opened.add(i); render(); }));
+    $("compose").innerHTML = `<div class="box"><span>${esc(u.roCh)}</span>${SEND}</div>`;
+  }
+  function setLang(l) { if (!T[l]) l = "en"; lang = l; const u = UI[l], t = T[l]; $("demo").innerHTML = frame(u, "team", 2); render(); common(u, t); }
+  boot(setLang);
+
+</script>
+</body>
+</html>
