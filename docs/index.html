@@ -18,6 +18,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
 <style>
   /* Fonts are self-hosted (docs/fonts/, from the @fontsource packages, SIL OFL): no request leaves this site for them. */
   @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/inter-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
@@ -30,59 +31,65 @@
   @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/source-serif-4-cyrillic-500-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
   @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/source-serif-4-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
   @font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/source-serif-4-cyrillic-600-normal.woff2) format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+
+  /* ── Palette: warm paper, her green and gold. Contrast checked: text ≥ 4.5:1, input border ≥ 3:1, in both themes ── */
   :root {
-    --bg: #ffffff; --surface: #ffffff; --ink: #1d1d1f; --muted: #6e6e73; --faint: #86868b; --line: #d2d2d7;
-    --brand: #0071e3; --brand-ink: #0066cc; --brand-soft: #eaf2fd; --accent: #0071e3;
-    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
-    --radius: 14px;
+    --bg: #f6f4ee; --surface: #ffffff; --ink: #1a1f1c; --muted: #56615b; --faint: #68716c;
+    --line: #e4e0d6; --line-strong: #8a928d;
+    --brand: #2e7a63; --brand-ink: #1f5e4c; --brand-soft: #e4efe9; --on-brand: #ffffff;
+    --gold: #d4a92b; --gold-soft: rgba(212, 169, 43, .30); --danger: #b3261e;
+    --shadow: 0 1px 2px rgba(26, 31, 28, .04), 0 10px 30px rgba(26, 31, 28, .07);
     --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --serif: "Source Serif 4", Georgia, serif;
+    color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #000000; --surface: #1d1d1f; --ink: #f5f5f7; --muted: #a1a1a6; --faint: #86868b;
-      --line: #424245; --brand: #2997ff; --brand-ink: #6fb5ff; --brand-soft: #14304d; --accent: #2997ff;
-      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+      --bg: #0d1210; --surface: #151b18; --ink: #edf1ed; --muted: #a9b4ae; --faint: #8f9a94;
+      --line: #253029; --line-strong: #5f6b64;
+      --brand: #5cc29c; --brand-ink: #86d6b8; --brand-soft: #16302a; --on-brand: #0b1411;
+      --gold: #e3bd52; --gold-soft: rgba(227, 189, 82, .22); --danger: #ff8a80;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .35);
+      color-scheme: dark;
     }
   }
   * { box-sizing: border-box; }
   html { height: 100%; }
-  body { margin: 0; min-height: 100%; }   /* min-height, not height: a sticky top bar only sticks within its parent, and the chat grows past one screen */
   body {
+    margin: 0; min-height: 100dvh; display: flex; flex-direction: column;
     background: var(--bg); color: var(--ink); font: 15.5px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
-    display: flex; flex-direction: column; min-height: 100dvh;
   }
   a { color: var(--brand-ink); }
   .sr-only { position: absolute; left: -9999px; }
+  :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
-  /* Top bar */
+  /* ── Top bar: empty on the start screen (the name is in the middle), her name and photo once the chat starts ── */
   .top {
     position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 12px max(16px, calc((100vw - 1040px) / 2));
-    background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+    padding: 14px max(20px, calc((100vw - 1120px) / 2)); border-bottom: 1px solid transparent; transition: background .3s, border-color .3s;
   }
-  /* The top bar is about Vildana (name, role, contacts); the assistant lives in the chat. The small photo appears only once the hero is gone. */
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
-  .brand-photo { display: none; width: 32px; height: 32px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
-  body.chatting .brand-photo { display: block; }
-  .who { display: flex; flex-direction: column; line-height: 1.15; }
+  body.chatting .top { background: color-mix(in srgb, var(--bg) 93%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom-color: var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; white-space: nowrap; transition: opacity .3s; }
+  body:not(.chatting) .brand { opacity: 0; visibility: hidden; }
+  .brand-photo { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
+  .who { display: flex; flex-direction: column; line-height: 1.15; font-weight: 600; letter-spacing: -.01em; }
   .who small { font-weight: 500; font-size: 12.5px; letter-spacing: 0; color: var(--muted); }
-  body:not(.chatting) .brand .who { visibility: hidden; }   /* the hero already shows the name and role; the header shows them once the hero is gone */
-  .actions { display: flex; gap: 8px; align-items: center; }
+  .actions { display: flex; gap: 6px; align-items: center; }
+  .lang { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--surface) 70%, transparent); }
+  .lang button { height: 30px; min-width: 36px; padding: 0 8px; border: 0; border-radius: 999px; background: none; font: 600 12px var(--sans); letter-spacing: .06em; color: var(--muted); cursor: pointer; }
+  .lang button:hover { color: var(--ink); }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
   .btn {
-    display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 16px; border-radius: 999px;
     border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none;
     font: 500 14px var(--sans); cursor: pointer; white-space: nowrap; list-style: none;
   }
-  .btn:hover { border-color: var(--faint); }
-  .lang { display: inline-flex; height: 36px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); overflow: hidden; }
-  .lang button { border: 0; background: none; padding: 0 11px; font: 600 12.5px var(--sans); letter-spacing: .04em; color: var(--muted); cursor: pointer; }
-  .lang button + button { border-left: 1px solid var(--line); }
-  .lang button[aria-pressed="true"] { background: var(--brand-soft); color: var(--brand-ink); }
-  .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
-  .btn.primary:hover { background: var(--brand-ink); }
+  .btn:hover { border-color: var(--line-strong); }
+  .btn.ghost { background: none; border-color: transparent; }
+  .btn.ghost:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); }
+  .btn.primary { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .btn.primary:hover { background: color-mix(in srgb, var(--ink) 86%, var(--brand)); }
   .btn svg { width: 16px; height: 16px; }
-  .chat-only { display: none; } body.chatting .chat-only { display: inline-flex; }
   .btn[hidden] { display: none; }
 
   /* Contact menu */
@@ -92,156 +99,183 @@
   .talk[open] summary .chev { transform: rotate(180deg); }
   .menu {
     position: absolute; right: 0; top: calc(100% + 8px); width: 290px; padding: 6px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,.16);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 16px 48px rgba(0, 0, 0, .16);
   }
-  .menu a { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 10px; color: var(--ink); text-decoration: none; }
+  .menu a { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 11px; color: var(--ink); text-decoration: none; }
   .menu a:hover { background: var(--brand-soft); }
-  .menu .ico { width: 34px; height: 34px; flex: none; border-radius: 9px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand-ink); }
+  .menu .ico { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand-ink); }
   .menu .ico svg { width: 17px; height: 17px; }
   .menu b { display: block; font-weight: 600; font-size: 14.5px; }
   .menu small { color: var(--muted); font-size: 12.5px; }
   .menu hr { border: 0; border-top: 1px solid var(--line); margin: 6px 4px; }
 
-  /* Hero: the card about Vildana, then the assistant right under it */
-  main { flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: 44px 20px 24px; }
-  body:not(.chatting) main { flex: 0 0 auto; max-width: 1040px; padding: 52px 20px 0; }
-  .hero { display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 40px; align-items: center; }
-  .portrait { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; display: block; justify-self: end; border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--line), var(--shadow); }
-  h1 { font: 600 clamp(36px, 5.6vw, 58px)/1.05 var(--serif); letter-spacing: -.02em; margin: 0 0 8px; }
-  .hrole { font: 500 19px/1.3 var(--sans); color: var(--brand-ink); margin: 0 0 14px; }
-  .lead { color: var(--muted); max-width: 62ch; margin: 0; font-size: 17px; line-height: 1.5; text-wrap: pretty; }
-  .lead strong { color: var(--ink); font-weight: 600; }
-  .ask-lead { font: 500 16.5px/1.4 var(--sans); margin: 34px 0 0; }
-  body:not(.chatting) .composer-wrap { position: static; padding-top: 10px; background: none; }
-  body:not(.chatting) .composer, body:not(.chatting) .count { max-width: 1000px; }
-  /* Portfolio strip: only on the start screen; in the chat the button and the assistant's links take over */
-  .strip { width: 100%; max-width: 1040px; margin: 0 auto; padding: 44px 20px 12px; }
-  body.chatting .strip { display: none; }
-  .strip h2 { font: 600 24px/1.15 var(--sans); letter-spacing: -.015em; margin: 0 0 4px; }
-  .strip .sub { color: var(--muted); margin: 0 0 16px; font-size: 15px; }
-  .cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
-  .card { position: relative; display: flex; flex-direction: column; padding: 16px 16px 14px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); transition: border-color .2s, box-shadow .2s; }
-  .card:hover { border-color: var(--faint); box-shadow: var(--shadow); }
-  .card .st { font: 600 11.5px/1.3 var(--sans); color: var(--muted); margin: 0 0 6px; }
-  .card h3 { font: 600 15.5px/1.25 var(--sans); letter-spacing: -.01em; margin: 0; text-wrap: balance; }
-  .card a { margin-top: auto; padding-top: 12px; font: 500 14px/1.2 var(--sans); color: var(--brand-ink); text-decoration: none; }
-  .card a::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }
-  .card a::after { content: "\203A"; display: inline-block; margin-left: 4px; transition: transform .2s; }
-  .card:hover a::after { transform: translateX(3px); }
+  /* ── Start screen: who, the hook, the assistant. Free space splits above and below, so the block sits in the middle ── */
+  main { flex: 1 0 auto; width: 100%; max-width: 760px; margin: 0 auto; padding: 20px 20px 24px; }
+  body:not(.chatting) main { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-end; max-width: 1040px; padding: 28px 20px 30px; }
+  .intro { text-align: center; }
+  .me {
+    display: inline-flex; align-items: center; gap: 12px; margin: 0 0 30px; padding: 6px 18px 6px 6px; text-align: left;
+    border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--surface) 78%, transparent); box-shadow: var(--shadow);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  }
+  .me img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; display: block; }
+  .me b { display: block; font: 600 15px/1.2 var(--sans); letter-spacing: -.01em; }
+  .me span { display: block; font: 500 12.5px/1.3 var(--sans); color: var(--muted); }
+  h1 { font: 600 clamp(42px, 6.4vw, 76px)/1.02 var(--serif); letter-spacing: -.03em; margin: 0 0 22px; text-wrap: balance; }
+  html[lang="de"] h1 { font-size: clamp(32px, 4.6vw, 58px); }   /* the German hook is twice as long: keep it to two lines on a laptop */
+  h1 em { font-style: normal; color: var(--brand); text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: .055em; text-underline-offset: .14em; }
+  .lead { color: var(--muted); max-width: 540px; margin: 0 auto; font-size: 17.5px; line-height: 1.55; text-wrap: pretty; }
 
-  /* Suggestion pills: in the hero before the first question, above the composer afterwards */
-  .suggest { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; max-width: 1000px; margin: 12px auto 0; }
-  .chip.jd { border-color: var(--brand); color: var(--brand-ink); }
+  /* ── Composer: the centre of the page. A slow green/gold ring shows it is alive ── */
+  @property --a { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+  @keyframes ring { to { --a: 360deg; } }
+  .composer-wrap { position: sticky; bottom: 0; z-index: 5; padding: 12px 20px calc(14px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 14px); }
+  body:not(.chatting) .composer-wrap { position: static; flex: 1 1 auto; padding-top: 0; background: none; }
+  .composer {
+    position: relative; max-width: 720px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px;
+    padding: 10px 10px 10px 20px; border-radius: 22px; border: 1.5px solid transparent;
+    background:
+      linear-gradient(var(--surface), var(--surface)) padding-box,
+      conic-gradient(from var(--a), var(--brand), var(--gold), color-mix(in srgb, var(--brand) 25%, var(--line)), var(--brand)) border-box;
+    box-shadow: var(--shadow); animation: ring 9s linear infinite;
+  }
+  .composer::before {
+    content: ""; position: absolute; inset: 4px; z-index: -1; border-radius: inherit; pointer-events: none;
+    background: conic-gradient(from var(--a), var(--brand), var(--gold), transparent 55%, var(--brand));
+    filter: blur(24px); opacity: .32; animation: ring 9s linear infinite;
+  }
+  body.chatting .composer, body.chatting .composer::before { animation-play-state: paused; }
+  body.chatting .composer::before { opacity: .16; }
+  body.chatting .composer:focus-within, body.chatting .composer:focus-within::before { animation-play-state: running; }
+  textarea { flex: 1; border: 0; outline: 0; resize: none; background: transparent; color: var(--ink); font: 16.5px/1.5 var(--sans); padding: 8px 0; max-height: 180px; }
+  body:not(.chatting) textarea { font-size: 17.5px; padding: 10px 0; }
+  textarea::placeholder { color: var(--faint); }
+  textarea:focus-visible { outline: none; }
+  .composer:focus-within { box-shadow: var(--shadow), 0 0 0 4px color-mix(in srgb, var(--brand) 14%, transparent); }
+  .send { flex: none; width: 44px; height: 44px; border-radius: 15px; border: 0; cursor: pointer; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; transition: transform .15s, background .2s; }
+  .send:not(:disabled):hover { transform: translateX(2px); }
+  .send:disabled { background: color-mix(in srgb, var(--line) 85%, var(--surface)); color: var(--faint); cursor: default; }
+  .send svg { width: 19px; height: 19px; }
+  .count { max-width: 720px; margin: 6px auto 0; text-align: right; font-size: 12.5px; color: var(--faint); }
+  .count:empty { display: none; }
+  .count.over { color: var(--danger); font-weight: 500; }
+
+  /* Starter questions under the composer; follow-ups above it once the chat runs */
+  .suggest { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 800px; margin: 16px auto 0; }
   .chip {
-    padding: 10px 16px; border-radius: 999px; cursor: pointer; background: var(--surface);
-    border: 1px solid var(--line); color: var(--ink); font: 500 14.5px/1.3 var(--sans); box-shadow: var(--shadow); transition: transform .12s, border-color .12s;
+    padding: 9px 15px; border-radius: 999px; cursor: pointer; border: 1px solid var(--line); color: var(--ink);
+    background: color-mix(in srgb, var(--surface) 82%, transparent); font: 500 14px/1.3 var(--sans);
+    transition: transform .15s, border-color .15s, background .15s;
   }
   .chip:hover { transform: translateY(-1px); border-color: var(--brand); }
+  .chip.jd { background: var(--brand-soft); border-color: transparent; color: var(--brand-ink); }
+  .chip.jd:hover { border-color: var(--brand); }
   .followups { display: none; max-width: 720px; margin: 0 auto 10px; gap: 8px; flex-wrap: wrap; padding: 2px 2px 4px; }
   .followups::-webkit-scrollbar { display: none; }
   body.chatting .followups { display: flex; }
-  .followups .chip { flex: none; padding: 8px 14px; font-size: 13.5px; box-shadow: none; }
+  .followups .chip { flex: none; padding: 7px 13px; font-size: 13.5px; }
   .followups .chip.reset { color: var(--muted); border-style: dashed; }
-  .followups .chip:disabled { opacity: .5; cursor: default; transform: none; }
 
-  /* Conversation */
   body.chatting .intro, body.chatting .suggest { display: none; }
-  body.chatting main { padding-top: 20px; }
-  .log { display: flex; flex-direction: column; gap: 22px; margin-top: 24px; }
-  .msg { display: flex; gap: 12px; animation: in .22s ease; scroll-margin: 84px 0 150px; }
-  @keyframes in { from { opacity: 0; transform: translateY(4px); } }
+
+  .note { margin: 0; padding: 0 16px 18px; text-align: center; font-size: 12.5px; color: var(--faint); }
+  body.chatting .note { display: none; }
+  .note a { color: var(--muted); text-underline-offset: 2px; }
+
+  /* ── Conversation ── */
+  .log { display: flex; flex-direction: column; gap: 26px; margin-top: 8px; }
+  .msg { display: flex; gap: 12px; animation: in .25s ease; scroll-margin: 84px 0 150px; }
+  @keyframes in { from { opacity: 0; transform: translateY(6px); } }
   .msg.user { justify-content: flex-end; }
-  .msg.user .body { background: var(--brand-soft); padding: 10px 14px; border-radius: 16px 16px 4px 16px; max-width: 80%; white-space: pre-wrap; }
-  .msg.bot .who { flex: none; width: 28px; height: 28px; border-radius: 50%; margin-top: 2px; background: var(--brand-soft); border: 1px solid var(--line); display: grid; place-items: center; }
-  .msg.bot .who svg { width: 14px; height: 14px; fill: var(--accent); }
-  .msg.bot .col { flex: 1; min-width: 0; }
-  .msg.bot .tag { font: 600 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); margin: 6px 0 4px; }
-  .msg.bot .body { min-width: 0; flex: 1; }
+  .msg.user .body { background: var(--brand-soft); padding: 10px 15px; border-radius: 18px 18px 5px 18px; max-width: 80%; white-space: pre-wrap; }
+  .msg.bot .who { flex: none; width: 30px; height: 30px; border-radius: 50%; margin-top: 1px; display: grid; place-items: center; background: conic-gradient(from 210deg, var(--brand), var(--gold), var(--brand)); }
+  .msg.bot .who svg { width: 14px; height: 14px; fill: #fff; }
+  .msg.bot .col { flex: 1; min-width: 0; scroll-margin-top: 84px; }
+  .msg.bot .tag { font: 600 11px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 6px 0 6px; }
+  .msg.bot .body { min-width: 0; flex: 1; font-size: 16px; line-height: 1.65; }
   .body > :first-child { margin-top: 0; } .body > :last-child { margin-bottom: 0; }
-  .body p { margin: 0 0 .7em; } .body ul, .body ol { margin: 0 0 .7em; padding-left: 1.3em; } .body li { margin: .15em 0; }
+  .body p { margin: 0 0 .75em; } .body ul, .body ol { margin: 0 0 .75em; padding-left: 1.3em; } .body li { margin: .2em 0; }
   .body em { color: var(--muted); } .body strong { font-weight: 600; }
+  .body a { text-underline-offset: 2px; }
   .body code { font-size: .9em; background: var(--brand-soft); padding: 1px 5px; border-radius: 5px; }
-  .table-wrap { overflow-x: auto; margin: .4em 0 .8em; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .table-wrap { overflow-x: auto; margin: .4em 0 .8em; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
   .body table { border-collapse: collapse; width: 100%; font-size: 14px; }
   .body th, .body td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
   .body tr:last-child td { border-bottom: 0; }
-  .body th { font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: color-mix(in srgb, var(--bg) 60%, var(--surface)); white-space: nowrap; }
+  .body th { font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: color-mix(in srgb, var(--bg) 60%, var(--surface)); white-space: nowrap; }
   .body td:last-child { white-space: nowrap; }
+  /* Demos shown inside the chat (built on the page, no request to the assistant) */
+  .demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin: 12px 0 10px; }
+  .demo { display: flex; flex-direction: column; gap: 4px; padding: 14px 14px 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); text-decoration: none; transition: border-color .2s, transform .2s; }
+  .demo:hover { border-color: var(--brand); transform: translateY(-1px); }
+  .demo .st { display: flex; align-items: flex-start; gap: 7px; font: 500 12px/1.3 var(--sans); color: var(--muted); }
+  .demo .st::before { content: ""; flex: none; width: 7px; height: 7px; margin-top: 4px; border-radius: 50%; background: var(--brand); }
+  .demo.pilot .st::before { background: var(--gold); }
+  .demo b { font: 600 15px/1.25 var(--sans); letter-spacing: -.01em; }
+  .demo .go { margin-top: 6px; font: 500 13.5px var(--sans); color: var(--brand-ink); }
   /* Waiting: the real steps of the workflow; the timings are estimates until the answer arrives */
-  .steps { border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; font-size: 13.5px; color: var(--muted); max-width: 520px; }
+  .steps { border: 1px solid var(--line); border-radius: 16px; padding: 10px 14px; font-size: 13.5px; color: var(--muted); max-width: 520px; background: color-mix(in srgb, var(--surface) 70%, transparent); }
   .step { display: grid; grid-template-columns: 16px auto 1fr auto; align-items: center; gap: 10px; padding: 3px 0; }
-  .step i { font-style: normal; font-weight: 600; text-align: center; color: var(--line); }
-  .step.done i { color: #1f7a4d; } .step.on i { color: var(--brand); animation: blink 1.2s infinite; }
+  .step i { font-style: normal; font-weight: 600; text-align: center; color: var(--line-strong); }
+  .step.done i { color: var(--brand); } .step.on i { color: var(--gold); animation: blink 1.2s infinite; }
   .step.on { color: var(--ink); }
-  .step .sys { font: 500 11px/18px var(--sans); color: var(--muted); background: color-mix(in srgb, var(--line) 45%, var(--surface)); border-radius: 6px; padding: 0 7px; white-space: nowrap; }
+  .step .sys { font: 500 11px/18px var(--sans); color: var(--muted); background: color-mix(in srgb, var(--line) 55%, var(--surface)); border-radius: 6px; padding: 0 7px; white-space: nowrap; }
   .step.on .sys { background: var(--brand-soft); color: var(--brand-ink); }
   .step .t { color: var(--faint); font-variant-numeric: tabular-nums; }
   @keyframes blink { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
-  .meta { margin-top: 6px; font-size: 12px; color: var(--faint); }
-  .nudge { position: fixed; right: 20px; bottom: calc(112px + env(safe-area-inset-bottom)); z-index: 12; background: var(--ink); color: var(--bg); border: 0; border-radius: 999px; padding: 10px 16px; font: 500 14px var(--sans); box-shadow: 0 8px 24px rgba(0,0,0,.18); cursor: pointer; animation: in .3s ease; }
+  .meta { margin-top: 8px; font-size: 12px; color: var(--faint); }
+  .nudge { position: fixed; right: 20px; bottom: calc(118px + env(safe-area-inset-bottom)); z-index: 12; background: var(--ink); color: var(--bg); border: 0; border-radius: 999px; padding: 11px 18px; font: 500 14px var(--sans); box-shadow: 0 10px 30px rgba(0, 0, 0, .2); cursor: pointer; animation: in .3s ease; }
   .nudge[hidden] { display: none; }
 
-  /* Composer */
-  .composer-wrap { position: sticky; bottom: 0; padding: 12px 20px calc(14px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 12px); }   /* opaque under the chips, a short fade above */
-  .composer { max-width: 720px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 8px 8px 8px 16px; box-shadow: var(--shadow); }
-  .composer:focus-within { border-color: var(--brand); }
-  textarea { flex: 1; border: 0; outline: 0; resize: none; background: transparent; color: var(--ink); font: 15.5px/1.5 var(--sans); padding: 7px 0; max-height: 180px; }
-  textarea::placeholder { color: var(--faint); }
-  .send { flex: none; width: 38px; height: 38px; border-radius: 12px; border: 0; cursor: pointer; background: var(--brand); color: #fff; display: grid; place-items: center; }
-  .send:disabled { background: var(--line); cursor: default; }
-  .send svg { width: 18px; height: 18px; }
-  .count { max-width: 720px; margin: 4px auto 0; text-align: right; font-size: 12px; color: var(--faint); min-height: 0; }
-  .count:empty { display: none; }
-  .note { max-width: 760px; margin: 8px auto 0; padding: 0 16px 16px; text-align: center; font-size: 12px; color: var(--faint); }
-  body.chatting .note { display: none; }
-  .note a { color: var(--muted); text-decoration: underline; }
-  .legal { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: grid; place-items: center; padding: 20px; z-index: 30; }
+  /* ── Dialogs ── */
+  .legal { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 20px; background: rgba(10, 14, 12, .38); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
   .legal[hidden] { display: none; }
-  .legal-box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; max-width: 560px; max-height: min(85vh, calc(100dvh - 40px)); overflow: auto; overscroll-behavior: contain; font-size: 14px; }
-  .legal-box h2 { margin: 0 0 10px; font: 600 18px var(--sans); }
+  .legal-box { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 24px 26px; max-width: 560px; max-height: min(85vh, calc(100dvh - 40px)); overflow: auto; overscroll-behavior: contain; font-size: 14px; box-shadow: 0 24px 64px rgba(0, 0, 0, .22); }
+  .legal-box h2 { margin: 0 0 12px; font: 600 22px/1.2 var(--serif); letter-spacing: -.01em; }
   .legal-box p { margin: 0 0 10px; color: var(--muted); }
   .legal-box .btn { margin-top: 6px; }
-  /* "About the assistant": five steps instead of prose */
-  .legal-box.wide { max-width: 760px; }
-  .legal-box.wide { scrollbar-width: thin; }
+  .legal-box.wide { max-width: 760px; scrollbar-width: thin; }
   .bp-steps { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 12px; }
   .bp-step { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; }
-  .bp-num { width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: #fff; font: 600 13px var(--sans); display: grid; place-items: center; flex: none; }
+  .bp-num { width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: var(--on-brand); font: 600 13px var(--sans); display: grid; place-items: center; flex: none; }
   .bp-txt { flex: 1; min-width: 0; }
   .bp-txt b { display: block; font-size: 14.5px; line-height: 1.3; font-weight: 600; color: var(--ink); }
   .bp-txt span { font-size: 13px; color: var(--muted); line-height: 1.35; }
   .bp-tag { flex: none; font: 500 12px var(--sans); color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
-  .bp-data { border: 1px dashed var(--faint); border-radius: 12px; padding: 10px 14px; font-size: 13.5px; color: var(--muted); line-height: 1.45; margin: 0 0 10px; }
+  .bp-data { border: 1px dashed var(--line-strong); border-radius: 12px; padding: 10px 14px; font-size: 13.5px; color: var(--muted); line-height: 1.45; margin: 0 0 10px; }
   .bp-data b, .bp-foot b { color: var(--ink); font-weight: 600; }
   .bp-foot { font-size: 13.5px; color: var(--muted); margin: 0 0 12px; }
-  @media (max-width: 640px) { .bp-step { flex-wrap: wrap; } .bp-txt { flex: 1 1 150px; } .bp-tag { margin-left: 46px; max-width: calc(100% - 46px); white-space: normal; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .composer, .composer::before, .msg, .nudge { animation: none; }
+    .chip, .send, .demo { transition: none; }
+  }
 
   @media (max-width: 640px) {
-    .top { padding: 10px 16px; }
-    .btn.hide-sm { display: none; }
-    .brand { font-size: 14px; gap: 8px; }
-    .who small { display: block; font-size: 11.5px; white-space: normal; max-width: 150px; line-height: 1.2; }
-    body.chatting .who { display: none; }
-    body.chatting .btn.hide-sm { display: none; }
-    .hero { grid-template-columns: 1fr; gap: 16px; }
-    .portrait { width: 96px; height: 96px; justify-self: start; order: -1; }
-    .hrole { font-size: 16px; }
-    .ask-lead { margin-top: 26px; }
-    .cards { grid-template-columns: 1fr; gap: 10px; }
-    .strip { padding: 36px 16px 8px; }
-    .nudge { right: 12px; bottom: calc(104px + env(safe-area-inset-bottom)); }
-    .lang button { padding: 0 8px; }
-    .btn { padding: 0 12px; }
+    .top { padding: 10px 14px; }
+    .hide-sm { display: none !important; }
+    .brand .who { display: none; }
+    .lang button { min-width: 32px; padding: 0 6px; }
+    .btn { padding: 0 14px; }
+    .btn.ghost { padding: 0 10px; }
     .talk summary .chev { display: none; }
-    main { padding: 30px 16px 16px; }
-    .lead { font-size: 15.5px; }
-    .suggest { gap: 8px; margin-top: 24px; }
-    .chip { padding: 9px 13px; font-size: 13.5px; }
+    main, body:not(.chatting) main { padding-left: 16px; padding-right: 16px; }
+    body:not(.chatting) main { padding-top: 16px; padding-bottom: 22px; }
+    .me { margin-bottom: 22px; padding-right: 14px; }
+    .me img { width: 38px; height: 38px; }
+    h1 { font-size: clamp(36px, 10.4vw, 46px); margin-bottom: 16px; }
+    .lead { font-size: 16px; }
+    .composer-wrap, body:not(.chatting) .composer-wrap { padding-left: 12px; padding-right: 12px; }
+    .composer { padding-left: 16px; }
+    .suggest { gap: 7px; margin-top: 14px; }
+    .chip { padding: 8px 12px; font-size: 13px; }
+    .chip.jd { order: -1; }
     .msg.user .body { max-width: 88%; }
-    .composer-wrap { padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); }
-    .note { font-size: 11.5px; }
+    .nudge { right: 12px; bottom: calc(108px + env(safe-area-inset-bottom)); }
     .followups { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-bottom: 8px; }
-    .menu { position: fixed; left: 12px; right: 12px; top: 62px; width: auto; }
+    .menu { position: fixed; left: 12px; right: 12px; top: 60px; width: auto; }
+    .demo-grid { grid-template-columns: 1fr 1fr; }
+    .bp-step { flex-wrap: wrap; } .bp-txt { flex: 1 1 150px; } .bp-tag { margin-left: 38px; max-width: calc(100% - 38px); white-space: normal; }
     .table-wrap { border: 0; background: none; overflow: visible; }
     .body table, .body tbody, .body tr, .body td { display: block; width: 100%; }
     .body thead { display: none; }
@@ -250,36 +284,37 @@
     .body td:first-child { font-weight: 600; }
     .body td[data-label]:not(:first-child)::before { content: attr(data-label) " · "; color: var(--faint); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
   }
+  @media (max-width: 380px) { .demo-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
   <header class="top">
-    <div class="brand">
-      <img class="brand-photo" id="brand-photo" src="photo.jpg" alt="" width="32" height="32">
+    <div class="brand" aria-hidden="true">
+      <img class="brand-photo" src="photo.jpg" alt="" width="32" height="32">
       <span class="who"><span class="nm">Vildana Razumova</span><small id="t-role">Data Scientist · AI Automation</small></span>
     </div>
     <nav class="actions">
       <div class="lang" id="lang" role="group" aria-label="Language">
         <button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="de" lang="de">DE</button><button type="button" data-lang="ru" lang="ru">RU</button>
       </div>
-      <a class="btn hide-sm chat-only" href="portfolio.html" id="t-examples">Portfolio</a>
+      <a class="btn ghost" href="portfolio.html" id="t-examples">Portfolio</a>
       <button type="button" class="btn hide-sm" id="built-btn" hidden><span id="t-built-btn">About the assistant</span></button>
       <details class="talk" id="talk">
         <summary class="btn primary"><span id="t-talk">Contact</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
         </summary>
-        <div class="menu" role="menu">
-          <a id="c-linkedin" href="#" target="_blank" rel="noopener" role="menuitem">
+        <div class="menu">
+          <a id="c-linkedin" href="#" target="_blank" rel="noopener">
             <span class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3v-11zm6.5 0h3.8v1.5h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.6 4.78 6v5.55h-4v-4.92c0-1.17-.02-2.68-1.63-2.68-1.64 0-1.89 1.28-1.89 2.6v5h-4v-11z"/></svg></span>
             <span><b>LinkedIn</b><small id="t-li">Profile and recommendations</small></span></a>
-          <a id="c-telegram" href="#" target="_blank" rel="noopener" role="menuitem">
+          <a id="c-telegram" href="#" target="_blank" rel="noopener">
             <span class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.6 20c-.25 1.1-.9 1.37-1.82.85l-5.03-3.7-2.43 2.33c-.27.27-.49.49-1 .49l.36-5.12 9.32-8.42c.4-.36-.09-.56-.63-.2L5.9 13.5l-4.96-1.55c-1.08-.34-1.1-1.08.22-1.6L20.6 2.86c.9-.33 1.69.2 1.3 1.44z"/></svg></span>
             <span><b>Telegram</b><small id="t-tg">Message her directly</small></span></a>
-          <a id="c-email" href="#" role="menuitem">
+          <a id="c-email" href="#">
             <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
             <span><b id="t-em">Email</b><small id="c-email-label">—</small></span></a>
           <hr>
-          <a id="c-cv" href="#" download="Vildana Razumova - Data Scientist, AI Automation Specialist - CV.pdf" role="menuitem">
+          <a id="c-cv" href="#" download="Vildana Razumova - Data Scientist, AI Automation Specialist - CV.pdf">
             <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg></span>
             <span><b id="t-cv">CV as PDF</b><small id="t-cv-s">Download, two pages</small></span></a>
         </div>
@@ -289,15 +324,12 @@
 
   <main>
     <section class="intro">
-      <div class="hero">
-        <div>
-          <h1 class="nm">Vildana Razumova</h1>
-          <p class="hrole" id="t-hrole">Data Scientist · AI Automation</p>
-          <p class="lead" id="t-lead"></p>
-        </div>
-        <img class="portrait" id="portrait" src="photo.jpg" alt="Vildana Razumova" width="200" height="200">
+      <div class="me">
+        <img id="portrait" src="photo.jpg" alt="Vildana Razumova" width="44" height="44">
+        <div><b class="nm">Vildana Razumova</b><span id="t-hrole">Data Scientist · AI Automation</span></div>
       </div>
-      <p class="ask-lead" id="t-ask"></p>
+      <h1 id="t-h1">Don't read my CV.<br><em>Ask it.</em></h1>
+      <p class="lead" id="t-lead">I'm Vildana's AI. Ask me about her experience, projects, skills and the way she works.</p>
     </section>
 
     <div class="log" id="log" aria-live="polite"></div>
@@ -306,30 +338,25 @@
   <div class="composer-wrap" id="composer-wrap">
     <div class="followups" id="followups" aria-label="Follow-up questions"></div>
     <form class="composer" id="form">
-      <label for="input" class="sr-only">Your message</label>
-      <textarea id="input" rows="1" maxlength="1500" placeholder="Ask anything about Vildana…"></textarea>
+      <label for="input" class="sr-only" id="t-input-label">Your message</label>
+      <textarea id="input" rows="1" placeholder="Ask about her experience and projects…"></textarea>
       <button class="send" id="send" type="submit" aria-label="Send" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
     </form>
     <p class="count" id="count" aria-live="polite"></p>
     <section class="suggest" id="suggest" aria-label="Suggested questions">
-      <button class="chip" data-i="0" data-q="Tell me about Vildana in 30 seconds.">Vildana in 30 seconds</button>
-      <button class="chip" data-i="1" data-q="What has she built?">What has she built?</button>
-      <button class="chip" data-i="2" data-q="How would I know if she'd fit my team?">Would she fit my team?</button>
+      <button class="chip" type="button" data-i="0">Vildana in 30 seconds</button>
+      <button class="chip" type="button" data-i="1">What has she built?</button>
+      <button class="chip" type="button" data-i="2">Would she fit my team?</button>
       <button class="chip jd" id="jd-chip" type="button">Paste a job description →</button>
     </section>
   </div>
-  <section class="strip" id="strip" aria-labelledby="t-strip-h">
-    <h2 id="t-strip-h">Portfolio</h2>
-    <p class="sub" id="t-strip-sub"></p>
-    <div class="cards" id="strip-cards"></div>
-  </section>
   <button type="button" class="nudge" id="nudge" hidden>Talk to Vildana →</button>
 
-  <p class="note"><span id="t-note">AI answers based on Vildana's profile. Please confirm important details with her directly.</span> <a href="portfolio.html" id="t-examples-link">Portfolio</a> · <a href="#privacy" id="t-privacy-link">Privacy</a> · <a href="#built" id="t-built-link">How it's built</a></p>
+  <p class="note"><span id="t-note">AI answers based on Vildana's profile. Please confirm important details with her directly.</span> <a href="#privacy" id="t-privacy-link">Privacy</a> · <a href="#built" id="t-built-link">How it's built</a></p>
 
-  <section class="legal" id="privacy" hidden aria-labelledby="t-privacy-h">
+  <section class="legal" id="privacy" hidden role="dialog" aria-modal="true" aria-labelledby="t-privacy-h">
     <div class="legal-box">
       <h2 id="t-privacy-h">Privacy</h2>
       <div id="t-privacy-body"></div>
@@ -337,7 +364,7 @@
     </div>
   </section>
 
-  <section class="legal" id="built" hidden aria-labelledby="t-built-h">
+  <section class="legal" id="built" hidden role="dialog" aria-modal="true" aria-labelledby="t-built-h">
     <div class="legal-box wide">
       <h2 id="t-built-h">How this assistant is built</h2>
       <div class="bp-steps" id="bp-steps"></div>
@@ -366,6 +393,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
 `+u),V&&(u=vn(u)),N&&At?F(u):u},t.setConfig=function(){let e=arguments.length>0&&arguments[0]!==void 0?arguments[0]:{};nn(e),Tt=!0,Et=L,Dt=R},t.clearConfig=function(){$t=null,Tt=!1,Et=null,Dt=null,N=Xe,P=``},t.isValidAttribute=function(e,t,n){$t||nn({});let r=Y(e),i=Y(t);return On(r,i,n)},t.addHook=function(e,t){typeof t==`function`&&x(I,e)&&ie(I[e],t)},t.removeHook=function(e,t){if(x(I,e)){if(t!==void 0){let n=ne(I[e],t);return n===-1?void 0:ae(I[e],n,1)[0]}return re(I[e])}},t.removeHooks=function(e){x(I,e)&&(I[e]=[])},t.removeAllHooks=function(){I=Ke()},t}return Je()});
 //# sourceMappingURL=purify.min.js.map
 </script>
+
 <script>
   // ── Settings: replace with your own ─────────────────────────────
   const CONFIG = {
@@ -388,7 +416,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   // close the contact menu on outside click / Esc
   const talk = $("talk");
   document.addEventListener("click", (e) => { if (talk.open && !talk.contains(e.target)) talk.open = false; });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") talk.open = false; });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { talk.open = false; $("privacy").hidden = true; $("built").hidden = true; } });
 
   let lastLang = "";
   const asked = new Set();        // questions already asked in this conversation (not offered again as chips)
@@ -403,9 +431,11 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   const T = {
     en: { role: "Data Scientist · AI Automation", talk: "Contact", examples: "Portfolio", menu: ["Profile and recommendations", "Message her directly", "Email", "CV as PDF", "Download, two pages"],
           bot: "AI assistant",
-          lead: "<strong>Leads ML projects at a tour operator, after 10 years in banking risk management, analytics and project management.</strong> Builds AI-first solutions. Every project has its own Second Brain — a knowledge base that lets people onboard without her.",
+          h1: "Don't read my CV.<br><em>Ask it.</em>", phx: ["What has she built?", "What is she working on now?", "Is she open to offers?", "Tell me something interesting", "How does this assistant work?"],
+          demosAll: "Descriptions and stack of each project", long: "too long — paste only the requirements", label: "Your message",
+          lead: "I'm Vildana's AI. Ask me about her experience, projects, skills and the way she works.",
           ask: "Don't read the CV — ask her AI assistant.", jd: ["Paste a job description →", "How well does Vildana's experience fit this role?\n\n"],
-          strip: ["Portfolio", "Demonstrations of real projects on synthetic data. Go into a project and see how they work.", "Open the demo", "Open the flow"],
+          strip: ["Portfolio", "Demonstrations of real projects on synthetic data. Open a project to see how it works.", "Open the demo", "Open the flow"],
           cards: [["Pilot", "Price revisions with comments"], ["In production since March 2026", "External market signals"], ["In production since July 2026", "Payments assistant"], ["In production since May 2026", "AI sales analyst"], ["In production since May 2026", "System alerts"]],
           wait: [["Page · GitHub Pages", "question sent"], ["n8n · Railway", "language and limits check"], ["n8n · Railway", "knowledge base and rules · prompt cache"], ["Anthropic API", "Claude is writing the answer…"], ["n8n → page", "checking and cleaning the answer"]],
           meta: ["{s} s", "prompt cache ✓", "prompt cache –", "{n} tokens"], nudge: "Talk to Vildana →",
@@ -419,9 +449,11 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
           more: [["Show me the portfolio", "Show me the portfolio with live examples of her work."], ["Is she open to offers?", "Is she open to new offers?"], ["What is she working on now?", "What is she working on right now?"], ["How does this assistant work?", "How does this assistant work?"]] },
     de: { role: "Data Scientist · KI-Automatisierung", talk: "Kontakt", examples: "Portfolio", menu: ["Profil und Empfehlungen", "Direkt schreiben", "E-Mail", "Lebenslauf als PDF", "Download, zwei Seiten"],
           bot: "KI-Assistent",
-          lead: "<strong>Leitet ML-Projekte bei einem Reiseveranstalter, davor 10 Jahre Risikomanagement, Analytik und Projektmanagement im Bankwesen.</strong> Baut AI-first-Lösungen. Für jedes Projekt nutzt sie den Second-Brain-Ansatz — eine Wissensbasis, mit der das Onboarding ins Projekt auch ohne sie gelingt.",
+          h1: "Lesen Sie nicht meinen Lebenslauf.<br><em>Fragen Sie ihn.</em>", phx: ["Was hat sie gebaut?", "Woran arbeitet sie gerade?", "Ist sie offen für Angebote?", "Etwas Interessantes, bitte", "Wie funktioniert dieser Assistent?"],
+          demosAll: "Beschreibung und Stack zu jedem Projekt", long: "zu lang — fügen Sie nur die Anforderungen ein", label: "Ihre Nachricht",
+          lead: "Ich bin Vildanas KI. Fragen Sie mich nach ihrer Erfahrung, ihren Projekten, Fähigkeiten und ihrer Arbeitsweise.",
           ask: "Lesen Sie nicht den Lebenslauf — fragen Sie ihren KI-Assistenten.", jd: ["Stellenbeschreibung einfügen →", "Wie gut passt Vildanas Erfahrung zu dieser Stelle?\n\n"],
-          strip: ["Portfolio", "Demonstrationen realer Projekte auf synthetischen Daten. Gehen Sie in ein Projekt und sehen Sie, wie sie aufgebaut sind.", "Demo öffnen", "Ablauf öffnen"],
+          strip: ["Portfolio", "Demonstrationen realer Projekte auf synthetischen Daten. Öffnen Sie ein Projekt und sehen Sie, wie es funktioniert.", "Demo öffnen", "Ablauf öffnen"],
           cards: [["Pilot", "Preisrevisionen mit Kommentaren"], ["Im Einsatz seit März 2026", "Externe Marktsignale"], ["Im Einsatz seit Juli 2026", "Zahlungsassistent"], ["Im Einsatz seit Mai 2026", "KI-Verkaufsanalyst"], ["Im Einsatz seit Mai 2026", "Systemmeldungen"]],
           wait: [["Seite · GitHub Pages", "Frage gesendet"], ["n8n · Railway", "Sprache und Limits prüfen"], ["n8n · Railway", "Wissensbasis und Regeln · Prompt-Cache"], ["Anthropic API", "Claude schreibt die Antwort …"], ["n8n → Seite", "Antwort wird geprüft und bereinigt"]],
           meta: ["{s} s", "Prompt-Cache ✓", "Prompt-Cache –", "{n} Tokens"], nudge: "Mit Vildana sprechen →",
@@ -435,9 +467,11 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
           more: [["Zeig mir das Portfolio", "Zeigen Sie mir das Portfolio mit Live-Beispielen ihrer Arbeit."], ["Ist sie offen für Angebote?", "Ist sie offen für neue Angebote?"], ["Woran arbeitet sie gerade?", "Woran arbeitet sie gerade?"], ["Wie funktioniert dieser Assistent?", "Wie funktioniert dieser Assistent?"]] },
     ru: { role: "Дата-сайентист · ИИ-автоматизация", talk: "Связаться", examples: "Портфолио", menu: ["Профиль и рекомендации", "Написать напрямую", "Почта", "Резюме в PDF", "Скачать, две страницы"],
           bot: "ИИ-ассистент",
-          lead: "<strong>Ведёт ML‑проекты в туроператоре, до этого — 10 лет в банковском риск‑менеджменте, аналитике и проджект‑менеджменте.</strong> Строит AI‑first решения. Для каждого проекта использует подход Second Brain — базу знаний, благодаря которой онбординг в проект проходит без её участия.",
+          h1: "Не читайте моё резюме.<br><em>Спросите его.</em>", phx: ["Что она построила?", "Над чем она работает сейчас?", "Открыта ли она к предложениям?", "Расскажи что-нибудь интересное", "Как устроен этот ассистент?"],
+          demosAll: "Описание и стек каждого проекта", long: "слишком длинно — вставьте только требования", label: "Ваше сообщение",
+          lead: "Я ИИ-ассистент Вильданы. Спросите меня о её опыте, проектах, навыках и о том, как она работает.",
           ask: "Не читайте резюме — спросите её ИИ-ассистента.", jd: ["Вставьте описание вакансии →", "Насколько опыт Вильданы подходит для этой вакансии?\n\n"],
-          strip: ["Портфолио", "Демонстрации реальных проектов на синтетических данных. Переходите в проект и посмотрите, как они устроены.", "Открыть демо", "Открыть схему"],
+          strip: ["Портфолио", "Демонстрации реальных проектов на синтетических данных. Откройте проект и посмотрите, как он устроен.", "Открыть демо", "Открыть схему"],
           cards: [["Пилот", "Ревизии цен с комментариями"], ["В эксплуатации с марта 2026", "Внешние сигналы рынка"], ["В эксплуатации с июля 2026", "Помощник по платежам"], ["В эксплуатации с мая 2026", "AI-аналитик по продажам"], ["В эксплуатации с мая 2026", "Алерты систем"]],
           wait: [["Страница · GitHub Pages", "вопрос отправлен"], ["n8n · Railway", "проверка языка и лимитов"], ["n8n · Railway", "база знаний и правила · кэш промпта"], ["Anthropic API", "Claude пишет ответ…"], ["n8n → страница", "проверка и очистка ответа"]],
           meta: ["{s} с", "кэш промпта ✓", "кэш промпта –", "{n} токенов"], nudge: "Поговорить с Вильданой →",
@@ -494,6 +528,23 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   };
   const BUILT_LABEL = { en: ["About the assistant", "Ask the assistant", "Close", "How does this assistant work?", "How this assistant is built"], de: ["Über den Assistenten", "Assistenten fragen", "Schließen", "Wie funktioniert dieser Assistent?", "So ist dieser Assistent gebaut"], ru: ["Об ассистенте", "Спросить ассистента", "Закрыть", "Как устроен этот ассистент?", "Как сделан этот ассистент"] };
   let pageLang = "en";
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let phTimer = 0;
+  function typePlaceholder() {
+    clearTimeout(phTimer);
+    const d = T[pageLang], base = matchMedia("(max-width: 640px)").matches ? d.phShort : d.ph;
+    input.placeholder = base;
+    if (calm) return;
+    let i = 0, j = 0, back = false;
+    const idle = () => document.body.classList.contains("chatting") || document.activeElement === input || input.value;
+    const step = () => {
+      if (idle()) { input.placeholder = base; j = 0; back = false; phTimer = setTimeout(step, 1500); return; }
+      const s = d.phx[i];
+      if (!back) { j += 1; input.placeholder = s.slice(0, j) + "\u258F"; if (j >= s.length) { back = true; phTimer = setTimeout(step, 1900); return; } phTimer = setTimeout(step, 48); }
+      else { j -= 2; if (j <= 0) { j = 0; back = false; i = (i + 1) % d.phx.length; input.placeholder = ""; phTimer = setTimeout(step, 380); return; } input.placeholder = s.slice(0, j); phTimer = setTimeout(step, 16); }
+    };
+    phTimer = setTimeout(step, 900);
+  }
   const NAME = { en: "Vildana Razumova", de: "Vildana Razumova", ru: "Вильдана Разумова" };
   const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   const STRIP_HREF = ["demos/revisions.html", "demos/news.html", "demos/payments.html", "demos/sales-digest.html", "demos/alerts.html"];
@@ -509,14 +560,13 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     document.documentElement.lang = l;
     document.querySelectorAll(".nm").forEach((e) => { e.textContent = NAME[l]; }); $("portrait").alt = NAME[l];
     document.title = NAME[l] + " — " + d.role;
-    $("t-lead").innerHTML = d.lead; $("t-ask").textContent = d.ask; $("t-note").textContent = d.note;
+    $("t-h1").innerHTML = d.h1; $("t-lead").textContent = d.lead; $("t-note").textContent = d.note; $("t-input-label").textContent = d.label;
     $("t-role").textContent = d.role; $("t-hrole").textContent = d.role;
     $("jd-chip").textContent = d.jd[0]; $("nudge").textContent = d.nudge;
-    $("t-strip-h").textContent = d.strip[0]; $("t-strip-sub").textContent = d.strip[1];
-    $("strip-cards").innerHTML = d.cards.map(([st, h], i) => `<article class="card"><p class="st">${esc(st)}</p><h3>${esc(h)}</h3><a href="${STRIP_HREF[i]}" aria-label="${esc(d.strip[2])} — ${esc(h)}">${esc(d.strip[2])}</a></article>`).join("");
-    document.querySelectorAll(".steps").forEach((el) => renderSteps(el, +el.dataset.on, +el.dataset.n)); $("t-talk").textContent = d.talk; $("t-examples").textContent = d.examples; $("t-examples-link").textContent = d.examples;
+
+    document.querySelectorAll(".steps").forEach((el) => renderSteps(el, +el.dataset.on, +el.dataset.n)); $("t-talk").textContent = d.talk; $("t-examples").textContent = d.examples;
     $("t-li").textContent = d.menu[0]; $("t-tg").textContent = d.menu[1]; $("t-em").textContent = d.menu[2]; $("t-cv").textContent = d.menu[3]; $("t-cv-s").textContent = d.menu[4];
-    input.placeholder = matchMedia("(max-width: 640px)").matches ? d.phShort : d.ph;
+    typePlaceholder();
     document.querySelectorAll("#suggest .chip[data-i]").forEach((c) => { const [t1, q] = d.chips[+c.dataset.i]; c.dataset.q = q; c.textContent = t1; });
     if (document.body.classList.contains("chatting")) showFollowups(lastSuggestions);
     document.querySelectorAll("#lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === l)));
@@ -588,7 +638,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
 
   async function ask(text) {
     document.body.classList.add("chatting");
-    asked.add(text);
+    asked.add(text); typePlaceholder();
     $("followups").innerHTML = "";   // no chips while waiting: they would cover the live steps
     add("user", text);
     const body = add("bot", '<div class="steps" data-on="0" data-n="1"></div>');
@@ -634,6 +684,16 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   $("nudge").addEventListener("click", () => { $("nudge").hidden = true; talk.open = true; });
   $("jd-chip").addEventListener("click", () => { const d = T[pageLang]; if (!input.value.trim()) input.value = d.jd[1]; input.focus(); input.setSelectionRange(input.value.length, input.value.length); grow(); window.scrollTo({ top: 0, behavior: "smooth" }); });
 
+  function showDemos(label, q) {
+    const d = T[pageLang];
+    document.body.classList.add("chatting"); asked.add(q);
+    add("user", label);
+    const cards = d.cards.map(([st, h], i) => `<a class="demo${i === 0 ? " pilot" : ""}" href="${STRIP_HREF[i]}" target="_blank" rel="noopener"><span class="st">${esc(st)}</span><b>${esc(h)}</b><span class="go">${esc(d.strip[2])} ›</span></a>`).join("");
+    const body = add("bot", `<p>${esc(d.strip[1])}</p><div class="demo-grid">${cards}</div><p><a href="portfolio.html">${esc(d.demosAll)} →</a></p>`);
+    body.parentElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    showFollowups([]);
+  }
+
   // ── Follow-up suggestions: the assistant proposes three next questions after each answer; static ones fill the gaps ──
   function showFollowups(list) {
     lastSuggestions = list;
@@ -645,7 +705,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     while (items.length < 3 && pool.length) items.push(pool.shift());
     for (const [label, q] of items) {
       const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = label;
-      b.addEventListener("click", () => ask(q)); box.appendChild(b);
+      b.addEventListener("click", () => (q === d.more[0][1] ? showDemos(label, q) : ask(q))); box.appendChild(b);
     }
     const r = document.createElement("button"); r.type = "button"; r.className = "chip reset"; r.textContent = "\u21ba " + d.reset;
     r.addEventListener("click", resetConversation); box.appendChild(r);
@@ -659,13 +719,17 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
 
   const MAX = 1500;   // same limit as the Guard node in n8n
   const grow = () => {
-    input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 180) + "px"; send.disabled = !input.value.trim();
-    const n = input.value.length; $("count").textContent = n > MAX * 0.8 ? `${n} / ${MAX}` : "";
+    input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 180) + "px";
+    const n = input.value.length, over = n > MAX;
+    send.disabled = !input.value.trim() || over;
+    $("count").textContent = over ? `${fmtN(n)} / ${fmtN(MAX)} — ${T[pageLang].long}` : n > MAX * 0.8 ? `${n} / ${MAX}` : "";
+    $("count").classList.toggle("over", over);
   };
   input.addEventListener("input", grow);
   input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("form").requestSubmit(); } });
-  $("form").addEventListener("submit", (e) => { e.preventDefault(); const t = input.value.trim(); if (!t) return; input.value = ""; grow(); ask(t); });
+  $("form").addEventListener("submit", (e) => { e.preventDefault(); const t = input.value.trim(); if (!t || input.value.length > MAX) return; input.value = ""; grow(); ask(t); });
   document.querySelectorAll("#suggest .chip[data-i]").forEach((c) => c.addEventListener("click", () => ask(c.dataset.q)));
+  input.addEventListener("blur", () => { if (!input.value) typePlaceholder(); });
 </script>
 </body>
 </html>
