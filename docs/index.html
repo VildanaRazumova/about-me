@@ -254,7 +254,7 @@
   <header class="top">
     <div class="brand">
       <img class="brand-photo" id="brand-photo" src="photo.jpg" alt="" width="32" height="32">
-      <span class="who"><span>Vildana Razumova</span><small id="t-role">Data Scientist · AI Automation</small></span>
+      <span class="who"><span class="nm">Vildana Razumova</span><small id="t-role">Data Scientist · AI Automation</small></span>
     </div>
     <nav class="actions">
       <div class="lang" id="lang" role="group" aria-label="Language">
@@ -289,7 +289,7 @@
     <section class="intro">
       <div class="hero">
         <div>
-          <h1>Vildana Razumova</h1>
+          <h1 class="nm">Vildana Razumova</h1>
           <p class="hrole" id="t-hrole">Data Scientist · AI Automation</p>
           <p class="lead" id="t-lead"></p>
         </div>
@@ -492,6 +492,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   };
   const BUILT_LABEL = { en: ["About the assistant", "Ask the assistant", "Close", "How does this assistant work?", "How this assistant is built"], de: ["Über den Assistenten", "Assistenten fragen", "Schließen", "Wie funktioniert dieser Assistent?", "So ist dieser Assistent gebaut"], ru: ["Об ассистенте", "Спросить ассистента", "Закрыть", "Как устроен этот ассистент?", "Как сделан этот ассистент"] };
   let pageLang = "en";
+  const NAME = { en: "Vildana Razumova", de: "Vildana Razumova", ru: "Вильдана Разумова" };
   const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   const STRIP_HREF = ["demos/revisions.html", "demos/news.html", "demos/payments.html", "demos/sales-digest.html", "demos/alerts.html"];
   function renderSteps(el, on, n) {
@@ -504,6 +505,8 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     if (!T[l]) l = "en";
     pageLang = l; const d = T[l];
     document.documentElement.lang = l;
+    document.querySelectorAll(".nm").forEach((e) => { e.textContent = NAME[l]; }); $("portrait").alt = NAME[l];
+    document.title = NAME[l] + " — " + d.role;
     $("t-lead").innerHTML = d.lead; $("t-ask").textContent = d.ask; $("t-note").textContent = d.note;
     $("t-role").textContent = d.role; $("t-hrole").textContent = d.role;
     $("jd-chip").textContent = d.jd[0]; $("nudge").textContent = d.nudge;
@@ -608,7 +611,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
       body.innerHTML = render(answer);
       // one grey line from the workflow's own logs (v1.10+); before that, only the time measured here
       const ms = Math.round(performance.now() - t0), meta = data.meta && typeof data.meta === "object" ? data.meta : null, d = T[pageLang];
-      const parts = [d.meta[0].replace("{s}", fmtS(meta && meta.ms ? meta.ms : ms))];
+      const parts = [d.meta[0].replace("{s}", fmtS(ms))];   // what the visitor actually waited (the model part alone comes in meta.ms)
       if (meta) { if (meta.model) parts.push(String(meta.model)); if (typeof meta.cache === "boolean") parts.push(meta.cache ? d.meta[1] : d.meta[2]); if (meta.tokens) parts.push(d.meta[3].replace("{n}", fmtN(+meta.tokens))); if (meta.lang) parts.push(String(meta.lang).toUpperCase()); }
       const line = document.createElement("div"); line.className = "meta"; line.textContent = parts.join(" · "); body.parentElement.appendChild(line);
       body.parentElement.scrollIntoView({ behavior: "smooth", block: "start" });
