@@ -231,8 +231,6 @@
   .step .t { color: var(--faint); font-variant-numeric: tabular-nums; }
   @keyframes blink { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
   .meta { margin-top: 8px; font-size: 12px; color: var(--faint); }
-  .nudge { position: fixed; right: 20px; bottom: calc(118px + env(safe-area-inset-bottom)); z-index: 12; background: var(--ink); color: var(--bg); border: 0; border-radius: 999px; padding: 11px 18px; font: 500 14px var(--sans); box-shadow: 0 10px 30px rgba(0, 0, 0, .2); cursor: pointer; animation: in .3s ease; }
-  .nudge[hidden] { display: none; }
 
   /* ── Dialogs ── */
   .legal { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 20px; background: rgba(10, 14, 12, .38); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
@@ -254,7 +252,7 @@
   .bp-foot { font-size: 13.5px; color: var(--muted); margin: 0 0 12px; }
 
   @media (prefers-reduced-motion: reduce) {
-    .composer, .composer::before, .msg, .nudge { animation: none; }
+    .composer, .composer::before, .msg { animation: none; }
     .chip, .send, .demo { transition: none; }
   }
 
@@ -278,7 +276,6 @@
     .chip { padding: 8px 12px; font-size: 13px; }
     .chip.jd { order: -1; }
     .msg.user .body { max-width: 88%; }
-    .nudge { right: 12px; bottom: calc(108px + env(safe-area-inset-bottom)); }
     .followups { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-bottom: 8px; }
     .menu { position: fixed; left: 12px; right: 12px; top: 60px; width: auto; }
     .demo-grid { grid-template-columns: 1fr 1fr; }
@@ -291,6 +288,11 @@
     .body td:first-child { font-weight: 600; }
     .body td[data-label]:not(:first-child)::before { content: attr(data-label) " · "; color: var(--faint); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
   }
+  .short { display: none; }
+  @media (max-width: 640px) {
+    .lead .long { display: none; } .lead .short { display: inline; }   /* phones: the short lead */
+    .suggest .chip[data-i="2"] { display: none; }
+  }
   @media (max-width: 380px) { .demo-grid { grid-template-columns: 1fr; } }
   .tools { display: none; max-width: 720px; margin: 8px auto 0; justify-content: center; align-items: center; gap: 4px; font-size: 12.5px; color: var(--faint); }
   body.chatting .tools { display: flex; }
@@ -300,7 +302,7 @@
   #print-head { display: none; }
   @media print {
     body { background: #fff !important; color: #000; }
-    .top, .composer-wrap, .note, .nudge, .meta, .legal { display: none !important; }
+    .top, .composer-wrap, .note, .meta, .legal { display: none !important; }
     #print-head { display: block; font: 600 13px var(--sans); color: #444; border-bottom: 1px solid #ccc; padding: 0 0 10px; margin: 0 0 18px; }
     main { max-width: none; padding: 0; }
     .msg { break-inside: avoid; animation: none; }
@@ -314,7 +316,7 @@
   <header class="top">
     <a class="brand" href="./" id="home-link" aria-label="Vildana Razumova — back to the start">
       <img class="brand-photo" src="photo.jpg" alt="" width="32" height="32">
-      <span class="who"><span class="nm">Vildana Razumova</span><small id="t-role">AI/ML Project Lead · from business problem to production</small></span>
+      <span class="who"><span class="nm">Vildana Razumova</span><small id="t-role">AI/ML Project Lead</small></span>
     </a>
     <nav class="actions">
       <div class="lang" id="lang" role="group" aria-label="Language">
@@ -351,10 +353,10 @@
     <section class="intro">
       <div class="me">
         <img id="portrait" src="photo.jpg" alt="Vildana Razumova" width="44" height="44">
-        <div><b class="nm">Vildana Razumova</b><span id="t-hrole">AI/ML Project Lead · from business problem to production</span></div>
+        <div><b class="nm">Vildana Razumova</b><span id="t-hrole">AI/ML Project Lead</span></div>
       </div>
       <h1 id="t-h1">Don't read my CV.<br><em>Ask it.</em></h1>
-      <p class="lead" id="t-lead">I'm Vildana's AI. Ask me about her experience, projects, skills and the way she works.</p>
+      <p class="lead"><span class="long" id="t-lead">I'm Vildana's AI. Ask me about her experience, projects, skills and the way she works.</span><span class="short" id="t-lead-s"></span></p>
     </section>
 
     <div class="log" id="log" aria-live="polite"></div>
@@ -378,9 +380,8 @@
       <button class="chip jd" id="jd-chip" type="button">Paste a job description →</button>
     </section>
   </div>
-  <button type="button" class="nudge" id="nudge" hidden>Talk to Vildana →</button>
 
-  <p class="note"><span id="t-note">AI answers based on Vildana's profile. Please confirm important details with her directly.</span> <a href="#privacy" id="t-privacy-link">Privacy</a> · <a href="#built" id="t-built-link">How it's built</a></p>
+  <p class="note"><a href="#privacy" id="t-privacy-link">Privacy</a> · <a href="#built" id="t-built-link">How it's built</a></p>
 
   <section class="legal" id="privacy" hidden role="dialog" aria-modal="true" aria-labelledby="t-privacy-h">
     <div class="legal-box">
@@ -455,54 +456,54 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
 
   // ── Page language. The assistant itself answers in the language you write in; this only translates the page. ──
   const T = {
-    en: { role: "AI/ML Project Lead · from business problem to production", talk: "Contact", examples: "Portfolio", menu: ["Profile and recommendations", "Message her directly", "Email", "CV as PDF", "Download, two pages"],
+    en: { role: "AI/ML Project Lead", talk: "Contact", examples: "Portfolio", menu: ["Profile and recommendations", "Message her directly", "Email", "CV as PDF", "Download, two pages"],
           bot: "AI assistant", save: ["Save conversation as PDF", "Conversation with Vildana Razumova's AI assistant"],
           h1: "Don't read my CV.<br><em>Ask it.</em>", phx: ["What has she built?", "What is she working on now?", "Is she open to offers?", "Tell me something interesting", "How does this assistant work?"],
           demosAll: "Descriptions and stack of each project", home: "back to the start", long: "too long — paste only the requirements", label: "Your message",
-          lead: "I'm Vildana's AI. Ask me about her experience, projects, skills and the way she works.",
+          lead: "I'm Vildana's AI. Ask me about her experience, projects, skills and the way she works.", leadShort: "I'm Vildana's AI assistant.",
           ask: "Don't read the CV — ask her AI assistant.", jd: ["Paste a job description →", "How well does Vildana's experience fit this role?\n\n"],
           strip: ["Portfolio", "Real projects, shown here on synthetic data. Open one to see how it works.", "Open the demo", "Open the flow"],
           cards: [["Pilot", "Price revisions with comments"], ["In production", "External market signals"], ["In production", "Payments assistant"], ["May – September 2026", "AI sales analyst"], ["In production", "System alerts"]],
           wait: [["Page · GitHub Pages", "question sent"], ["n8n · Railway", "language and limits check"], ["n8n · Railway", "knowledge base and rules · prompt cache"], ["Anthropic API", "Claude is writing the answer…"], ["n8n → page", "checking and cleaning the answer"]],
-          meta: ["{s} s", "prompt cache ✓", "prompt cache –", "{n} tokens"], nudge: "Talk to Vildana →",
+          meta: ["{s} s", "prompt cache ✓", "prompt cache –", "{n} tokens"],
           reset: "New conversation",
-          ph: "Ask about her experience and projects…", phShort: "Ask about her work…", note: "AI answers based on Vildana's profile. Please confirm important details with her directly.",
+          ph: "Ask about her experience and projects…", phShort: "Ask about her work…",
           err: "Sorry, something went wrong. Please try again, or use **Contact** to reach Vildana directly.",
           chips: [["Vildana in 30 seconds", "Tell me about Vildana in 30 seconds."],
                   ["What has she built?", "What has she built?"],
                   ["Would she fit my team?", "How would I know if she'd fit my team?"],
                   ["Tell me something interesting", "Tell me something interesting about her."]],
           more: [["Show me the portfolio", "Show me the portfolio with live examples of her work."], ["Is she open to offers?", "Is she open to new offers?"], ["What is she working on now?", "What is she working on right now?"], ["How does this assistant work?", "How does this assistant work?"]] },
-    de: { role: "AI/ML Project Lead · vom Geschäftsproblem bis zum Produktivbetrieb", talk: "Kontakt", examples: "Portfolio", menu: ["Profil und Empfehlungen", "Direkt schreiben", "E-Mail", "Lebenslauf als PDF", "Download, zwei Seiten"],
+    de: { role: "AI/ML Project Lead", talk: "Kontakt", examples: "Portfolio", menu: ["Profil und Empfehlungen", "Direkt schreiben", "E-Mail", "Lebenslauf als PDF", "Download, zwei Seiten"],
           bot: "KI-Assistent", save: ["Gespräch als PDF speichern", "Gespräch mit dem KI-Assistenten von Vildana Razumova"],
           h1: "Lesen Sie nicht meinen Lebenslauf.<br><em>Fragen Sie ihn.</em>", phx: ["Was hat sie gebaut?", "Woran arbeitet sie gerade?", "Ist sie offen für Angebote?", "Etwas Interessantes, bitte", "Wie funktioniert dieser Assistent?"],
           demosAll: "Beschreibung und Stack zu jedem Projekt", home: "zurück zum Anfang", long: "zu lang — fügen Sie nur die Anforderungen ein", label: "Ihre Nachricht",
-          lead: "Ich bin Vildanas KI. Fragen Sie mich nach ihrer Erfahrung, ihren Projekten, Fähigkeiten und ihrer Arbeitsweise.",
+          lead: "Ich bin Vildanas KI. Fragen Sie mich nach ihrer Erfahrung, ihren Projekten, Fähigkeiten und ihrer Arbeitsweise.", leadShort: "Ich bin Vildanas KI-Assistent.",
           ask: "Lesen Sie nicht den Lebenslauf — fragen Sie ihren KI-Assistenten.", jd: ["Stellenbeschreibung einfügen →", "Wie gut passt Vildanas Erfahrung zu dieser Stelle?\n\n"],
           strip: ["Portfolio", "Reale Projekte, hier mit synthetischen Daten gezeigt. Öffnen Sie ein Projekt, um zu sehen, wie es funktioniert.", "Demo öffnen", "Ablauf öffnen"],
           cards: [["Pilot", "Preisrevisionen mit Kommentaren"], ["Im Einsatz", "Externe Marktsignale"], ["Im Einsatz", "Zahlungsassistent"], ["Mai – September 2026", "KI-Verkaufsanalyst"], ["Im Einsatz", "Systemmeldungen"]],
           wait: [["Seite · GitHub Pages", "Frage gesendet"], ["n8n · Railway", "Sprache und Limits prüfen"], ["n8n · Railway", "Wissensbasis und Regeln · Prompt-Cache"], ["Anthropic API", "Claude schreibt die Antwort …"], ["n8n → Seite", "Antwort wird geprüft und bereinigt"]],
-          meta: ["{s} s", "Prompt-Cache ✓", "Prompt-Cache –", "{n} Tokens"], nudge: "Mit Vildana sprechen →",
+          meta: ["{s} s", "Prompt-Cache ✓", "Prompt-Cache –", "{n} Tokens"],
           reset: "Neues Gespräch",
-          ph: "Fragen Sie nach ihrer Erfahrung und ihren Projekten …", phShort: "Fragen zu ihrer Arbeit …", note: "KI-Antworten auf Basis von Vildanas Profil. Bitte klären Sie wichtige Details direkt mit ihr.",
+          ph: "Fragen Sie nach ihrer Erfahrung und ihren Projekten …", phShort: "Fragen zu ihrer Arbeit …",
           err: "Entschuldigung, etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder erreichen Sie Vildana über **Kontakt**.",
           chips: [["Vildana in 30 Sekunden", "Erzählen Sie mir in 30 Sekunden von Vildana."],
                   ["Was hat sie gebaut?", "Was hat sie gebaut?"],
                   ["Passt sie in mein Team?", "Woran erkenne ich, ob sie in mein Team passt?"],
                   ["Etwas Interessantes, bitte", "Erzählen Sie mir etwas Interessantes über sie."]],
           more: [["Zeig mir das Portfolio", "Zeigen Sie mir das Portfolio mit Live-Beispielen ihrer Arbeit."], ["Ist sie offen für Angebote?", "Ist sie offen für neue Angebote?"], ["Woran arbeitet sie gerade?", "Woran arbeitet sie gerade?"], ["Wie funktioniert dieser Assistent?", "Wie funktioniert dieser Assistent?"]] },
-    ru: { role: "AI/ML Project Lead · от бизнес-задачи до продакшена", talk: "Связаться", examples: "Портфолио", menu: ["Профиль и рекомендации", "Написать напрямую", "Почта", "Резюме в PDF", "Скачать, две страницы"],
+    ru: { role: "AI/ML Project Lead", talk: "Связаться", examples: "Портфолио", menu: ["Профиль и рекомендации", "Написать напрямую", "Почта", "Резюме в PDF", "Скачать, две страницы"],
           bot: "ИИ-ассистент", save: ["Сохранить разговор в PDF", "Разговор с ИИ-ассистентом Вильданы Разумовой"],
           h1: "Не читайте моё резюме.<br><em>Спросите его.</em>", phx: ["Что она построила?", "Над чем она работает сейчас?", "Открыта ли она к предложениям?", "Расскажи что-нибудь интересное", "Как устроен этот ассистент?"],
           demosAll: "Описание и стек каждого проекта", home: "к началу", long: "слишком длинно — вставьте только требования", label: "Ваше сообщение",
-          lead: "Я ИИ-ассистент Вильданы. Спросите меня о её опыте, проектах, навыках и о том, как она работает.",
+          lead: "Я ИИ-ассистент Вильданы. Спросите меня о её опыте, проектах, навыках и о том, как она работает.", leadShort: "Я ИИ-ассистент Вильданы.",
           ask: "Не читайте резюме — спросите её ИИ-ассистента.", jd: ["Вставьте описание вакансии →", "Насколько опыт Вильданы подходит для этой вакансии?\n\n"],
           strip: ["Портфолио", "Реальные проекты на синтетических данных. Откройте любой и посмотрите, как он работает.", "Открыть демо", "Открыть схему"],
           cards: [["Пилот", "Ревизии цен с комментариями"], ["В эксплуатации", "Внешние сигналы рынка"], ["В эксплуатации", "Помощник по платежам"], ["Май – сентябрь 2026", "AI-аналитик по продажам"], ["В эксплуатации", "Алерты систем"]],
           wait: [["Страница · GitHub Pages", "вопрос отправлен"], ["n8n · Railway", "проверка языка и лимитов"], ["n8n · Railway", "база знаний и правила · кэш промпта"], ["Anthropic API", "Claude пишет ответ…"], ["n8n → страница", "проверка и очистка ответа"]],
-          meta: ["{s} с", "кэш промпта ✓", "кэш промпта –", "{n} токенов"], nudge: "Поговорить с Вильданой →",
+          meta: ["{s} с", "кэш промпта ✓", "кэш промпта –", "{n} токенов"],
           reset: "Новый разговор",
-          ph: "Спросите о её опыте и проектах…", phShort: "Спросите о её работе…", note: "Ответы ИИ на основе профиля Вильданы. Важные детали уточняйте у неё напрямую.",
+          ph: "Спросите о её опыте и проектах…", phShort: "Спросите о её работе…",
           err: "Что-то пошло не так. Попробуйте ещё раз или напишите Вильдане через **Связаться**.",
           chips: [["Вильдана за 30 секунд", "Расскажи о Вильдане за 30 секунд."],
                   ["Что она построила?", "Что она построила?"],
@@ -586,9 +587,9 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     document.documentElement.lang = l;
     document.querySelectorAll(".nm").forEach((e) => { e.textContent = NAME[l]; }); $("portrait").alt = NAME[l];
     document.title = NAME[l] + " — " + d.role.split(" · ")[0];
-    $("home-link").setAttribute("aria-label", NAME[l] + " — " + d.home); $("home-link").title = d.home; $("m-privacy").textContent = PRIVACY_LABEL[l][0]; $("m-built").textContent = BUILT_LABEL[l][0]; $("t-save").textContent = d.save[0]; $("t-new").textContent = d.reset; $("t-h1").innerHTML = d.h1; $("t-lead").textContent = d.lead; $("t-note").textContent = d.note; $("t-input-label").textContent = d.label;
+    $("home-link").setAttribute("aria-label", NAME[l] + " — " + d.home); $("home-link").title = d.home; $("m-privacy").textContent = PRIVACY_LABEL[l][0]; $("m-built").textContent = BUILT_LABEL[l][0]; $("t-save").textContent = d.save[0]; $("t-new").textContent = d.reset; $("t-h1").innerHTML = d.h1; $("t-lead").textContent = d.lead; $("t-lead-s").textContent = d.leadShort; $("t-input-label").textContent = d.label;
     $("t-role").textContent = d.role; $("t-hrole").textContent = d.role;
-    $("jd-chip").textContent = d.jd[0]; $("nudge").textContent = d.nudge;
+    $("jd-chip").textContent = d.jd[0];
 
     document.querySelectorAll(".steps").forEach((el) => renderSteps(el, +el.dataset.on, +el.dataset.n)); $("t-talk").textContent = d.talk; $("t-examples").textContent = d.examples;
     $("t-li").textContent = d.menu[0]; $("t-tg").textContent = d.menu[1]; $("t-em").textContent = d.menu[2]; $("t-cv").textContent = d.menu[3]; $("t-cv-s").textContent = d.menu[4];
@@ -698,7 +699,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
       body.parentElement.scrollIntoView({ behavior: "smooth", block: "start" });
       showFollowups(sugg);
       saved.push({ r: "u", t: text }, { r: "b", md: answer, meta: line.textContent }); persist();
-      answers += 1; if (answers === 3 && !nudged) { nudged = true; $("nudge").hidden = false; setTimeout(() => { $("nudge").hidden = true; }, 20000); }
+      answers += 1;
     } catch (e) {
       console.warn("assistant:", e); stop();
       body.innerHTML = render(T[pageLang].err);
@@ -714,7 +715,6 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   function persist() {
     try { sessionStorage.setItem(STORE, JSON.stringify({ sid: sessionId, items: saved, asked: [...asked], sugg: lastSuggestions, lastLang, answers, nudged })); } catch (e) {}
   }
-  $("nudge").addEventListener("click", () => { $("nudge").hidden = true; talk.open = true; });
   $("jd-chip").addEventListener("click", () => { const d = T[pageLang]; if (!input.value.trim()) input.value = d.jd[1]; input.focus(); input.setSelectionRange(input.value.length, input.value.length); grow(); window.scrollTo({ top: 0, behavior: "smooth" }); });
 
   function showDemos(label, q) {
@@ -755,7 +755,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     log.innerHTML = ""; asked.clear(); lastSuggestions = []; lastLang = ""; saved = []; answers = 0; nudged = false;
     try { sessionStorage.removeItem(STORE); } catch (e) {}
     sessionId = crypto.randomUUID(); try { sessionStorage.setItem("sid", sessionId); } catch (e) {}
-    document.body.classList.remove("chatting"); $("followups").innerHTML = ""; $("nudge").hidden = true;
+    document.body.classList.remove("chatting"); $("followups").innerHTML = "";
     window.scrollTo({ top: 0, behavior: "smooth" }); input.focus({ preventScroll: true });
   }
 
