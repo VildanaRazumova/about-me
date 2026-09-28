@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src https://n8n-production-9eec.up.railway.app; form-action 'none'; object-src 'none'; base-uri 'self'">
-<title>Vildana Razumova — Data Scientist · AI Automation</title>
+<title>Vildana Razumova — Don't read my CV. Talk to it.</title>
 <meta name="description" content="A live AI assistant built by Vildana Razumova (data science & AI automation). Ask it about her work, or ask how it was built.">
 <!-- Link preview (LinkedIn, Telegram, WhatsApp) -->
 <meta property="og:title" content="Vildana Razumova — Data Scientist · AI Automation">
@@ -18,8 +18,6 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<!-- For search engines: who this page is about (schema.org). Not shown on the page. -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Vildana Razumova", "alternateName": "Вильдана Разумова", "jobTitle": "Data Scientist, AI Automation", "url": "https://vildanarazumova.github.io/about-me/", "image": "https://vildanarazumova.github.io/about-me/photo.jpg", "sameAs": ["https://www.linkedin.com/in/vildanarazumova"]}</script>
 
 <style>
   /* Fonts are self-hosted (docs/fonts/, from the @fontsource packages, SIL OFL): no request leaves this site for them. */
@@ -61,7 +59,6 @@
     margin: 0; min-height: 100dvh; display: flex; flex-direction: column;
     background: var(--bg); color: var(--ink); font: 15.5px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
   }
-  b, strong { font-weight: 600; }   /* the fonts ship 400/500/600 only: no faux bold */
   a { color: var(--brand-ink); }
   .sr-only { position: absolute; left: -9999px; }
   :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
@@ -72,8 +69,7 @@
     padding: 14px max(20px, calc((100vw - 1120px) / 2)); border-bottom: 1px solid transparent; transition: background .3s, border-color .3s;
   }
   body.chatting .top { background: color-mix(in srgb, var(--bg) 93%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom-color: var(--line); }
-  .brand { display: flex; align-items: center; gap: 10px; white-space: nowrap; color: var(--ink); text-decoration: none; border-radius: 999px; transition: opacity .3s; }
-  .brand:hover .brand-photo { box-shadow: 0 0 0 2px var(--brand); }
+  .brand { display: flex; align-items: center; gap: 10px; white-space: nowrap; transition: opacity .3s; }
   body:not(.chatting) .brand { opacity: 0; visibility: hidden; }
   .brand-photo { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
   .who { display: flex; flex-direction: column; line-height: 1.15; font-weight: 600; letter-spacing: -.01em; }
@@ -112,9 +108,6 @@
   .menu b { display: block; font-weight: 600; font-size: 14.5px; }
   .menu small { color: var(--muted); font-size: 12.5px; }
   .menu hr { border: 0; border-top: 1px solid var(--line); margin: 6px 4px; }
-  .menu .menu-foot { margin: 4px 0 2px; padding: 8px 12px 4px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--faint); }
-  .menu .menu-foot a { display: inline; padding: 0; color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
-  .menu .menu-foot a:hover { background: none; color: var(--ink); }
 
   /* ── Start screen: who, the hook, the assistant. Free space splits above and below, so the block sits in the middle ── */
   main { flex: 1 0 auto; width: 100%; max-width: 760px; margin: 0 auto; padding: 20px 20px 24px; }
@@ -154,7 +147,7 @@
   body.chatting .composer, body.chatting .composer::before { animation-play-state: paused; }
   body.chatting .composer::before { opacity: .16; }
   body.chatting .composer:focus-within, body.chatting .composer:focus-within::before { animation-play-state: running; }
-  textarea { flex: 1; border: 0; outline: 0; resize: none; background: transparent; color: var(--ink); font: 16.5px/1.5 var(--sans); padding: 8px 0; max-height: 180px; }
+  textarea { flex: 1; border: 0; outline: 0; resize: none; background: transparent; color: var(--ink); font: 16.5px/1.5 var(--sans); padding: 8px 0; max-height: 180px; overflow-y: hidden; scrollbar-width: thin; }   /* no scrollbar until the text is taller than the box */
   body:not(.chatting) textarea { font-size: 17.5px; padding: 10px 0; }
   textarea::placeholder { color: var(--faint); }
   textarea:focus-visible { outline: none; }
@@ -292,31 +285,14 @@
     .body td[data-label]:not(:first-child)::before { content: attr(data-label) " · "; color: var(--faint); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
   }
   @media (max-width: 380px) { .demo-grid { grid-template-columns: 1fr; } }
-
-  .tools { display: none; max-width: 720px; margin: 8px auto 0; justify-content: center; align-items: center; gap: 4px; font-size: 12.5px; color: var(--faint); }
-  body.chatting .tools { display: flex; }
-  .tools button { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border: 0; border-radius: 8px; background: none; color: var(--muted); font: 500 12.5px var(--sans); cursor: pointer; }
-  .tools button:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); color: var(--ink); }
-  .tools svg { width: 14px; height: 14px; }
-  #print-head { display: none; }
-  @media print {
-    body { background: #fff !important; color: #000; }
-    .top, .composer-wrap, .note, .nudge, .meta, .legal { display: none !important; }
-    #print-head { display: block; font: 600 13px var(--sans); color: #444; border-bottom: 1px solid #ccc; padding: 0 0 10px; margin: 0 0 18px; }
-    main { max-width: none; padding: 0; }
-    .msg { break-inside: avoid; animation: none; }
-    .msg.user .body { background: #f1f1ee; }
-    .msg.bot .who { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .demo { border-color: #ccc; }
-  }
 </style>
 </head>
 <body>
   <header class="top">
-    <a class="brand" href="./" id="home-link" aria-label="Vildana Razumova — back to the start">
+    <div class="brand" aria-hidden="true">
       <img class="brand-photo" src="photo.jpg" alt="" width="32" height="32">
       <span class="who"><span class="nm">Vildana Razumova</span><small id="t-role">Data Scientist · AI Automation</small></span>
-    </a>
+    </div>
     <nav class="actions">
       <div class="lang" id="lang" role="group" aria-label="Language">
         <button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="de" lang="de">DE</button><button type="button" data-lang="ru" lang="ru">RU</button>
@@ -341,14 +317,12 @@
           <a id="c-cv" href="#" download="Vildana Razumova - Data Scientist, AI Automation Specialist - CV.pdf">
             <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg></span>
             <span><b id="t-cv">CV as PDF</b><small id="t-cv-s">Download, two pages</small></span></a>
-          <p class="menu-foot"><a href="#privacy" id="m-privacy">Privacy</a> · <a href="#built" id="m-built">How it's built</a></p>
         </div>
       </details>
     </nav>
   </header>
 
   <main>
-    <p id="print-head"></p>
     <section class="intro">
       <div class="me">
         <img id="portrait" src="photo.jpg" alt="Vildana Razumova" width="44" height="44">
@@ -371,7 +345,6 @@
       </button>
     </form>
     <p class="count" id="count" aria-live="polite"></p>
-    <p class="tools" id="tools"><button type="button" id="save-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg><span id="t-save">Save conversation as PDF</span></button><span aria-hidden="true">·</span><button type="button" id="new-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span id="t-new">New conversation</span></button></p>
     <section class="suggest" id="suggest" aria-label="Suggested questions">
       <button class="chip" type="button" data-i="0">Vildana in 30 seconds</button>
       <button class="chip" type="button" data-i="1">What has she built?</button>
@@ -457,13 +430,13 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   // ── Page language. The assistant itself answers in the language you write in; this only translates the page. ──
   const T = {
     en: { role: "Data Scientist · AI Automation", talk: "Contact", examples: "Portfolio", menu: ["Profile and recommendations", "Message her directly", "Email", "CV as PDF", "Download, two pages"],
-          bot: "AI assistant", save: ["Save conversation as PDF", "Conversation with Vildana Razumova's AI assistant"],
+          bot: "AI assistant",
           h1: "Don't read my CV.<br><em>Ask it.</em>", phx: ["What has she built?", "What is she working on now?", "Is she open to offers?", "Tell me something interesting", "How does this assistant work?"],
-          demosAll: "Descriptions and stack of each project", home: "back to the start", long: "too long — paste only the requirements", label: "Your message",
+          demosAll: "Descriptions and stack of each project", long: "too long — paste only the requirements", label: "Your message",
           lead: "I'm Vildana's AI. Ask me about her experience, projects, skills and the way she works.",
           ask: "Don't read the CV — ask her AI assistant.", jd: ["Paste a job description →", "How well does Vildana's experience fit this role?\n\n"],
-          strip: ["Portfolio", "Real projects, shown here on synthetic data. Open one to see how it works.", "Open the demo", "Open the flow"],
-          cards: [["Pilot", "Price revisions with comments"], ["In production", "External market signals"], ["In production", "Payments assistant"], ["In production", "AI sales analyst"], ["In production", "System alerts"]],
+          strip: ["Portfolio", "Demonstrations of real projects on synthetic data. Open a project to see how it works.", "Open the demo", "Open the flow"],
+          cards: [["Pilot", "Price revisions with comments"], ["In production since March 2026", "External market signals"], ["In production since July 2026", "Payments assistant"], ["In production since May 2026", "AI sales analyst"], ["In production since May 2026", "System alerts"]],
           wait: [["Page · GitHub Pages", "question sent"], ["n8n · Railway", "language and limits check"], ["n8n · Railway", "knowledge base and rules · prompt cache"], ["Anthropic API", "Claude is writing the answer…"], ["n8n → page", "checking and cleaning the answer"]],
           meta: ["{s} s", "prompt cache ✓", "prompt cache –", "{n} tokens"], nudge: "Talk to Vildana →",
           reset: "New conversation",
@@ -475,13 +448,13 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
                   ["Tell me something interesting", "Tell me something interesting about her."]],
           more: [["Show me the portfolio", "Show me the portfolio with live examples of her work."], ["Is she open to offers?", "Is she open to new offers?"], ["What is she working on now?", "What is she working on right now?"], ["How does this assistant work?", "How does this assistant work?"]] },
     de: { role: "Data Scientist · KI-Automatisierung", talk: "Kontakt", examples: "Portfolio", menu: ["Profil und Empfehlungen", "Direkt schreiben", "E-Mail", "Lebenslauf als PDF", "Download, zwei Seiten"],
-          bot: "KI-Assistent", save: ["Gespräch als PDF speichern", "Gespräch mit dem KI-Assistenten von Vildana Razumova"],
+          bot: "KI-Assistent",
           h1: "Lesen Sie nicht meinen Lebenslauf.<br><em>Fragen Sie ihn.</em>", phx: ["Was hat sie gebaut?", "Woran arbeitet sie gerade?", "Ist sie offen für Angebote?", "Etwas Interessantes, bitte", "Wie funktioniert dieser Assistent?"],
-          demosAll: "Beschreibung und Stack zu jedem Projekt", home: "zurück zum Anfang", long: "zu lang — fügen Sie nur die Anforderungen ein", label: "Ihre Nachricht",
+          demosAll: "Beschreibung und Stack zu jedem Projekt", long: "zu lang — fügen Sie nur die Anforderungen ein", label: "Ihre Nachricht",
           lead: "Ich bin Vildanas KI. Fragen Sie mich nach ihrer Erfahrung, ihren Projekten, Fähigkeiten und ihrer Arbeitsweise.",
           ask: "Lesen Sie nicht den Lebenslauf — fragen Sie ihren KI-Assistenten.", jd: ["Stellenbeschreibung einfügen →", "Wie gut passt Vildanas Erfahrung zu dieser Stelle?\n\n"],
-          strip: ["Portfolio", "Reale Projekte, hier mit synthetischen Daten gezeigt. Öffnen Sie ein Projekt, um zu sehen, wie es funktioniert.", "Demo öffnen", "Ablauf öffnen"],
-          cards: [["Pilot", "Preisrevisionen mit Kommentaren"], ["Im Einsatz", "Externe Marktsignale"], ["Im Einsatz", "Zahlungsassistent"], ["Im Einsatz", "KI-Verkaufsanalyst"], ["Im Einsatz", "Systemmeldungen"]],
+          strip: ["Portfolio", "Demonstrationen realer Projekte auf synthetischen Daten. Öffnen Sie ein Projekt und sehen Sie, wie es funktioniert.", "Demo öffnen", "Ablauf öffnen"],
+          cards: [["Pilot", "Preisrevisionen mit Kommentaren"], ["Im Einsatz seit März 2026", "Externe Marktsignale"], ["Im Einsatz seit Juli 2026", "Zahlungsassistent"], ["Im Einsatz seit Mai 2026", "KI-Verkaufsanalyst"], ["Im Einsatz seit Mai 2026", "Systemmeldungen"]],
           wait: [["Seite · GitHub Pages", "Frage gesendet"], ["n8n · Railway", "Sprache und Limits prüfen"], ["n8n · Railway", "Wissensbasis und Regeln · Prompt-Cache"], ["Anthropic API", "Claude schreibt die Antwort …"], ["n8n → Seite", "Antwort wird geprüft und bereinigt"]],
           meta: ["{s} s", "Prompt-Cache ✓", "Prompt-Cache –", "{n} Tokens"], nudge: "Mit Vildana sprechen →",
           reset: "Neues Gespräch",
@@ -493,13 +466,13 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
                   ["Etwas Interessantes, bitte", "Erzählen Sie mir etwas Interessantes über sie."]],
           more: [["Zeig mir das Portfolio", "Zeigen Sie mir das Portfolio mit Live-Beispielen ihrer Arbeit."], ["Ist sie offen für Angebote?", "Ist sie offen für neue Angebote?"], ["Woran arbeitet sie gerade?", "Woran arbeitet sie gerade?"], ["Wie funktioniert dieser Assistent?", "Wie funktioniert dieser Assistent?"]] },
     ru: { role: "Дата-сайентист · ИИ-автоматизация", talk: "Связаться", examples: "Портфолио", menu: ["Профиль и рекомендации", "Написать напрямую", "Почта", "Резюме в PDF", "Скачать, две страницы"],
-          bot: "ИИ-ассистент", save: ["Сохранить разговор в PDF", "Разговор с ИИ-ассистентом Вильданы Разумовой"],
+          bot: "ИИ-ассистент",
           h1: "Не читайте моё резюме.<br><em>Спросите его.</em>", phx: ["Что она построила?", "Над чем она работает сейчас?", "Открыта ли она к предложениям?", "Расскажи что-нибудь интересное", "Как устроен этот ассистент?"],
-          demosAll: "Описание и стек каждого проекта", home: "к началу", long: "слишком длинно — вставьте только требования", label: "Ваше сообщение",
+          demosAll: "Описание и стек каждого проекта", long: "слишком длинно — вставьте только требования", label: "Ваше сообщение",
           lead: "Я ИИ-ассистент Вильданы. Спросите меня о её опыте, проектах, навыках и о том, как она работает.",
           ask: "Не читайте резюме — спросите её ИИ-ассистента.", jd: ["Вставьте описание вакансии →", "Насколько опыт Вильданы подходит для этой вакансии?\n\n"],
-          strip: ["Портфолио", "Реальные проекты на синтетических данных. Откройте любой и посмотрите, как он работает.", "Открыть демо", "Открыть схему"],
-          cards: [["Пилот", "Ревизии цен с комментариями"], ["В эксплуатации", "Внешние сигналы рынка"], ["В эксплуатации", "Помощник по платежам"], ["В эксплуатации", "AI-аналитик по продажам"], ["В эксплуатации", "Алерты систем"]],
+          strip: ["Портфолио", "Демонстрации реальных проектов на синтетических данных. Откройте проект и посмотрите, как он устроен.", "Открыть демо", "Открыть схему"],
+          cards: [["Пилот", "Ревизии цен с комментариями"], ["В эксплуатации с марта 2026", "Внешние сигналы рынка"], ["В эксплуатации с июля 2026", "Помощник по платежам"], ["В эксплуатации с мая 2026", "AI-аналитик по продажам"], ["В эксплуатации с мая 2026", "Алерты систем"]],
           wait: [["Страница · GitHub Pages", "вопрос отправлен"], ["n8n · Railway", "проверка языка и лимитов"], ["n8n · Railway", "база знаний и правила · кэш промпта"], ["Anthropic API", "Claude пишет ответ…"], ["n8n → страница", "проверка и очистка ответа"]],
           meta: ["{s} с", "кэш промпта ✓", "кэш промпта –", "{n} токенов"], nudge: "Поговорить с Вильданой →",
           reset: "Новый разговор",
@@ -513,17 +486,17 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   };
   const PRIVACY = {
     en: ["<p><b>What happens with your question.</b> The text you type is sent to the workflow that runs this assistant (n8n, hosted on Railway, United States) and from there to Anthropic's Claude API (United States) to generate the answer. The workflow keeps a log of questions and answers for a limited time for debugging and abuse prevention, then deletes it.</p>",
-         "<p><b>What stays in your browser.</b> Your language choice and, until you close the tab or start a new conversation, the conversation itself, so it is still here when you come back from the portfolio. This copy stays on your device. No account, no cookies, no analytics, no advertising.</p>",
+         "<p><b>What is not collected.</b> No account, no cookies, no analytics, no advertising. The page keeps a random conversation id and your language choice in your browser only.</p>",
          "<p><b>Please do not paste personal data of other people</b> (for example names and contact details from a job posting): the assistant only needs the requirements.</p>",
          "<p><b>Contact and responsibility.</b> Vildana Razumova, Germany. Reach me via LinkedIn or Telegram (menu \"Contact\") for any question about this page or your data.</p>",
          "<p><a href=\"privacy.html\">Full privacy policy</a> (Deutsch · English · Русский)</p>"],
     de: ["<p><b>Was mit Ihrer Frage passiert.</b> Ihr Text wird an den Workflow gesendet, der diesen Assistenten betreibt (n8n, gehostet bei Railway, USA), und von dort an die Claude-API von Anthropic (USA), um die Antwort zu erzeugen. Der Workflow speichert Fragen und Antworten für begrenzte Zeit zur Fehlersuche und zum Schutz vor Missbrauch und löscht sie dann.</p>",
-         "<p><b>Was in Ihrem Browser bleibt.</b> Ihre Sprachwahl und, bis Sie den Tab schließen oder ein neues Gespräch beginnen, das Gespräch selbst, damit es nach einem Blick ins Portfolio noch da ist. Diese Kopie bleibt auf Ihrem Gerät. Kein Konto, keine Cookies, keine Analyse-Tools, keine Werbung.</p>",
+         "<p><b>Was nicht erhoben wird.</b> Kein Konto, keine Cookies, keine Analyse-Tools, keine Werbung. Die Seite merkt sich nur in Ihrem Browser eine zufällige Gesprächs-ID und Ihre Sprachwahl.</p>",
          "<p><b>Bitte fügen Sie keine personenbezogenen Daten Dritter ein</b> (z. B. Namen und Kontaktdaten aus einer Stellenanzeige): dem Assistenten genügen die Anforderungen.</p>",
          "<p><b>Kontakt und Verantwortliche.</b> Vildana Razumova, Deutschland. Bei Fragen zu dieser Seite oder Ihren Daten erreichen Sie mich über LinkedIn oder Telegram (Menü \"Kontakt\").</p>",
          "<p><a href=\"privacy.html\">Vollständige Datenschutzerklärung</a> (Deutsch · English · Русский)</p>"],
     ru: ["<p><b>Что происходит с вашим вопросом.</b> Текст отправляется в workflow, на котором работает ассистент (n8n на хостинге Railway, США), а оттуда в Claude API компании Anthropic (США), чтобы сформировать ответ. Workflow хранит вопросы и ответы ограниченное время для отладки и защиты от злоупотреблений, затем удаляет.</p>",
-         "<p><b>Что остаётся в браузере.</b> Выбранный язык и, пока вы не закроете вкладку или не начнёте новый разговор, сам разговор, чтобы он сохранился, когда вы вернётесь из портфолио. Эта копия остаётся на вашем устройстве. Без аккаунта, cookies, аналитики и рекламы.</p>",
+         "<p><b>Что не собирается.</b> Без аккаунта, cookies, аналитики и рекламы. Страница хранит только в вашем браузере случайный идентификатор разговора и выбранный язык.</p>",
          "<p><b>Пожалуйста, не вставляйте персональные данные других людей</b> (например, имена и контакты из вакансии): ассистенту достаточно требований.</p>",
          "<p><b>Контакт и ответственная.</b> Вильдана Разумова, Германия. По вопросам об этой странице или ваших данных пишите в LinkedIn или Telegram (меню \"Связаться\").</p>",
          "<p><a href=\"privacy.html\">Полная политика конфиденциальности</a> (Deutsch · English · Русский)</p>"],
@@ -536,21 +509,21 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
                   ["Adds the knowledge base and the rules", "facts, project cards and stories; no vector database", "Markdown / YAML · build scripts"],
                   ["Claude writes the answer", "only from the knowledge base and the rules", "Anthropic API · prompt caching"],
                   ["The answer returns to the page", "as text with three follow-up questions; checked in code and sanitised on the page", "JSON → page"]],
-          data: ["Data.", " The log of questions and answers and the daily counters live in PostgreSQL on Railway for up to 14 days, then they are deleted. Your browser keeps the language and, until the tab is closed, the conversation."],
+          data: ["Data.", " The log of questions and answers and the daily counters live in PostgreSQL on Railway for up to 14 days, then they are deleted. Your browser keeps only the language and a conversation id."],
           foot: ["Not open source.", " The knowledge base, the rules and the workflow are private."] },
     de: { steps: [["Sie stellen eine Frage", "auf dieser Seite", "HTML/JS · GitHub Pages"],
                   ["Der Workflow nimmt sie an", "erkennt die Sprache und führt ein Protokoll", "n8n · Railway"],
                   ["Fügt Wissensbasis und Regeln hinzu", "Fakten, Projektkarten und Geschichten; keine Vektordatenbank", "Markdown / YAML · Build-Skripte"],
                   ["Claude schreibt die Antwort", "nur aus Wissensbasis und Regeln", "Anthropic API · Prompt-Caching"],
                   ["Die Antwort kommt zurück auf die Seite", "als Text mit drei Vorschlägen; im Code geprüft und auf der Seite bereinigt", "JSON → Seite"]],
-          data: ["Daten.", " Das Protokoll der Fragen und Antworten und die Tageszähler liegen bis zu 14 Tage in PostgreSQL auf Railway und werden dann gelöscht. Im Browser bleiben die Sprache und, bis der Tab geschlossen wird, das Gespräch."],
+          data: ["Daten.", " Das Protokoll der Fragen und Antworten und die Tageszähler liegen bis zu 14 Tage in PostgreSQL auf Railway und werden dann gelöscht. Im Browser bleiben nur die Sprache und eine Gesprächsnummer."],
           foot: ["Nicht Open Source.", " Wissensbasis, Regeln und Workflow sind privat."] },
     ru: { steps: [["Вы задаёте вопрос", "на этой странице", "HTML/JS · GitHub Pages"],
                   ["Воркфлоу принимает вопрос", "определяет язык и ведёт журнал", "n8n · Railway"],
                   ["Добавляет базу знаний и правила", "факты, карточки проектов и истории; без векторной базы", "Markdown / YAML · скрипты сборки"],
                   ["Claude пишет ответ", "отвечает только по базе знаний и правилам", "Anthropic API · кэш промпта"],
                   ["Ответ возвращается на страницу", "текстом, с тремя подсказками; текст проверяется кодом и очищается на странице", "JSON → страница"]],
-          data: ["Данные.", " Журнал вопросов и ответов и дневные счётчики хранятся в PostgreSQL на Railway до 14 дней, затем удаляются. В браузере — язык и, до закрытия вкладки, сам разговор."],
+          data: ["Данные.", " Журнал вопросов и ответов и дневные счётчики хранятся в PostgreSQL на Railway до 14 дней, затем удаляются. В браузере — только язык и номер разговора."],
           foot: ["Не open source.", " База знаний, правила и воркфлоу приватны."] },
   };
   const BUILT_LABEL = { en: ["About the assistant", "Ask the assistant", "Close", "How does this assistant work?", "How this assistant is built"], de: ["Über den Assistenten", "Assistenten fragen", "Schließen", "Wie funktioniert dieser Assistent?", "So ist dieser Assistent gebaut"], ru: ["Об ассистенте", "Спросить ассистента", "Закрыть", "Как устроен этот ассистент?", "Как сделан этот ассистент"] };
@@ -587,7 +560,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     document.documentElement.lang = l;
     document.querySelectorAll(".nm").forEach((e) => { e.textContent = NAME[l]; }); $("portrait").alt = NAME[l];
     document.title = NAME[l] + " — " + d.role;
-    $("home-link").setAttribute("aria-label", NAME[l] + " — " + d.home); $("home-link").title = d.home; $("m-privacy").textContent = PRIVACY_LABEL[l][0]; $("m-built").textContent = BUILT_LABEL[l][0]; $("t-save").textContent = d.save[0]; $("t-new").textContent = d.reset; $("t-h1").innerHTML = d.h1; $("t-lead").textContent = d.lead; $("t-note").textContent = d.note; $("t-input-label").textContent = d.label;
+    $("t-h1").innerHTML = d.h1; $("t-lead").textContent = d.lead; $("t-note").textContent = d.note; $("t-input-label").textContent = d.label;
     $("t-role").textContent = d.role; $("t-hrole").textContent = d.role;
     $("jd-chip").textContent = d.jd[0]; $("nudge").textContent = d.nudge;
 
@@ -659,7 +632,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     log.appendChild(row);
     // keep the new message clear of the sticky composer (its height changes with the follow-up chips)
     row.style.scrollMarginBottom = ($("composer-wrap").offsetHeight + 16) + "px";
-    if (!restoring) row.scrollIntoView({ behavior: "smooth", block: "end" });
+    row.scrollIntoView({ behavior: "smooth", block: "end" });
     return body;
   }
 
@@ -698,7 +671,6 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
       const line = document.createElement("div"); line.className = "meta"; line.textContent = parts.join(" · "); body.parentElement.appendChild(line);
       body.parentElement.scrollIntoView({ behavior: "smooth", block: "start" });
       showFollowups(sugg);
-      saved.push({ r: "u", t: text }, { r: "b", md: answer, meta: line.textContent }); persist();
       answers += 1; if (answers === 3 && !nudged) { nudged = true; $("nudge").hidden = false; setTimeout(() => { $("nudge").hidden = true; }, 20000); }
     } catch (e) {
       console.warn("assistant:", e); stop();
@@ -709,12 +681,6 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     }
   }
   let answers = 0, nudged = false;
-  // ── The conversation survives a trip to the portfolio: kept for this tab only (sessionStorage), cleared on "New conversation" ──
-  const STORE = "chat";
-  let saved = [], restoring = false;
-  function persist() {
-    try { sessionStorage.setItem(STORE, JSON.stringify({ sid: sessionId, items: saved, asked: [...asked], sugg: lastSuggestions, lastLang, answers, nudged })); } catch (e) {}
-  }
   $("nudge").addEventListener("click", () => { $("nudge").hidden = true; talk.open = true; });
   $("jd-chip").addEventListener("click", () => { const d = T[pageLang]; if (!input.value.trim()) input.value = d.jd[1]; input.focus(); input.setSelectionRange(input.value.length, input.value.length); grow(); window.scrollTo({ top: 0, behavior: "smooth" }); });
 
@@ -722,15 +688,10 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     const d = T[pageLang];
     document.body.classList.add("chatting"); asked.add(q);
     add("user", label);
-    const body = add("bot", demosHTML());
+    const cards = d.cards.map(([st, h], i) => `<a class="demo${i === 0 ? " pilot" : ""}" href="${STRIP_HREF[i]}" target="_blank" rel="noopener"><span class="st">${esc(st)}</span><b>${esc(h)}</b><span class="go">${esc(d.strip[2])} ›</span></a>`).join("");
+    const body = add("bot", `<p>${esc(d.strip[1])}</p><div class="demo-grid">${cards}</div><p><a href="portfolio.html">${esc(d.demosAll)} →</a></p>`);
     body.parentElement.scrollIntoView({ behavior: "smooth", block: "start" });
     showFollowups([]);
-    saved.push({ r: "u", t: label }, { r: "demos" }); persist();
-  }
-  function demosHTML() {
-    const d = T[pageLang];
-    const cards = d.cards.map(([st, h], i) => `<a class="demo${i === 0 ? " pilot" : ""}" href="${STRIP_HREF[i]}" target="_blank" rel="noopener"><span class="st">${esc(st)}</span><b>${esc(h)}</b><span class="go">${esc(d.strip[2])} ›</span></a>`).join("");
-    return `<p>${esc(d.strip[1])}</p><div class="demo-grid">${cards}</div><p><a href="portfolio.html">${esc(d.demosAll)} →</a></p>`;
   }
 
   // ── Follow-up suggestions: the assistant proposes three next questions after each answer; static ones fill the gaps ──
@@ -746,15 +707,11 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
       const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = label;
       b.addEventListener("click", () => (q === d.more[0][1] ? showDemos(label, q) : ask(q))); box.appendChild(b);
     }
+    const r = document.createElement("button"); r.type = "button"; r.className = "chip reset"; r.textContent = "\u21ba " + d.reset;
+    r.addEventListener("click", resetConversation); box.appendChild(r);
   }
-  $("save-btn").addEventListener("click", () => { $("print-head").textContent = T[pageLang].save[1] + " · " + new Date().toLocaleDateString(pageLang) + " · vildanarazumova.github.io/about-me"; window.print(); });
-  $("new-btn").addEventListener("click", resetConversation);
-  $("home-link").addEventListener("click", (e) => { e.preventDefault(); resetConversation(); });
-  $("m-privacy").addEventListener("click", (e) => { e.preventDefault(); talk.open = false; $("privacy").hidden = false; $("privacy-close").focus(); });
-  $("m-built").addEventListener("click", (e) => { e.preventDefault(); talk.open = false; $("built").hidden = false; $("built").querySelector(".legal-box").scrollTop = 0; $("built-close").focus({ preventScroll: true }); });
   function resetConversation() {
-    log.innerHTML = ""; asked.clear(); lastSuggestions = []; lastLang = ""; saved = []; answers = 0; nudged = false;
-    try { sessionStorage.removeItem(STORE); } catch (e) {}
+    log.innerHTML = ""; asked.clear(); lastSuggestions = []; lastLang = "";
     sessionId = crypto.randomUUID(); try { sessionStorage.setItem("sid", sessionId); } catch (e) {}
     document.body.classList.remove("chatting"); $("followups").innerHTML = ""; $("nudge").hidden = true;
     window.scrollTo({ top: 0, behavior: "smooth" }); input.focus({ preventScroll: true });
@@ -762,7 +719,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
 
   const MAX = 1500;   // same limit as the Guard node in n8n
   const grow = () => {
-    input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 180) + "px";
+    input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 180) + "px"; input.style.overflowY = input.scrollHeight > 180 ? "auto" : "hidden";
     const n = input.value.length, over = n > MAX;
     send.disabled = !input.value.trim() || over;
     $("count").textContent = over ? `${fmtN(n)} / ${fmtN(MAX)} — ${T[pageLang].long}` : n > MAX * 0.8 ? `${n} / ${MAX}` : "";
@@ -773,27 +730,6 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   $("form").addEventListener("submit", (e) => { e.preventDefault(); const t = input.value.trim(); if (!t || input.value.length > MAX) return; input.value = ""; grow(); ask(t); });
   document.querySelectorAll("#suggest .chip[data-i]").forEach((c) => c.addEventListener("click", () => ask(c.dataset.q)));
   input.addEventListener("blur", () => { if (!input.value) typePlaceholder(); });
-  (function restore() {
-    let st = null;
-    try { st = JSON.parse(sessionStorage.getItem(STORE) || "null"); } catch (e) {}
-    if (!st || st.sid !== sessionId || !Array.isArray(st.items) || !st.items.length) return;
-    restoring = true;
-    document.body.classList.add("chatting");
-    (st.asked || []).forEach((q) => asked.add(q)); lastLang = st.lastLang || ""; answers = +st.answers || 0; nudged = !!st.nudged;
-    for (const it of st.items) {
-      if (it.r === "u") add("user", String(it.t || ""));
-      else if (it.r === "demos") add("bot", demosHTML());
-      else if (it.r === "b") {
-        const body = add("bot", render(String(it.md || "")));
-        if (it.meta) { const line = document.createElement("div"); line.className = "meta"; line.textContent = String(it.meta); body.parentElement.appendChild(line); }
-      }
-    }
-    saved = st.items;
-    showFollowups(Array.isArray(st.sugg) ? st.sugg : []);
-    restoring = false;
-    requestAnimationFrame(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  })();
-
 </script>
 </body>
 </html>
