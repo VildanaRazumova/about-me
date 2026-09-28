@@ -59,6 +59,7 @@
     margin: 0; min-height: 100dvh; display: flex; flex-direction: column;
     background: var(--bg); color: var(--ink); font: 15.5px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
   }
+  b, strong { font-weight: 600; }   /* the fonts ship 400/500/600 only: no faux bold */
   a { color: var(--brand-ink); }
   .sr-only { position: absolute; left: -9999px; }
   :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
@@ -69,7 +70,8 @@
     padding: 14px max(20px, calc((100vw - 1120px) / 2)); border-bottom: 1px solid transparent; transition: background .3s, border-color .3s;
   }
   body.chatting .top { background: color-mix(in srgb, var(--bg) 93%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom-color: var(--line); }
-  .brand { display: flex; align-items: center; gap: 10px; white-space: nowrap; transition: opacity .3s; }
+  .brand { display: flex; align-items: center; gap: 10px; white-space: nowrap; color: var(--ink); text-decoration: none; border-radius: 999px; transition: opacity .3s; }
+  .brand:hover .brand-photo { box-shadow: 0 0 0 2px var(--brand); }
   body:not(.chatting) .brand { opacity: 0; visibility: hidden; }
   .brand-photo { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
   .who { display: flex; flex-direction: column; line-height: 1.15; font-weight: 600; letter-spacing: -.01em; }
@@ -289,10 +291,10 @@
 </head>
 <body>
   <header class="top">
-    <div class="brand" aria-hidden="true">
+    <a class="brand" href="./" id="home-link" aria-label="Vildana Razumova — back to the start">
       <img class="brand-photo" src="photo.jpg" alt="" width="32" height="32">
       <span class="who"><span class="nm">Vildana Razumova</span><small id="t-role">Data Scientist · AI Automation</small></span>
-    </div>
+    </a>
     <nav class="actions">
       <div class="lang" id="lang" role="group" aria-label="Language">
         <button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="de" lang="de">DE</button><button type="button" data-lang="ru" lang="ru">RU</button>
@@ -432,7 +434,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     en: { role: "Data Scientist · AI Automation", talk: "Contact", examples: "Portfolio", menu: ["Profile and recommendations", "Message her directly", "Email", "CV as PDF", "Download, two pages"],
           bot: "AI assistant",
           h1: "Don't read my CV.<br><em>Ask it.</em>", phx: ["What has she built?", "What is she working on now?", "Is she open to offers?", "Tell me something interesting", "How does this assistant work?"],
-          demosAll: "Descriptions and stack of each project", long: "too long — paste only the requirements", label: "Your message",
+          demosAll: "Descriptions and stack of each project", home: "back to the start", long: "too long — paste only the requirements", label: "Your message",
           lead: "I'm Vildana's AI. Ask me about her experience, projects, skills and the way she works.",
           ask: "Don't read the CV — ask her AI assistant.", jd: ["Paste a job description →", "How well does Vildana's experience fit this role?\n\n"],
           strip: ["Portfolio", "Demonstrations of real projects on synthetic data. Open a project to see how it works.", "Open the demo", "Open the flow"],
@@ -450,7 +452,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     de: { role: "Data Scientist · KI-Automatisierung", talk: "Kontakt", examples: "Portfolio", menu: ["Profil und Empfehlungen", "Direkt schreiben", "E-Mail", "Lebenslauf als PDF", "Download, zwei Seiten"],
           bot: "KI-Assistent",
           h1: "Lesen Sie nicht meinen Lebenslauf.<br><em>Fragen Sie ihn.</em>", phx: ["Was hat sie gebaut?", "Woran arbeitet sie gerade?", "Ist sie offen für Angebote?", "Etwas Interessantes, bitte", "Wie funktioniert dieser Assistent?"],
-          demosAll: "Beschreibung und Stack zu jedem Projekt", long: "zu lang — fügen Sie nur die Anforderungen ein", label: "Ihre Nachricht",
+          demosAll: "Beschreibung und Stack zu jedem Projekt", home: "zurück zum Anfang", long: "zu lang — fügen Sie nur die Anforderungen ein", label: "Ihre Nachricht",
           lead: "Ich bin Vildanas KI. Fragen Sie mich nach ihrer Erfahrung, ihren Projekten, Fähigkeiten und ihrer Arbeitsweise.",
           ask: "Lesen Sie nicht den Lebenslauf — fragen Sie ihren KI-Assistenten.", jd: ["Stellenbeschreibung einfügen →", "Wie gut passt Vildanas Erfahrung zu dieser Stelle?\n\n"],
           strip: ["Portfolio", "Demonstrationen realer Projekte auf synthetischen Daten. Öffnen Sie ein Projekt und sehen Sie, wie es funktioniert.", "Demo öffnen", "Ablauf öffnen"],
@@ -468,7 +470,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     ru: { role: "Дата-сайентист · ИИ-автоматизация", talk: "Связаться", examples: "Портфолио", menu: ["Профиль и рекомендации", "Написать напрямую", "Почта", "Резюме в PDF", "Скачать, две страницы"],
           bot: "ИИ-ассистент",
           h1: "Не читайте моё резюме.<br><em>Спросите его.</em>", phx: ["Что она построила?", "Над чем она работает сейчас?", "Открыта ли она к предложениям?", "Расскажи что-нибудь интересное", "Как устроен этот ассистент?"],
-          demosAll: "Описание и стек каждого проекта", long: "слишком длинно — вставьте только требования", label: "Ваше сообщение",
+          demosAll: "Описание и стек каждого проекта", home: "к началу", long: "слишком длинно — вставьте только требования", label: "Ваше сообщение",
           lead: "Я ИИ-ассистент Вильданы. Спросите меня о её опыте, проектах, навыках и о том, как она работает.",
           ask: "Не читайте резюме — спросите её ИИ-ассистента.", jd: ["Вставьте описание вакансии →", "Насколько опыт Вильданы подходит для этой вакансии?\n\n"],
           strip: ["Портфолио", "Демонстрации реальных проектов на синтетических данных. Откройте проект и посмотрите, как он устроен.", "Открыть демо", "Открыть схему"],
@@ -560,7 +562,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     document.documentElement.lang = l;
     document.querySelectorAll(".nm").forEach((e) => { e.textContent = NAME[l]; }); $("portrait").alt = NAME[l];
     document.title = NAME[l] + " — " + d.role;
-    $("t-h1").innerHTML = d.h1; $("t-lead").textContent = d.lead; $("t-note").textContent = d.note; $("t-input-label").textContent = d.label;
+    $("home-link").setAttribute("aria-label", NAME[l] + " — " + d.home); $("home-link").title = d.home; $("t-h1").innerHTML = d.h1; $("t-lead").textContent = d.lead; $("t-note").textContent = d.note; $("t-input-label").textContent = d.label;
     $("t-role").textContent = d.role; $("t-hrole").textContent = d.role;
     $("jd-chip").textContent = d.jd[0]; $("nudge").textContent = d.nudge;
 
@@ -710,6 +712,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     const r = document.createElement("button"); r.type = "button"; r.className = "chip reset"; r.textContent = "\u21ba " + d.reset;
     r.addEventListener("click", resetConversation); box.appendChild(r);
   }
+  $("home-link").addEventListener("click", (e) => { e.preventDefault(); resetConversation(); });
   function resetConversation() {
     log.innerHTML = ""; asked.clear(); lastSuggestions = []; lastLang = "";
     sessionId = crypto.randomUUID(); try { sessionStorage.setItem("sid", sessionId); } catch (e) {}
