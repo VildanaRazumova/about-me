@@ -1,2 +1,0 @@
-Inter (c) The Inter Project Authors and Source Serif 4 (c) Adobe, both under the SIL Open Font License 1.1.
-Files taken unmodified from the @fontsource/inter and @fontsource/source-serif-4 npm packages.
