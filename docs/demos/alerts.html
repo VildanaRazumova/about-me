@@ -466,7 +466,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
 
 <script>
 (() => {
-  const C = {"page": "alerts", "webhook": "https://n8n-production-9eec.up.railway.app/webhook/322d072f-63fd-4d6a-889a-c114ddbad4be/chat", "ui": {"en": {"btn": "Ask about this project", "bot": "AI assistant", "ph": "Ask about this project…", "wait": "Thinking…", "err": "Something went wrong. Please try again.", "close": "Close", "full": "Full chat →", "send": "Send"}, "de": {"btn": "Fragen zum Projekt", "bot": "KI-Assistent", "ph": "Fragen Sie zu diesem Projekt …", "wait": "Denkt nach …", "err": "Etwas ist schiefgelaufen. Bitte versuchen Sie es noch einmal.", "close": "Schließen", "full": "Zum vollen Chat →", "send": "Senden"}, "ru": {"btn": "Спросить про проект", "bot": "ИИ-ассистент", "ph": "Спросите про этот проект…", "wait": "Думает…", "err": "Что-то пошло не так. Попробуйте ещё раз.", "close": "Закрыть", "full": "Полный чат →", "send": "Отправить"}}, "name": {"en": "System alerts", "de": "Systemmeldungen", "ru": "Алерты систем"}, "q": {"en": ["Why does every system report to Teams?", "What happens when data is incomplete?", "Which systems report here?"], "de": ["Warum meldet jedes System in Teams?", "Was passiert bei unvollständigen Daten?", "Welche Systeme melden hier?"], "ru": ["Зачем каждая система отчитывается в Teams?", "Что происходит, если данные неполные?", "Какие системы здесь отчитываются?"]}};
+  const C = {"page": "alerts", "webhook": "https://n8n-production-9eec.up.railway.app/webhook/322d072f-63fd-4d6a-889a-c114ddbad4be/chat", "ui": {"en": {"btn": "Ask about this project", "bot": "AI assistant", "ph": "Ask about this project…", "wait": "Thinking…", "err": "Something went wrong. Please try again.", "close": "Close", "full": "Full chat →", "send": "Send"}, "de": {"btn": "Fragen zum Projekt", "bot": "KI-Assistent", "ph": "Fragen Sie zu diesem Projekt …", "wait": "Denkt nach …", "err": "Etwas ist schiefgelaufen. Bitte versuchen Sie es noch einmal.", "close": "Schließen", "full": "Zum vollen Chat →", "send": "Senden"}, "ru": {"btn": "Спросить про проект", "bot": "ИИ-ассистент", "ph": "Спросите про этот проект…", "wait": "Думает…", "err": "Что-то пошло не так. Попробуйте ещё раз.", "close": "Закрыть", "full": "Полный чат →", "send": "Отправить"}}, "name": {"en": "System alerts", "de": "Systemmeldungen", "ru": "Алерты систем"}, "q": {"en": ["Tell me about this project", "What technologies were used?", "What did Vildana do here?", "What was the result?", "What problem did the alerts catch?", "Why report successful runs too?", "Didn't that create too much noise?", "What did she learn?"], "de": ["Erzählen Sie mir von diesem Projekt", "Welche Technologien wurden eingesetzt?", "Was hat Vildana hier gemacht?", "Was ist das Ergebnis?", "Welches Problem haben die Alerts erkannt?", "Warum auch erfolgreiche Läufe melden?", "Gab das nicht zu viele Benachrichtigungen?", "Was hat sie daraus gelernt?"], "ru": ["Расскажи про этот проект", "Какие технологии использовались?", "Что Вильдана делала в этом проекте?", "Какой результат?", "Какую проблему поймали алерты?", "Зачем сообщать и об успешных запусках?", "Не слишком ли много уведомлений?", "Какой вывод она сделала?"]}};
   const $ = (id) => document.getElementById(id);
   const L = () => (C.ui[document.documentElement.lang] ? document.documentElement.lang : "en");
   let sid = null; try { sid = sessionStorage.getItem("demo-chat-sid"); } catch (e) {}
@@ -481,15 +481,17 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     tpl.content.querySelectorAll("table").forEach((t) => { const w = document.createElement("div"); w.className = "table-wrap"; t.replaceWith(w); w.appendChild(t); });
     return tpl.innerHTML;
   }
-  function chips(list) {
+  const done = new Set();
+  function chips() {
+    // the next three questions of the fixed list that were not asked yet (all answered by the project's card)
     const box = $("dc-chips"); box.innerHTML = "";
-    (list || []).slice(0, 3).forEach((q) => { const b = document.createElement("button"); b.type = "button"; b.textContent = q; b.addEventListener("click", () => ask(q)); box.appendChild(b); });
+    C.q[L()].filter((q) => !done.has(q)).slice(0, 3).forEach((q) => { const b = document.createElement("button"); b.type = "button"; b.textContent = q; b.addEventListener("click", () => ask(q)); box.appendChild(b); });
   }
   function texts() {
     const l = L(), u = C.ui[l];
     $("dc-btn-t").textContent = u.btn; $("dc-title").textContent = u.bot; $("dc-sub").textContent = C.name[l];
     $("dc-full").textContent = u.full; $("dc-x").setAttribute("aria-label", u.close); $("dc-in").placeholder = u.ph; $("dc-send").setAttribute("aria-label", u.send);
-    if (!asked) chips(C.q[l]);
+    if (!busy) chips();
   }
   function add(cls, html, isText) {
     const d = document.createElement("div"); d.className = cls; if (isText) d.textContent = html; else d.innerHTML = html;
@@ -497,7 +499,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
   }
   async function ask(text) {
     text = String(text || "").trim(); if (!text || busy) return;
-    busy = true; asked += 1; $("dc-send").disabled = true; $("dc-in").value = ""; chips([]);
+    busy = true; asked += 1; done.add(text); $("dc-send").disabled = true; $("dc-in").value = ""; $("dc-chips").innerHTML = "";
     add("dc-u", text, true);
     const wait = add("dc-wait", C.ui[L()].wait, true);
     try {
@@ -508,7 +510,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
       wait.remove();
       const b = add("dc-b", render(String(data.output ?? data.text ?? "")));
       if (data.meta && data.meta.lang) lastLang = data.meta.lang;
-      chips(Array.isArray(data.suggestions) ? data.suggestions : []);
+      chips();
       $("dc-log").scrollTop = b.offsetTop - 8;
     } catch (e) {
       wait.remove(); add("dc-b", C.ui[L()].err, true);
