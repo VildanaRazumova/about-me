@@ -76,13 +76,14 @@
   /* ── flow tokens: roles in the diagram — logic green, AI model gold, data slate ── */
   :root { --canvas: #efece4; --dot: rgba(26,31,28,.08); --edge: #a4a295; --node: #ffffff; --chip: #ebe8df;
     --r-user: #1a1f1c; --r-user-bg: #ebe8df; --r-flow: #2e7a63; --r-flow-bg: #e4efe9; --r-ai: #8a6100; --r-ai-bg: #f6ecd2; --r-data: #3b6c8c; --r-data-bg: #e3edf4;
-    --ok: #1f7a4d; --warn: #b25000; --err: #c0392b; }
+    --ok: #1f7a4d; --warn: #b25000; --err: #c0392b;
+    --p-one: #1a1f1c; --p-news: #b8860b; --p-market: #3b6c8c; --p-search: #2e7a63; --p-final: #2e7a63; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --canvas: #111815; --dot: rgba(237,241,237,.07); --edge: #56635c; --node: #151b18; --chip: #1f2824;
     --r-user: #edf1ed; --r-user-bg: #26302b; --r-flow: #5cc29c; --r-flow-bg: #16302a; --r-ai: #e3bd52; --r-ai-bg: #3a3016; --r-data: #86b8d8; --r-data-bg: #17293a;
-    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; } }
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; --p-one: #edf1ed; --p-news: #e3bd52; --p-market: #86b8d8; --p-search: #5cc29c; --p-final: #5cc29c; } }
   :root[data-theme="dark"] { --canvas: #111815; --dot: rgba(237,241,237,.07); --edge: #56635c; --node: #151b18; --chip: #1f2824;
     --r-user: #edf1ed; --r-user-bg: #26302b; --r-flow: #5cc29c; --r-flow-bg: #16302a; --r-ai: #e3bd52; --r-ai-bg: #3a3016; --r-data: #86b8d8; --r-data-bg: #17293a;
-    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; }
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; --p-one: #edf1ed; --p-news: #e3bd52; --p-market: #86b8d8; --p-search: #5cc29c; --p-final: #5cc29c; }
   /* ── level rows ── */
   .meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 32px 0 12px; }
   .eyebrow { display: flex; align-items: center; gap: 8px; margin: 0; font: 600 13px/1 var(--sans); color: var(--muted); }
@@ -97,6 +98,7 @@
   .legend li { display: flex; align-items: center; gap: 6px; }
   .legend i { width: 12px; height: 12px; border-radius: 4px; background: var(--rb); box-shadow: inset 0 0 0 1.5px var(--r); }
   .legend .dash { width: 18px; height: 0; border-radius: 0; background: none; box-shadow: none; border-top: 1.5px dashed var(--edge); }
+  .legend .pt { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: -7px 0 0 -2px color-mix(in srgb, var(--c) 35%, transparent); margin-left: 6px; }
   /* ── canvas ── */
   .canvas { position: relative; border: 1px solid var(--line); border-radius: 18px; padding: 44px 24px 40px;
     background: radial-gradient(circle, var(--dot) 1px, transparent 1.5px) 0 0 / 16px 16px, var(--canvas); }
@@ -104,9 +106,28 @@
   .wires path { fill: none; stroke: var(--edge); stroke-width: 1.5; }
   .wires .dash { stroke-dasharray: 4 4; }
   .wires text { font: 500 11px var(--sans); fill: var(--muted); paint-order: stroke; stroke: var(--canvas); stroke-width: 5px; stroke-linejoin: round; }
+  /* data points: the joint of several flows, the shared line, the moving points */
+  .wires .trunk { stroke-width: 3; stroke-linecap: round; }
+  .wires path.route { stroke: none; }
+  .wires .jn { fill: var(--edge); stroke: none; }
+  .wires .dots circle { stroke: none; }
+  .src { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; font: 500 11.5px/1.3 var(--sans); color: var(--faint); }
+  .src span { display: inline-flex; align-items: center; gap: 5px; transition: color .3s; }
+  .src i { width: 8px; height: 8px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--edge); transition: background .3s, box-shadow .3s; }
+  .src span.on { color: var(--ink); }
+  .src span.on i { background: var(--c); box-shadow: none; }
+  .node.end { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .node.hit { animation: hit .7s ease-out; }
+  .node.end.hit { animation: hit-end 1s ease-out; }
+  @keyframes hit { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pc) 55%, transparent); } 100% { box-shadow: 0 0 0 12px color-mix(in srgb, var(--pc) 0%, transparent); } }
+  @keyframes hit-end { 0% { box-shadow: 0 0 0 3px var(--brand-soft), 0 0 0 3px color-mix(in srgb, var(--brand) 60%, transparent); }
+    100% { box-shadow: 0 0 0 3px var(--brand-soft), 0 0 0 22px color-mix(in srgb, var(--brand) 0%, transparent); } }
+  .n-sub.sent { color: var(--brand-ink); font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { .node.hit, .node.end.hit { animation: none; } }
   .flow { --gap: 44px; position: relative; z-index: 1; display: grid; align-items: center; row-gap: 56px; grid-template-columns: repeat(4, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
   .flow[data-n="4"] { grid-template-columns: repeat(3, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
   .flow[data-n="6"] { --gap: 32px; grid-template-columns: repeat(5, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
+  .flow.lanes[data-n="5"] { grid-template-columns: repeat(2, minmax(0,1fr) var(--gap)) minmax(0,1fr) 104px minmax(0,1fr) var(--gap) minmax(0,1fr); }   /* room for the joint of the flows */
   .node { --r: var(--r-flow); --rb: var(--r-flow-bg); position: relative; min-width: 0; min-height: 124px; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px;
     background: var(--node); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
   .node[data-role="user"] { --r: var(--r-user); --rb: var(--r-user-bg); }
@@ -139,13 +160,16 @@
   .flow.lanes { row-gap: 64px; }
   .flow.lanes .node { min-height: 0; height: 150px; overflow: hidden; }
   .flow.lanes .n-sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .flow.lanes > .node { height: auto; min-height: 150px; }
   .group { display: grid; grid-template-columns: subgrid; align-items: center; position: relative; margin: -34px -12px -12px; padding: 34px 12px 12px; border: 1px dashed var(--edge); border-radius: 20px; }
   .g-lbl { position: absolute; top: 11px; left: 14px; display: flex; align-items: center; gap: 6px; font: 500 12px/1 var(--sans); color: var(--muted); }
   .g-lbl svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   @media (max-width: 760px) {
     .how { margin-top: 28px; } .how + .meta { margin-top: 44px; } .how h2 { font-size: 21px; }
     .canvas { padding: 16px 12px; background: var(--canvas); }
-    .wires { display: none; }
+    .canvas.merge { padding-right: 40px; }
+    .flow.lanes > .edge.js { display: none; }
+    .flow.lanes > .edge.js + .node { margin-top: 64px; }
     .flow, .flow[data-n] { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
     .group { display: flex; flex-direction: column; align-items: stretch; margin: 0; padding: 36px 10px 10px; }
     .node { min-height: 0; }
@@ -331,8 +355,8 @@
   const UI = {"en": {"rail": ["Activity", "Chat", "Teams", "Calendar"], "search": "Search", "today": "Today", "ro": "In the demo — ready-made questions only ↑", "roCh": "Read-only in the demo", "pinned": "Pinned", "recent": "Recent", "chat": "Chat", "teams": "Teams", "team": "Destinations", "channels": ["General", "Sales · Sunny Coast", "System alerts", "Market signals"], "chats": [["Payments assistant", "Yes, two payments of $920…"], ["AI sales analyst", "Sales digest for {d-1}"], ["Mary", "did the group on SA103 confirm?"], ["Sales team", "Marat: closed 3 bookings on…"], ["System alerts", "✔ Run finished · 14:31"]], "tabsChat": ["Chat", "About", "Files"], "tabsCh": ["Posts", "Files"], "try": "Try:", "back": "← Portfolio", "role": "AI/ML Project Lead", "details": "details"}, "de": {"rail": ["Aktivität", "Chat", "Teams", "Kalender"], "search": "Suchen", "today": "Heute", "ro": "In der Demo — nur vorbereitete Fragen ↑", "roCh": "In der Demo nur zum Lesen", "pinned": "Angeheftet", "recent": "Zuletzt", "chat": "Chat", "teams": "Teams", "team": "Reiseziele", "channels": ["Allgemein", "Verkauf · Sonnenküste", "Systemmeldungen", "Marktsignale"], "chats": [["Zahlungsassistent", "Ja, zwei Zahlungen über $920…"], ["KI-Verkaufsanalyst", "Verkaufsübersicht {d-1}"], ["Mary", "hat die Gruppe auf SA103 bestätigt?"], ["Vertrieb", "Marat: 3 Buchungen abgeschlossen…"], ["Systemmeldungen", "✔ Lauf abgeschlossen · 14:31"]], "tabsChat": ["Chat", "Info", "Dateien"], "tabsCh": ["Beiträge", "Dateien"], "try": "Probieren Sie:", "back": "← Portfolio", "role": "AI/ML Project Lead", "details": "Details"}, "ru": {"rail": ["Действия", "Чат", "Команды", "Календарь"], "search": "Поиск", "today": "Сегодня", "ro": "В демо — только готовые вопросы ↑", "roCh": "В демо — только чтение", "pinned": "Закреплённые", "recent": "Недавние", "chat": "Чат", "teams": "Команды", "team": "Направления", "channels": ["Общий", "Продажи · Солнечный берег", "Алерты систем", "Внешние сигналы"], "chats": [["Помощник по платежам", "Да, два платежа по $920…"], ["AI-аналитик по продажам", "Сводка продаж за {d-1}"], ["Мэри", "по SA103 подтвердили группу?"], ["Отдел продаж", "Марат: закрыли 3 брони по…"], ["Алерты систем", "✔ Прогон завершён · 14:31"]], "tabsChat": ["Чат", "Сведения", "Файлы"], "tabsCh": ["Публикации", "Файлы"], "try": "Попробуйте:", "back": "← Портфолио", "role": "AI/ML Project Lead", "details": "подробнее"}};
   const T = {"en": {"crumb": "Portfolio · System alerts", "lvl1": "What the IT team sees", "title": "System alerts in Microsoft Teams", "lead": "After every run a system writes to the shared channel what was done, which checks passed and where the data was incomplete — a failure is visible before it shows in the numbers.", "pill": "Demo data · 1 day", "chan": "System alerts", "sub": "channel · pipeline health", "all": "All", "sys": {"pr": "Pricing", "mon": "Price monitoring", "news": "News flow", "chk": "Data checks", "pay": "Payments assistant", "an": "AI analyst"}, "feed": [["06:05", "news", "ok", "✔ News flow finished", [["Items collected", "142"], ["New after deduplication", "37"], ["Scored by the model", "37"], ["Duration", "2 min 40 s"]], "sources: 4 RSS queries · duplicates by URL: 61 · by title: 44\nknown titles skipped: 0 · relevance ≥ 0.6: 9 · written: 37 rows"], ["07:31", "pr", "ok", "✔ Run finished · morning", [["Segments recalculated", "1,284"], ["Recommendations down / up", "212 / 96"], ["Deep discounts", "38"], ["Data checks", "12 / 12 passed", "ok"], ["Duration", "4 min 12 s"]], "load forecast: 17 flights · 145 hotels · 5 stay lengths\nregression against the frozen run: identical\nresult written · managers' page updated"], ["08:00", "an", "ok", "✔ Digest sent · 2 destinations", [["Sunny Coast", "47 bookings · posted 08:00"], ["Azure Bay", "31 bookings · posted 08:00"], ["Queries", "9 · 1.8 s"]], "numbers in the text checked against the query result: 24 / 24 match"], ["09:05", "mon", "att", "⚠ Incomplete data", [["Competitors received", "7 of 8"], ["Missing", "Competitor D — API timeout"], ["Action", "retry in 30 min"]], "GET /prices?dest=SC — 504 Gateway Timeout after 30 s (3 attempts)\nthe 11:30 pricing run will use yesterday's prices for Competitor D if the retry fails"], ["09:35", "mon", "ok", "✔ Retry done · 8 of 8", [["Competitors received", "8 of 8"], ["Offers collected", "3,912"], ["Duration", "1 min 05 s"]], "Competitor D responded in 2.1 s · price changes since yesterday: 214 offers"], ["11:31", "pr", "ok", "✔ Run finished · midday", [["Segments recalculated", "1,284"], ["Recommendations down / up", "205 / 101"], ["Changed since the morning", "63"], ["Data checks", "12 / 12 passed", "ok"], ["Duration", "4 min 05 s"]], "63 recommendations changed; 41 of them because of Competitor D's updated prices"], ["12:10", "chk", "warn", "✖ Check failed: duplicate bookings", [["Check", "duplicates in yesterday's bookings"], ["Found", "14 rows"], ["Action", "the 14:30 run is on hold until the source is fixed"]], "SELECT booking_id, COUNT(*) … HAVING COUNT(*) > 1 → 14 rows\nsource: the booking export ran twice at 03:10 and 03:25\nnotified: data team"], ["13:05", "chk", "ok", "✔ Duplicates fixed at the source · check passed", [["Check", "duplicates in yesterday's bookings"], ["Found", "0 rows"], ["Action", "the 14:30 run is released"]], "the second export was removed by the data team at 12:52 · re-check: 0 duplicates"], ["14:31", "pr", "ok", "✔ Run finished · afternoon", [["Segments recalculated", "1,284"], ["Recommendations down / up", "212 / 96"], ["Deep discounts", "38"], ["Data checks", "12 / 12 passed", "ok"], ["Duration", "4 min 12 s"]], "result written · managers' page updated · 14 recommendations waiting for a decision"], ["18:00", "pay", "info", "ℹ Weekly usage", [["Questions this week", "72"], ["Requests to accounting", "5"], ["Average answer time", "3.1 s"]], "top intents: payment status 41 · payment by amount 18 · open requests 8 · other 5"]]}, "de": {"crumb": "Portfolio · Systemmeldungen", "lvl1": "Was das IT-Team sieht", "title": "Systemmeldungen in Microsoft Teams", "lead": "Nach jedem Lauf schreibt das System in den gemeinsamen Kanal, was getan wurde, welche Prüfungen bestanden sind und wo Daten unvollständig waren — ein Fehler ist sichtbar, bevor er sich in den Zahlen zeigt.", "pill": "Demo-Daten · 1 Tag", "chan": "Systemmeldungen", "sub": "Kanal · Zustand der Pipelines", "all": "Alle", "sys": {"pr": "Preisbildung", "mon": "Preisbeobachtung", "news": "Nachrichten-Flow", "chk": "Datenprüfungen", "pay": "Zahlungsassistent", "an": "KI-Analyst"}, "feed": [["06:05", "news", "ok", "✔ Nachrichten-Flow abgeschlossen", [["Gesammelt", "142"], ["Neu nach Deduplizierung", "37"], ["Vom Modell bewertet", "37"], ["Dauer", "2 Min 40 s"]], "Quellen: 4 RSS-Abfragen · Dubletten nach URL: 61 · nach Titel: 44\nbekannte Titel übersprungen: 0 · Relevanz ≥ 0,6: 9 · geschrieben: 37 Zeilen"], ["07:31", "pr", "ok", "✔ Lauf abgeschlossen · morgens", [["Segmente neu berechnet", "1.284"], ["Empfehlungen runter / rauf", "212 / 96"], ["Tiefe Rabatte", "38"], ["Datenprüfungen", "12 / 12 bestanden", "ok"], ["Dauer", "4 Min 12 s"]], "Auslastungsprognose: 17 Flüge · 145 Hotels · 5 Aufenthaltsdauern\nRegression gegen den eingefrorenen Lauf: identisch\nErgebnis gespeichert · Manager-Seite aktualisiert"], ["08:00", "an", "ok", "✔ Übersicht gesendet · 2 Reiseziele", [["Sonnenküste", "47 Buchungen · 08:00"], ["Azurbucht", "31 Buchungen · 08:00"], ["Abfragen", "9 · 1,8 s"]], "Zahlen im Text gegen das Abfrageergebnis geprüft: 24 / 24 stimmen"], ["09:05", "mon", "att", "⚠ Unvollständige Daten", [["Wettbewerber erhalten", "7 von 8"], ["Fehlt", "Wettbewerber D — API-Timeout"], ["Aktion", "Wiederholung in 30 Min"]], "GET /prices?dest=SC — 504 Gateway Timeout nach 30 s (3 Versuche)\nder Lauf um 11:30 nutzt für Wettbewerber D die Preise von gestern, falls die Wiederholung fehlschlägt"], ["09:35", "mon", "ok", "✔ Wiederholung erfolgreich · 8 von 8", [["Wettbewerber erhalten", "8 von 8"], ["Angebote gesammelt", "3.912"], ["Dauer", "1 Min 05 s"]], "Wettbewerber D antwortete in 2,1 s · Preisänderungen seit gestern: 214 Angebote"], ["11:31", "pr", "ok", "✔ Lauf abgeschlossen · mittags", [["Segmente neu berechnet", "1.284"], ["Empfehlungen runter / rauf", "205 / 101"], ["Geändert seit dem Morgen", "63"], ["Datenprüfungen", "12 / 12 bestanden", "ok"], ["Dauer", "4 Min 05 s"]], "63 Empfehlungen geändert; 41 davon wegen der aktualisierten Preise von Wettbewerber D"], ["12:10", "chk", "warn", "✖ Prüfung fehlgeschlagen: doppelte Buchungen", [["Prüfung", "Dubletten in den Buchungen von gestern"], ["Gefunden", "14 Zeilen"], ["Aktion", "der Lauf um 14:30 wartet, bis die Quelle korrigiert ist"]], "SELECT booking_id, COUNT(*) … HAVING COUNT(*) > 1 → 14 Zeilen\nUrsache: der Buchungsexport lief zweimal, 03:10 und 03:25\nbenachrichtigt: Datenteam"], ["13:05", "chk", "ok", "✔ Dubletten an der Quelle behoben · Prüfung bestanden", [["Prüfung", "Dubletten in den Buchungen von gestern"], ["Gefunden", "0 Zeilen"], ["Aktion", "der Lauf um 14:30 ist freigegeben"]], "der zweite Export wurde vom Datenteam um 12:52 entfernt · erneute Prüfung: 0 Dubletten"], ["14:31", "pr", "ok", "✔ Lauf abgeschlossen · nachmittags", [["Segmente neu berechnet", "1.284"], ["Empfehlungen runter / rauf", "212 / 96"], ["Tiefe Rabatte", "38"], ["Datenprüfungen", "12 / 12 bestanden", "ok"], ["Dauer", "4 Min 12 s"]], "Ergebnis gespeichert · Manager-Seite aktualisiert · 14 Empfehlungen warten auf eine Entscheidung"], ["18:00", "pay", "info", "ℹ Nutzung diese Woche", [["Fragen diese Woche", "72"], ["Anfragen an die Buchhaltung", "5"], ["Mittlere Antwortzeit", "3,1 s"]], "häufigste Absichten: Zahlungsstatus 41 · Zahlung nach Betrag 18 · offene Anfragen 8 · sonstiges 5"]]}, "ru": {"crumb": "Портфолио · Алерты систем", "lvl1": "Что видит ИТ-команда", "title": "Алерты систем в Microsoft Teams", "lead": "После каждого запуска система пишет в общий канал, что сделано, какие проверки пройдены и где данные неполные, — сбой виден раньше, чем по цифрам.", "pill": "Демо-данные · 1 день", "chan": "Алерты систем", "sub": "канал · состояние пайплайнов", "all": "Все", "sys": {"pr": "Ценообразование", "mon": "Мониторинг цен", "news": "Поток новостей", "chk": "Проверки данных", "pay": "Помощник по платежам", "an": "AI-аналитик"}, "feed": [["06:05", "news", "ok", "✔ Поток новостей завершён", [["Собрано", "142"], ["Новых после дедупликации", "37"], ["Оценено моделью", "37"], ["Длительность", "2 мин 40 с"]], "источники: 4 RSS-запроса · дубли по URL: 61 · по заголовку: 44\nизвестных заголовков пропущено: 0 · релевантность ≥ 0,6: 9 · записано: 37 строк"], ["07:31", "pr", "ok", "✔ Прогон завершён · утро", [["Сегментов пересчитано", "1 284"], ["Рекомендаций вниз / вверх", "212 / 96"], ["Глубоких скидок", "38"], ["Проверки данных", "12 / 12 пройдены", "ok"], ["Длительность", "4 мин 12 с"]], "прогноз загрузки: 17 рейсов · 145 отелей · 5 длительностей\nрегрессия против замороженного прогона: совпадает\nрезультат записан · страница менеджеров обновлена"], ["08:00", "an", "ok", "✔ Сводка отправлена · 2 направления", [["Солнечный берег", "47 бронирований · 08:00"], ["Лазурная бухта", "31 бронирование · 08:00"], ["Запросов", "9 · 1,8 с"]], "цифры в тексте сверены с результатом запросов: 24 / 24 совпадают"], ["09:05", "mon", "att", "⚠ Неполные данные", [["Конкурентов получено", "7 из 8"], ["Пропущен", "Конкурент D — таймаут API"], ["Действие", "повтор через 30 мин"]], "GET /prices?dest=SC — 504 Gateway Timeout после 30 с (3 попытки)\nпрогон 11:30 возьмёт вчерашние цены конкурента D, если повтор не удастся"], ["09:35", "mon", "ok", "✔ Повтор выполнен · 8 из 8", [["Конкурентов получено", "8 из 8"], ["Предложений собрано", "3 912"], ["Длительность", "1 мин 05 с"]], "конкурент D ответил за 2,1 с · изменений цен со вчера: 214 предложений"], ["11:31", "pr", "ok", "✔ Прогон завершён · день", [["Сегментов пересчитано", "1 284"], ["Рекомендаций вниз / вверх", "205 / 101"], ["Изменилось с утра", "63"], ["Проверки данных", "12 / 12 пройдены", "ok"], ["Длительность", "4 мин 05 с"]], "изменились 63 рекомендации; 41 из них — из-за обновлённых цен конкурента D"], ["12:10", "chk", "warn", "✖ Проверка не пройдена: дубли бронирований", [["Проверка", "дубли в бронированиях за вчера"], ["Найдено", "14 строк"], ["Действие", "прогон 14:30 отложен до исправления источника"]], "SELECT booking_id, COUNT(*) … HAVING COUNT(*) > 1 → 14 строк\nпричина: выгрузка бронирований отработала дважды, 03:10 и 03:25\nуведомлена: команда данных"], ["13:05", "chk", "ok", "✔ Дубли устранены источником · проверка пройдена", [["Проверка", "дубли в бронированиях за вчера"], ["Найдено", "0 строк"], ["Действие", "прогон 14:30 разрешён"]], "вторая выгрузка удалена командой данных в 12:52 · повторная проверка: 0 дублей"], ["14:31", "pr", "ok", "✔ Прогон завершён · вечер", [["Сегментов пересчитано", "1 284"], ["Рекомендаций вниз / вверх", "212 / 96"], ["Глубоких скидок", "38"], ["Проверки данных", "12 / 12 пройдены", "ok"], ["Длительность", "4 мин 12 с"]], "результат записан · страница менеджеров обновлена · 14 рекомендаций ждут решения"], ["18:00", "pay", "info", "ℹ Использование за неделю", [["Вопросов за неделю", "72"], ["Запросов в бухгалтерию", "5"], ["Среднее время ответа", "3,1 с"]], "частые намерения: статус оплаты 41 · платёж по сумме 18 · открытые запросы 8 · прочее 5"]]}};
   const NAME = { en: "Vildana Razumova", de: "Vildana Razumova", ru: "Вильдана Разумова" };
-  const HOW = {"en": {"lvl1": "What the manager sees", "lvl2": "How it works", "demo": "Demo", "legend": ["What the user sees", "Logic", "AI model", "Data", "Branch"]}, "de": {"lvl1": "Was der Manager sieht", "lvl2": "So funktioniert es", "demo": "Demo", "legend": ["Sieht der Nutzer", "Logik", "KI-Modell", "Daten", "Zweig"]}, "ru": {"lvl1": "Что видит менеджер", "lvl2": "Как устроено", "demo": "Демо", "legend": ["Видит пользователь", "Логика", "ИИ-модель", "Данные", "Ветка"]}};
-  const FLOW = {"en": {"heading": "Where every alert comes from", "n": 6, "pad": "64px", "wires": "chk:b>rep:b dash|check failed → calculation skipped; s1:r>tm:l; s2:r>tm:l; s3:r>tm:l", "items": [{"group": {"cols": "1 / 8", "icon": "clock", "label": "every pipeline run · Airflow", "items": [{"role": "flow", "icon": "shield", "title": "Data checks", "tech": ["SQL"], "sub": "freshness, duplicates, ranges", "id": "chk"}, "->", {"role": "ai", "icon": "trend", "title": "Calculation", "tech": ["Python"], "sub": "the model or the system's rules"}, "->", {"role": "data", "icon": "db", "title": "Write", "tech": ["ClickHouse"], "sub": "the result goes to the database"}, "->", {"role": "flow", "icon": "doc", "title": "Status report", "tech": ["Python"], "sub": "what was done, how much, how long", "id": "rep"}]}}, "->", {"role": "flow", "icon": "n8n", "title": "Level", "tech": ["n8n"], "ports": [["s1", "✔ success", "ok"], ["s2", "⚠ attention", "warn"], ["s3", "✖ failure", "err"]]}, {"edge": {"js": true}}, {"role": "user", "icon": "bell", "title": "Teams channel", "tech": ["Teams"], "sub": "one feed for managers and the developer", "id": "tm", "demo": ["in the demo ↑", "#demo"]}]}, "de": {"heading": "Woher jede Meldung kommt", "n": 6, "pad": "64px", "wires": "chk:b>rep:b dash|Prüfung fehlgeschlagen → Berechnung übersprungen; s1:r>tm:l; s2:r>tm:l; s3:r>tm:l", "items": [{"group": {"cols": "1 / 8", "icon": "clock", "label": "jeder Pipeline-Lauf · Airflow", "items": [{"role": "flow", "icon": "shield", "title": "Datenprüfungen", "tech": ["SQL"], "sub": "Aktualität, Dubletten, Wertebereiche", "id": "chk"}, "->", {"role": "ai", "icon": "trend", "title": "Berechnung", "tech": ["Python"], "sub": "das Modell oder die Regeln des Systems"}, "->", {"role": "data", "icon": "db", "title": "Speichern", "tech": ["ClickHouse"], "sub": "das Ergebnis in die Datenbank"}, "->", {"role": "flow", "icon": "doc", "title": "Zustandsbericht", "tech": ["Python"], "sub": "was getan wurde, wie viel, wie lange", "id": "rep"}]}}, "->", {"role": "flow", "icon": "n8n", "title": "Stufe", "tech": ["n8n"], "ports": [["s1", "✔ Erfolg", "ok"], ["s2", "⚠ Achtung", "warn"], ["s3", "✖ Fehler", "err"]]}, {"edge": {"js": true}}, {"role": "user", "icon": "bell", "title": "Teams-Kanal", "tech": ["Teams"], "sub": "ein Feed für Manager und Entwicklerin", "id": "tm", "demo": ["in der Demo ↑", "#demo"]}]}, "ru": {"heading": "Откуда берётся каждый алерт", "n": 6, "pad": "64px", "wires": "chk:b>rep:b dash|проверка не прошла → расчёт пропущен; s1:r>tm:l; s2:r>tm:l; s3:r>tm:l", "items": [{"group": {"cols": "1 / 8", "icon": "clock", "label": "каждый запуск пайплайна · Airflow", "items": [{"role": "flow", "icon": "shield", "title": "Проверки данных", "tech": ["SQL"], "sub": "свежесть, дубли, диапазоны", "id": "chk"}, "->", {"role": "ai", "icon": "trend", "title": "Расчёт", "tech": ["Python"], "sub": "модель или правила системы"}, "->", {"role": "data", "icon": "db", "title": "Запись", "tech": ["ClickHouse"], "sub": "результат в базу"}, "->", {"role": "flow", "icon": "doc", "title": "Отчёт о состоянии", "tech": ["Python"], "sub": "что сделано, сколько, как долго", "id": "rep"}]}}, "->", {"role": "flow", "icon": "n8n", "title": "Уровень", "tech": ["n8n"], "ports": [["s1", "✔ успех", "ok"], ["s2", "⚠ внимание", "warn"], ["s3", "✖ сбой", "err"]]}, {"edge": {"js": true}}, {"role": "user", "icon": "bell", "title": "Канал Teams", "tech": ["Teams"], "sub": "одна лента для менеджеров и разработчика", "id": "tm", "demo": ["в демо ↑", "#demo"]}]}};
+  const HOW = {"en": {"lvl1": "What the manager sees", "lvl2": "How it works", "demo": "Demo", "legend": ["What the user sees", "Logic", "AI model", "Data", "Branch", "data flow"]}, "de": {"lvl1": "Was der Manager sieht", "lvl2": "So funktioniert es", "demo": "Demo", "legend": ["Sieht der Nutzer", "Logik", "KI-Modell", "Daten", "Zweig", "Datenfluss"]}, "ru": {"lvl1": "Что видит менеджер", "lvl2": "Как устроено", "demo": "Демо", "legend": ["Видит пользователь", "Логика", "ИИ-модель", "Данные", "Ветка", "поток данных"]}};
+  const FLOW = {"en": {"heading": "Where every alert comes from", "n": 6, "pad": "64px", "wires": "chk:b>rep:b dash|check failed → calculation skipped; s1:r>tm:l; s2:r>tm:l; s3:r>tm:l", "rounds": [{"tours": [{"path": ["chk", "calc", "wr", "rep", "lvl", "s1", "tm"]}]}, {"tours": [{"path": ["chk", "calc", "wr", "rep", "lvl", "s2", "tm"]}]}, {"tours": [{"path": ["chk", "rep", "lvl", "s3", "tm"]}]}], "end": ["tm"], "items": [{"group": {"cols": "1 / 8", "icon": "clock", "label": "every pipeline run · Airflow", "items": [{"role": "flow", "icon": "shield", "title": "Data checks", "tech": ["SQL"], "sub": "freshness, duplicates, ranges", "id": "chk"}, "->", {"role": "ai", "icon": "trend", "title": "Calculation", "tech": ["Python"], "sub": "the model or the system's rules", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Write", "tech": ["ClickHouse"], "sub": "the result goes to the database", "id": "wr"}, "->", {"role": "flow", "icon": "doc", "title": "Status report", "tech": ["Python"], "sub": "what was done, how much, how long", "id": "rep"}]}}, "->", {"role": "flow", "icon": "n8n", "title": "Level", "tech": ["n8n"], "id": "lvl", "ports": [["s1", "✔ success", "ok"], ["s2", "⚠ attention", "warn"], ["s3", "✖ failure", "err"]]}, {"edge": {"js": true}}, {"role": "user", "icon": "bell", "title": "Teams channel", "tech": ["Teams"], "sub": "one feed for managers and the developer", "id": "tm", "demo": ["in the demo ↑", "#demo"]}]}, "de": {"heading": "Woher jede Meldung kommt", "n": 6, "pad": "64px", "wires": "chk:b>rep:b dash|Prüfung fehlgeschlagen → Berechnung übersprungen; s1:r>tm:l; s2:r>tm:l; s3:r>tm:l", "rounds": [{"tours": [{"path": ["chk", "calc", "wr", "rep", "lvl", "s1", "tm"]}]}, {"tours": [{"path": ["chk", "calc", "wr", "rep", "lvl", "s2", "tm"]}]}, {"tours": [{"path": ["chk", "rep", "lvl", "s3", "tm"]}]}], "end": ["tm"], "items": [{"group": {"cols": "1 / 8", "icon": "clock", "label": "jeder Pipeline-Lauf · Airflow", "items": [{"role": "flow", "icon": "shield", "title": "Datenprüfungen", "tech": ["SQL"], "sub": "Aktualität, Dubletten, Wertebereiche", "id": "chk"}, "->", {"role": "ai", "icon": "trend", "title": "Berechnung", "tech": ["Python"], "sub": "das Modell oder die Regeln des Systems", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Speichern", "tech": ["ClickHouse"], "sub": "das Ergebnis in die Datenbank", "id": "wr"}, "->", {"role": "flow", "icon": "doc", "title": "Zustandsbericht", "tech": ["Python"], "sub": "was getan wurde, wie viel, wie lange", "id": "rep"}]}}, "->", {"role": "flow", "icon": "n8n", "title": "Stufe", "tech": ["n8n"], "id": "lvl", "ports": [["s1", "✔ Erfolg", "ok"], ["s2", "⚠ Achtung", "warn"], ["s3", "✖ Fehler", "err"]]}, {"edge": {"js": true}}, {"role": "user", "icon": "bell", "title": "Teams-Kanal", "tech": ["Teams"], "sub": "ein Feed für Manager und Entwicklerin", "id": "tm", "demo": ["in der Demo ↑", "#demo"]}]}, "ru": {"heading": "Откуда берётся каждый алерт", "n": 6, "pad": "64px", "wires": "chk:b>rep:b dash|проверка не прошла → расчёт пропущен; s1:r>tm:l; s2:r>tm:l; s3:r>tm:l", "rounds": [{"tours": [{"path": ["chk", "calc", "wr", "rep", "lvl", "s1", "tm"]}]}, {"tours": [{"path": ["chk", "calc", "wr", "rep", "lvl", "s2", "tm"]}]}, {"tours": [{"path": ["chk", "rep", "lvl", "s3", "tm"]}]}], "end": ["tm"], "items": [{"group": {"cols": "1 / 8", "icon": "clock", "label": "каждый запуск пайплайна · Airflow", "items": [{"role": "flow", "icon": "shield", "title": "Проверки данных", "tech": ["SQL"], "sub": "свежесть, дубли, диапазоны", "id": "chk"}, "->", {"role": "ai", "icon": "trend", "title": "Расчёт", "tech": ["Python"], "sub": "модель или правила системы", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Запись", "tech": ["ClickHouse"], "sub": "результат в базу", "id": "wr"}, "->", {"role": "flow", "icon": "doc", "title": "Отчёт о состоянии", "tech": ["Python"], "sub": "что сделано, сколько, как долго", "id": "rep"}]}}, "->", {"role": "flow", "icon": "n8n", "title": "Уровень", "tech": ["n8n"], "id": "lvl", "ports": [["s1", "✔ успех", "ok"], ["s2", "⚠ внимание", "warn"], ["s3", "✖ сбой", "err"]]}, {"edge": {"js": true}}, {"role": "user", "icon": "bell", "title": "Канал Teams", "tech": ["Teams"], "sub": "одна лента для менеджеров и разработчика", "id": "tm", "demo": ["в демо ↑", "#demo"]}]}};
 
   const ICONS = {"msg": "<path d=\"M4 5.5h16v10.5H10l-4.5 3.5V16H4z\"/>", "spark": "<path d=\"M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z\"/>", "branch": "<path d=\"M4 12h5M9 12c3 0 3-6 6-6h5M9 12c3 0 3 6 6 6h5M9 12h11\"/>", "db": "<ellipse cx=\"12\" cy=\"6\" rx=\"7\" ry=\"2.8\"/><path d=\"M5 6v12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6M5 12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8\"/>", "card": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2.5\"/><path d=\"M7 10h10M7 14h6\"/>", "ticket": "<path d=\"M4 7.5h16v3a1.8 1.8 0 000 3.6v3H4v-3a1.8 1.8 0 000-3.6z\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 8v4.5l3 2\"/>", "loop": "<path d=\"M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4\"/>", "send": "<path d=\"M4 11.5L20 4l-6.5 16-2.7-6.8z\"/>", "shield": "<path d=\"M12 3.5l7 2.8v5.4c0 4.1-2.9 7.4-7 8.8-4.1-1.4-7-4.7-7-8.8V6.3z M9 12l2 2 4-4\"/>", "trend": "<path d=\"M4 17l5-5 3.5 3L20 7.5M15 7.5h5v5\"/>", "doc": "<path d=\"M7 3.5h7l4 4v13H7z M14 3.5v4h4 M10 12h5M10 15.5h5\"/>", "n8n": "<circle cx=\"5.5\" cy=\"12\" r=\"2\"/><circle cx=\"18.5\" cy=\"6\" r=\"2\"/><circle cx=\"18.5\" cy=\"18\" r=\"2\"/><path d=\"M7.5 12h2c3 0 3-6 7-6M9.5 12c3 0 3 6 7 6\"/>", "bell": "<path d=\"M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5h4\"/>", "window": "<rect x=\"3.5\" y=\"4.5\" width=\"17\" height=\"15\" rx=\"2.5\"/><path d=\"M3.5 9h17\"/>", "rss": "<path d=\"M5 5a14 14 0 0 1 14 14M5 10.5a8.5 8.5 0 0 1 8.5 8.5\"/><circle cx=\"6.2\" cy=\"17.8\" r=\"1.4\"/>", "filter": "<path d=\"M4 5h16l-6.5 8v5.5l-3 1.5V13z\"/>"};
   const ico = (n) => `<svg viewBox="0 0 24 24">${ICONS[n] || ""}</svg>`;
@@ -340,8 +364,9 @@
     const slot = n.demo ? `<a class="n-demo" href="${n.demo[1]}">${esc(n.demo[0])}</a>` : n.br ? `<span class="n-br">${esc(n.br)}</span>` : "";
     const body = n.ports ? `<b class="n-title">${esc(n.title)}</b><ul class="ports">${n.ports.map((p) => `<li class="${p[2] || ""}" data-id="${p[0]}">${esc(p[1])}</li>`).join("")}</ul>`
                          : `<b class="n-title">${esc(n.title)}</b><span class="n-sub">${esc(n.sub || "")}</span>`;
+    const srcs = n.srcs ? `<div class="src">${n.srcs.map((x) => `<span data-src="${x[0]}"><i style="--c:var(--p-${x[0]})"></i>${esc(x[1])}</span>`).join("")}</div>` : "";
     const tech = n.tech && n.tech.length ? `<div class="n-tech">${n.tech.map((t) => `<span>${esc(t)}</span>`).join("")}</div>` : "";
-    return `<div class="node${n.stack ? " stack" : ""}${n.area ? " br" : ""}" data-role="${n.role}"${n.id ? ` data-id="${n.id}"` : ""} role="listitem"${n.area || n.pos ? ` style="grid-area:${n.area || n.pos}"` : ""}><div class="n-top"><span class="n-ico">${ico(n.icon)}</span>${slot}</div>${body}${tech}</div>`;
+    return `<div class="node${n.stack ? " stack" : ""}${n.area ? " br" : ""}" data-role="${n.role}"${n.id ? ` data-id="${n.id}"` : ""} role="listitem"${n.area || n.pos ? ` style="grid-area:${n.area || n.pos}"` : ""}><div class="n-top"><span class="n-ico">${ico(n.icon)}</span>${slot}</div>${body}${srcs}${tech}</div>`;
   }
   function itemsHTML(list) {
     return list.map((it) => {
@@ -353,31 +378,169 @@
     }).join("");
   }
   const DIR = { l: [-1, 0], r: [1, 0], t: [0, -1], b: [0, 1] };
+  const NS = "http://www.w3.org/2000/svg";
+  const narrow = () => matchMedia("(max-width: 760px)").matches;
+  const nodeOf = (el) => el && (el.classList.contains("node") ? el : el.closest(".node"));
+  function svgEl(parent, tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text) e.textContent = text; parent.append(e); return e; }
+  // Wires drawn by script (branches, loops, merges). Each one is also a path the data points can travel ("segment").
+  // On a phone only the merge is drawn (as a shared line on the right); the other wires stay desktop-only.
   function drawWires(cv) {
     const svg = cv.querySelector(".wires");
-    if (!svg || !cv.dataset.wires || getComputedStyle(svg).display === "none") return;
-    const c = cv.getBoundingClientRect(), NS = "http://www.w3.org/2000/svg", marker = svg.querySelector("marker").id;
-    const at = (ref) => { const [id, s] = ref.trim().split(":"), el = cv.querySelector(`[data-id="${id}"]`); if (!el) return null; const r = el.getBoundingClientRect();
-      return { x: (s === "l" ? r.left : s === "r" ? r.right : r.left + r.width / 2) - c.left, y: (s === "t" ? r.top : s === "b" ? r.bottom : r.top + r.height / 2) - c.top, d: DIR[s] }; };
+    if (!svg) return;
+    const mob = narrow(), c = cv.getBoundingClientRect(), marker = svg.querySelector("marker").id;
+    const rel = (el) => { const r = el.getBoundingClientRect(); return { l: r.left - c.left, r: r.right - c.left, t: r.top - c.top, b: r.bottom - c.top, cx: (r.left + r.right) / 2 - c.left, cy: (r.top + r.bottom) / 2 - c.top }; };
+    const at = (ref) => { const [id, s] = ref.trim().split(":"), el = cv.querySelector(`[data-id="${id}"]`); if (!el) return null; const r = rel(el);
+      return { el, x: s === "l" ? r.l : s === "r" ? r.r : r.cx, y: s === "t" ? r.t : s === "b" ? r.b : r.cy, d: DIR[s] }; };
     svg.querySelectorAll(".w").forEach((n) => n.remove());
-    for (const spec of cv.dataset.wires.split(";")) {
+    const segs = [], merges = [];
+    for (const spec of (cv.dataset.wires || "").split(";")) {
       if (!spec.trim()) continue;
       const [def, label] = spec.split("|"), [ends, style = ""] = def.trim().split(/\s+/), [a, b] = ends.split(">").map(at);
       if (!a || !b) continue;
+      if (style === "merge") { merges.push({ a, b }); continue; }
+      if (mob) continue;
       const k = Math.min(80, Math.max(24, Math.hypot(b.x - a.x, b.y - a.y) * 0.45));
       const c1 = [a.x + a.d[0] * k, a.y + a.d[1] * k], c2 = [b.x + b.d[0] * k, b.y + b.d[1] * k];
-      const p = document.createElementNS(NS, "path");
-      p.setAttribute("d", `M${a.x},${a.y} C${c1} ${c2} ${b.x},${b.y}`); p.setAttribute("class", "w " + style); p.setAttribute("marker-end", `url(#${marker})`); svg.append(p);
-      if (label) { const t = document.createElementNS(NS, "text"); t.setAttribute("x", (a.x + 3 * c1[0] + 3 * c2[0] + b.x) / 8); t.setAttribute("y", (a.y + 3 * c1[1] + 3 * c2[1] + b.y) / 8 + 4);
-        t.setAttribute("text-anchor", "middle"); t.setAttribute("class", "w"); t.textContent = label.trim(); svg.append(t); }
+      const p = svgEl(svg, "path", { d: `M${a.x},${a.y} C${c1} ${c2} ${b.x},${b.y}`, class: "w " + style, "marker-end": `url(#${marker})` });
+      segs.push({ from: a.el, to: nodeOf(b.el), path: p });
+      if (label) svgEl(svg, "text", { x: (a.x + 3 * c1[0] + 3 * c2[0] + b.x) / 8, y: (a.y + 3 * c1[1] + 3 * c2[1] + b.y) / 8 + 4, "text-anchor": "middle", class: "w" }, label.trim());
     }
+    cv.classList.toggle("merge", merges.length > 0);
+    if (merges.length) {   // several flows that meet in one node: one shared line, "N → 1" at the joint
+      const R = 14, tgt = nodeOf(merges[0].b.el), T = rel(tgt), lbl = `${merges.length} → 1`;
+      merges.sort((m, n) => m.a.y - n.a.y);
+      if (!mob) {
+        const ty = merges[0].b.y, tx = merges[0].b.x, xc = Math.round((Math.max(...merges.map((m) => m.a.x)) + tx) / 2);
+        for (const m of merges) {
+          const y = m.a.y, s = Math.sign(ty - y), dy = Math.abs(ty - y);
+          const mid = dy < 1 ? `H${xc}` : dy < 2 * R ? `H${xc - 10} C${xc},${y} ${xc},${ty} ${xc + 10},${ty}` : `H${xc - R} Q${xc},${y} ${xc},${y + s * R} V${ty - s * R} Q${xc},${ty} ${xc + R},${ty}`;
+          svgEl(svg, "path", { d: `M${m.a.x},${y} ${mid}`, class: "w" });
+          segs.push({ from: m.a.el, to: tgt, path: svgEl(svg, "path", { d: `M${m.a.x},${y} ${mid} H${tx}`, class: "w route" }) });
+        }
+        svgEl(svg, "path", { d: `M${xc},${ty} H${tx}`, class: "w trunk", "marker-end": `url(#${marker})` });
+        svgEl(svg, "circle", { cx: xc, cy: ty, r: 4, class: "w jn" });
+        svgEl(svg, "text", { x: (xc + tx) / 2, y: ty - 12, "text-anchor": "middle", class: "w" }, lbl);
+      } else {
+        const bx = rel(cv.querySelector(".flow")).r + 22, ky = T.t - 26, cx = T.cx, down = `V${ky - R} Q${bx},${ky} ${bx - R},${ky} H${cx + R} Q${cx},${ky} ${cx},${ky + R} V${T.t}`;
+        merges.forEach((m, i) => {
+          const y = m.a.y;
+          svgEl(svg, "path", { d: `M${m.a.x},${y} H${bx - R} Q${bx},${y} ${bx},${y + R}`, class: "w" });
+          if (i) svgEl(svg, "circle", { cx: bx, cy: y + R, r: 3.5, class: "w jn" });
+          segs.push({ from: m.a.el, to: tgt, path: svgEl(svg, "path", { d: `M${m.a.x},${y} H${bx - R} Q${bx},${y} ${bx},${y + R} ${down}`, class: "w route" }) });
+        });
+        const y0 = merges[0].a.y, y1 = merges[merges.length - 1].a.y;
+        svgEl(svg, "path", { d: `M${bx},${y0 + R} V${y1 + R}`, class: "w" });
+        svgEl(svg, "path", { d: `M${bx},${y1 + R} ${down}`, class: "w trunk", "marker-end": `url(#${marker})` });
+        svgEl(svg, "text", { x: bx - 8, y: ky - 10, "text-anchor": "end", class: "w" }, lbl);
+      }
+    }
+    cv.__wireSegs = segs;
+    if (cv.__anim) cv.__anim.rebuild();
+  }
+  // Straight arrows between neighbouring blocks (CSS edges) as segments: horizontal on a desktop, vertical on a phone.
+  function edgeSegs(cv, g) {
+    const mob = narrow(), c = cv.getBoundingClientRect(), segs = [];
+    const rel = (el) => { const r = el.getBoundingClientRect(); return { l: r.left - c.left, cx: (r.left + r.right) / 2 - c.left, cy: (r.top + r.bottom) / 2 - c.top }; };
+    const first = (el) => el.classList.contains("node") ? el : el.querySelector(".node"), last = (el) => el.classList.contains("node") ? el : [...el.querySelectorAll(".node")].pop();
+    cv.querySelectorAll(".edge").forEach((e) => {
+      if (getComputedStyle(e).display === "none" || (e.classList.contains("js") && !mob)) return;
+      const pe = e.previousElementSibling, ne = e.nextElementSibling, a = pe && last(pe), b = ne && first(ne);
+      if (!a || !b) return;
+      const ra = rel(a), rb = rel(b), re = rel(e);
+      segs.push({ from: a, to: b, path: svgEl(g, "path", { d: mob ? `M${re.l + 28},${ra.cy} V${rb.cy}` : `M${ra.cx},${re.cy} H${rb.cx}`, class: "route" }) });
+    });
+    return segs;
+  }
+  // Data points moving along the scheme. A "tour" is a list of node or port ids; rounds of tours repeat.
+  // Joins light the source they came from (f.srcs on a node); f.end marks the final point.
+  function animate(cv, f) {
+    if (cv.__anim) cv.__anim.stop();
+    const svg = cv.querySelector(".wires"), gR = svgEl(svg, "g", { class: "routes" }), gD = svgEl(svg, "g", { class: "dots" });
+    const rounds = f.rounds || [], ends = new Set(f.end || []), done = f.done || {};
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const byId = (id) => cv.querySelector(`[data-id="${id}"]`);
+    let segs = [], sim = 0, events = [], toks = [], live = 0, ri = 0, cur = 0, visible = true, raf = 0, last = 0;
+    for (const id of ends) { const n = byId(id); if (n) n.classList.add("end"); }
+    const segFor = (a, b) => { const to = nodeOf(b), c = segs.filter((s) => s.to === to && (s.from === a || nodeOf(s.from) === nodeOf(a))); return c.find((s) => s.from === a) || c[0]; };
+    function plan(t) {
+      const els = t.path.map(byId); if (els.some((e) => !e)) return null;
+      let color = t.color || "var(--p-one)"; const legs = [];
+      for (let i = 1; i < els.length; i++) {
+        const a = els[i - 1], b = els[i];
+        if (b !== a && nodeOf(b) === nodeOf(a)) { for (const k of ["ok", "warn", "err"]) if (b.classList.contains(k)) color = `var(--${k})`; continue; }
+        const s = segFor(a, b); if (!s) return null;
+        legs.push({ s, color });
+      }
+      return legs.length ? legs : null;
+    }
+    const at = (d, fn) => events.push({ t: sim + d, fn });
+    function pulse(n, color, big) { n.style.setProperty("--pc", color); n.classList.remove("hit"); void n.offsetWidth; n.classList.add("hit"); }
+    function reset() {
+      cv.querySelectorAll(".src span").forEach((s) => s.classList.remove("on"));
+      for (const id in done) { const n = byId(id), sub = n && n.querySelector(".n-sub"); if (sub && sub.dataset.text) { sub.textContent = sub.dataset.text; sub.classList.remove("sent"); } }
+    }
+    function startRound(tries = 0) {
+      if (!rounds.length || tries > rounds.length) return;
+      cur = ri; const r = rounds[ri]; ri = (ri + 1) % rounds.length;
+      const ok = r.tours.map((t) => ({ t, legs: plan(t) })).filter((x) => x.legs);
+      if (!ok.length) return startRound(tries + 1);
+      if (r.reset) reset();
+      live = ok.length;
+      ok.forEach(({ t, legs }) => at(t.delay || 0, () => {
+        const g = svgEl(gD, "g", {}), rr = t.big ? 6.5 : 4.5;
+        const dots = [0.12, 0.25, 0.45, 1].map((op, k) => svgEl(g, "circle", { r: k === 3 ? rr : rr * (0.55 + k * 0.12), style: `opacity:${op}` }));
+        toks.push({ t, legs, li: 0, t0: sim, g, dots, gap: r.gap });
+      }));
+    }
+    function arrive(tok) {
+      const n = tok.legs[tok.legs.length - 1].s.to, color = tok.legs[tok.legs.length - 1].color, id = n.dataset.id;
+      if (tok.t.src) { const s = n.querySelector(`.src [data-src="${tok.t.src}"]`); if (s) s.classList.add("on"); }
+      pulse(n, color);
+      if (done[id]) { const sub = n.querySelector(".n-sub"); if (sub) { sub.dataset.text = sub.dataset.text || sub.textContent; sub.textContent = done[id]; sub.classList.add("sent"); } }
+      if (--live === 0) at(tok.gap != null ? tok.gap : 1.1, startRound);
+    }
+    function tick(dt) {
+      sim += dt;
+      for (let i = events.length - 1; i >= 0; i--) if (events[i].t <= sim) events.splice(i, 1)[0].fn();
+      const speed = narrow() ? 170 : 240;
+      for (let i = toks.length - 1; i >= 0; i--) {
+        const k = toks[i]; let leg = k.legs[k.li], len = leg.s.path.getTotalLength(), d = (sim - k.t0) * speed;
+        if (d >= len) { k.li++; k.t0 = sim; if (k.li >= k.legs.length) { k.g.remove(); toks.splice(i, 1); arrive(k); continue; } leg = k.legs[k.li]; d = 0; }
+        k.dots.forEach((c, j) => { const q = leg.s.path.getPointAtLength(Math.max(0, d - (3 - j) * 7)); c.setAttribute("cx", q.x); c.setAttribute("cy", q.y); c.style.fill = leg.color; });
+      }
+    }
+    function frame(now) { const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now; if (visible && !document.hidden) tick(dt); raf = requestAnimationFrame(frame); }
+    function drawStill() {   // reduced motion: points resting on the lines, every source in, the final point marked
+      gD.innerHTML = ""; const seen = new Set();
+      rounds.forEach((r) => r.tours.forEach((t) => (plan(t) || []).forEach((l) => { if (seen.has(l.s)) return; seen.add(l.s);
+        const len = l.s.path.getTotalLength(), q = l.s.path.getPointAtLength(len / 2); svgEl(gD, "circle", { cx: q.x, cy: q.y, r: 4, style: `fill:${l.color}` }); })));
+      cv.querySelectorAll(".src span").forEach((s) => s.classList.add("on"));
+    }
+    const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => { visible = es[0].isIntersecting; }) : null;
+    if (io) io.observe(cv);
+    const api = {
+      rebuild() {
+        gR.innerHTML = ""; svg.append(gR, gD);
+        segs = [...(cv.__wireSegs || []), ...edgeSegs(cv, gR)];
+        toks.forEach((k) => k.g.remove()); toks = []; events = []; live = 0;
+        if (still) return drawStill();
+        ri = cur; reset(); startRound();
+        if (!raf) raf = requestAnimationFrame(frame);
+      },
+      stop() { cancelAnimationFrame(raf); raf = 0; if (io) io.disconnect(); toks = []; events = []; },
+    };
+    cv.__anim = api;
+    return api;
   }
   function renderHow(f, u) {
     $("how-h").textContent = f.heading;
-    $("legend").innerHTML = [["user", u.legend[0]], ["flow", u.legend[1]], ["ai", u.legend[2]], ["data", u.legend[3]]].map(([r, l]) => `<li><i style="--r:var(--r-${r});--rb:var(--r-${r}-bg)"></i>${esc(l)}</li>`).join("") + `<li><i class="dash"></i>${esc(u.legend[4])}</li>`;
+    const pts = f.srcLegend ? f.srcLegend.map((x) => `<li><i class="pt" style="--c:var(--p-${x[0]})"></i>${esc(x[1])}</li>`).join("") : `<li><i class="pt" style="--c:var(--p-one)"></i>${esc(u.legend[5])}</li>`;
+    $("legend").innerHTML = [["user", u.legend[0]], ["flow", u.legend[1]], ["ai", u.legend[2]], ["data", u.legend[3]]].map(([r, l]) => `<li><i style="--r:var(--r-${r});--rb:var(--r-${r}-bg)"></i>${esc(l)}</li>`).join("") + `<li><i class="dash"></i>${esc(u.legend[4])}</li>` + pts;
     const cv = $("canvas");
+    if (cv.__anim) { cv.__anim.stop(); cv.__anim = null; }
     cv.innerHTML = `<svg class="wires" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M2 1.5L9 5L2 8.5" style="stroke-dasharray:none;stroke-width:1.5"/></marker></defs></svg><div class="flow${f.lanes ? " lanes" : ""}" data-n="${f.n}" role="list">${itemsHTML(f.items)}</div>`;
     cv.dataset.wires = f.wires || ""; cv.style.paddingBottom = f.pad || "";
+    animate(cv, f);
     if (!cv.__ro) { cv.__ro = new ResizeObserver(() => drawWires(cv)); cv.__ro.observe(cv); }
     document.fonts.ready.then(() => drawWires(cv)); drawWires(cv);
   }

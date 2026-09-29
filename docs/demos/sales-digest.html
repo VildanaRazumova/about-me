@@ -76,13 +76,14 @@
   /* ── flow tokens: roles in the diagram — logic green, AI model gold, data slate ── */
   :root { --canvas: #efece4; --dot: rgba(26,31,28,.08); --edge: #a4a295; --node: #ffffff; --chip: #ebe8df;
     --r-user: #1a1f1c; --r-user-bg: #ebe8df; --r-flow: #2e7a63; --r-flow-bg: #e4efe9; --r-ai: #8a6100; --r-ai-bg: #f6ecd2; --r-data: #3b6c8c; --r-data-bg: #e3edf4;
-    --ok: #1f7a4d; --warn: #b25000; --err: #c0392b; }
+    --ok: #1f7a4d; --warn: #b25000; --err: #c0392b;
+    --p-one: #1a1f1c; --p-news: #b8860b; --p-market: #3b6c8c; --p-search: #2e7a63; --p-final: #2e7a63; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --canvas: #111815; --dot: rgba(237,241,237,.07); --edge: #56635c; --node: #151b18; --chip: #1f2824;
     --r-user: #edf1ed; --r-user-bg: #26302b; --r-flow: #5cc29c; --r-flow-bg: #16302a; --r-ai: #e3bd52; --r-ai-bg: #3a3016; --r-data: #86b8d8; --r-data-bg: #17293a;
-    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; } }
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; --p-one: #edf1ed; --p-news: #e3bd52; --p-market: #86b8d8; --p-search: #5cc29c; --p-final: #5cc29c; } }
   :root[data-theme="dark"] { --canvas: #111815; --dot: rgba(237,241,237,.07); --edge: #56635c; --node: #151b18; --chip: #1f2824;
     --r-user: #edf1ed; --r-user-bg: #26302b; --r-flow: #5cc29c; --r-flow-bg: #16302a; --r-ai: #e3bd52; --r-ai-bg: #3a3016; --r-data: #86b8d8; --r-data-bg: #17293a;
-    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; }
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; --p-one: #edf1ed; --p-news: #e3bd52; --p-market: #86b8d8; --p-search: #5cc29c; --p-final: #5cc29c; }
   /* ── level rows ── */
   .meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 32px 0 12px; }
   .eyebrow { display: flex; align-items: center; gap: 8px; margin: 0; font: 600 13px/1 var(--sans); color: var(--muted); }
@@ -97,6 +98,7 @@
   .legend li { display: flex; align-items: center; gap: 6px; }
   .legend i { width: 12px; height: 12px; border-radius: 4px; background: var(--rb); box-shadow: inset 0 0 0 1.5px var(--r); }
   .legend .dash { width: 18px; height: 0; border-radius: 0; background: none; box-shadow: none; border-top: 1.5px dashed var(--edge); }
+  .legend .pt { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: -7px 0 0 -2px color-mix(in srgb, var(--c) 35%, transparent); margin-left: 6px; }
   /* ── canvas ── */
   .canvas { position: relative; border: 1px solid var(--line); border-radius: 18px; padding: 44px 24px 40px;
     background: radial-gradient(circle, var(--dot) 1px, transparent 1.5px) 0 0 / 16px 16px, var(--canvas); }
@@ -104,9 +106,28 @@
   .wires path { fill: none; stroke: var(--edge); stroke-width: 1.5; }
   .wires .dash { stroke-dasharray: 4 4; }
   .wires text { font: 500 11px var(--sans); fill: var(--muted); paint-order: stroke; stroke: var(--canvas); stroke-width: 5px; stroke-linejoin: round; }
+  /* data points: the joint of several flows, the shared line, the moving points */
+  .wires .trunk { stroke-width: 3; stroke-linecap: round; }
+  .wires path.route { stroke: none; }
+  .wires .jn { fill: var(--edge); stroke: none; }
+  .wires .dots circle { stroke: none; }
+  .src { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; font: 500 11.5px/1.3 var(--sans); color: var(--faint); }
+  .src span { display: inline-flex; align-items: center; gap: 5px; transition: color .3s; }
+  .src i { width: 8px; height: 8px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--edge); transition: background .3s, box-shadow .3s; }
+  .src span.on { color: var(--ink); }
+  .src span.on i { background: var(--c); box-shadow: none; }
+  .node.end { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .node.hit { animation: hit .7s ease-out; }
+  .node.end.hit { animation: hit-end 1s ease-out; }
+  @keyframes hit { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pc) 55%, transparent); } 100% { box-shadow: 0 0 0 12px color-mix(in srgb, var(--pc) 0%, transparent); } }
+  @keyframes hit-end { 0% { box-shadow: 0 0 0 3px var(--brand-soft), 0 0 0 3px color-mix(in srgb, var(--brand) 60%, transparent); }
+    100% { box-shadow: 0 0 0 3px var(--brand-soft), 0 0 0 22px color-mix(in srgb, var(--brand) 0%, transparent); } }
+  .n-sub.sent { color: var(--brand-ink); font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { .node.hit, .node.end.hit { animation: none; } }
   .flow { --gap: 44px; position: relative; z-index: 1; display: grid; align-items: center; row-gap: 56px; grid-template-columns: repeat(4, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
   .flow[data-n="4"] { grid-template-columns: repeat(3, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
   .flow[data-n="6"] { --gap: 32px; grid-template-columns: repeat(5, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
+  .flow.lanes[data-n="5"] { grid-template-columns: repeat(2, minmax(0,1fr) var(--gap)) minmax(0,1fr) 104px minmax(0,1fr) var(--gap) minmax(0,1fr); }   /* room for the joint of the flows */
   .node { --r: var(--r-flow); --rb: var(--r-flow-bg); position: relative; min-width: 0; min-height: 124px; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px;
     background: var(--node); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
   .node[data-role="user"] { --r: var(--r-user); --rb: var(--r-user-bg); }
@@ -139,13 +160,16 @@
   .flow.lanes { row-gap: 64px; }
   .flow.lanes .node { min-height: 0; height: 150px; overflow: hidden; }
   .flow.lanes .n-sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .flow.lanes > .node { height: auto; min-height: 150px; }
   .group { display: grid; grid-template-columns: subgrid; align-items: center; position: relative; margin: -34px -12px -12px; padding: 34px 12px 12px; border: 1px dashed var(--edge); border-radius: 20px; }
   .g-lbl { position: absolute; top: 11px; left: 14px; display: flex; align-items: center; gap: 6px; font: 500 12px/1 var(--sans); color: var(--muted); }
   .g-lbl svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   @media (max-width: 760px) {
     .how { margin-top: 28px; } .how + .meta { margin-top: 44px; } .how h2 { font-size: 21px; }
     .canvas { padding: 16px 12px; background: var(--canvas); }
-    .wires { display: none; }
+    .canvas.merge { padding-right: 40px; }
+    .flow.lanes > .edge.js { display: none; }
+    .flow.lanes > .edge.js + .node { margin-top: 64px; }
     .flow, .flow[data-n] { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
     .group { display: flex; flex-direction: column; align-items: stretch; margin: 0; padding: 36px 10px 10px; }
     .node { min-height: 0; }
@@ -331,8 +355,8 @@
   const UI = {"en": {"rail": ["Activity", "Chat", "Teams", "Calendar"], "search": "Search", "today": "Today", "ro": "In the demo — ready-made questions only ↑", "roCh": "Read-only in the demo", "pinned": "Pinned", "recent": "Recent", "chat": "Chat", "teams": "Teams", "team": "Destinations", "channels": ["General", "Sales · Sunny Coast", "System alerts", "Market signals"], "chats": [["Payments assistant", "Yes, two payments of $920…"], ["AI sales analyst", "Sales digest for {d-1}"], ["Mary", "did the group on SA103 confirm?"], ["Sales team", "Marat: closed 3 bookings on…"], ["System alerts", "✔ Run finished · 14:31"]], "tabsChat": ["Chat", "About", "Files"], "tabsCh": ["Posts", "Files"], "try": "Try:", "back": "← Portfolio", "role": "AI/ML Project Lead", "details": "details"}, "de": {"rail": ["Aktivität", "Chat", "Teams", "Kalender"], "search": "Suchen", "today": "Heute", "ro": "In der Demo — nur vorbereitete Fragen ↑", "roCh": "In der Demo nur zum Lesen", "pinned": "Angeheftet", "recent": "Zuletzt", "chat": "Chat", "teams": "Teams", "team": "Reiseziele", "channels": ["Allgemein", "Verkauf · Sonnenküste", "Systemmeldungen", "Marktsignale"], "chats": [["Zahlungsassistent", "Ja, zwei Zahlungen über $920…"], ["KI-Verkaufsanalyst", "Verkaufsübersicht {d-1}"], ["Mary", "hat die Gruppe auf SA103 bestätigt?"], ["Vertrieb", "Marat: 3 Buchungen abgeschlossen…"], ["Systemmeldungen", "✔ Lauf abgeschlossen · 14:31"]], "tabsChat": ["Chat", "Info", "Dateien"], "tabsCh": ["Beiträge", "Dateien"], "try": "Probieren Sie:", "back": "← Portfolio", "role": "AI/ML Project Lead", "details": "Details"}, "ru": {"rail": ["Действия", "Чат", "Команды", "Календарь"], "search": "Поиск", "today": "Сегодня", "ro": "В демо — только готовые вопросы ↑", "roCh": "В демо — только чтение", "pinned": "Закреплённые", "recent": "Недавние", "chat": "Чат", "teams": "Команды", "team": "Направления", "channels": ["Общий", "Продажи · Солнечный берег", "Алерты систем", "Внешние сигналы"], "chats": [["Помощник по платежам", "Да, два платежа по $920…"], ["AI-аналитик по продажам", "Сводка продаж за {d-1}"], ["Мэри", "по SA103 подтвердили группу?"], ["Отдел продаж", "Марат: закрыли 3 брони по…"], ["Алерты систем", "✔ Прогон завершён · 14:31"]], "tabsChat": ["Чат", "Сведения", "Файлы"], "tabsCh": ["Публикации", "Файлы"], "try": "Попробуйте:", "back": "← Портфолио", "role": "AI/ML Project Lead", "details": "подробнее"}};
   const T = {"en": {"crumb": "Portfolio · AI sales analyst", "title": "AI sales analyst in Microsoft Teams", "lead": "Every morning at 08:00 the destination channel got a sales digest. The figures came from database queries; the model only wrote the text. It ran from May to September 2026, then direct access to the database through Claude replaced it.", "pill": "Demo data · 7 days", "bot": ["AI sales analyst", "bot · digest every morning at 08:00"], "chan": "Sales · Sunny Coast", "dg": {"h": "Sales digest for {date} · Sunny Coast", "k": ["Bookings yesterday", "Travellers", "Plan fulfilment by airport", "Average tour price"], "avg": "vs average", "cities": "City A {a}% · City B {b}%", "top": "Best-selling hotels", "bk": "bookings", "none": "No sales for 7 days", "crit": "Critical flights", "cl": "{fl} · {date} · load {lf}% with {n} days left", "thread": "{n} replies"}, "hotels": ["Hotel Aurora 4*", "Marina Bay 5*", "Coral Garden 3*", "Sunset Villas 4*", "Palm Court 3*", "Ocean Pearl 4*"], "qa": [["why is SA103 critical?", "SA103 departs on <b>{d+4}</b>: 15 of 35 seats sold (43%), the plan for this distance to departure is 65%. No sales in the last 3 days. In the price revisions this flight has −$300 for 6 and 8 nights — the recommendation is waiting for a decision."], ["compare City A and City B this week", "This week City A averaged <b>89%</b> plan fulfilment, 5 days of 7 above 85%; City B averaged <b>68%</b>, no day above 80%. The gap has been growing since {d-3}: City B had two flights in a row below 55% load."], ["what changed since the morning?", "Since 08:00: <b>+6 bookings</b> (4 for Hotel Aurora, 2 for Marina Bay), SA103 unchanged, BB540 +2 seats (51% → 55%). The next price recalculation is at 14:30."]]}, "de": {"crumb": "Portfolio · KI-Verkaufsanalyst", "title": "KI-Verkaufsanalyst in Microsoft Teams", "lead": "Jeden Morgen um 08:00 kam eine Verkaufsübersicht in den Kanal des Reiseziels. Die Zahlen kamen aus Datenbankabfragen; das Modell schrieb nur den Text. Im Einsatz von Mai bis September 2026, danach durch direkten Datenbankzugriff über Claude ersetzt.", "pill": "Demo-Daten · 7 Tage", "bot": ["KI-Verkaufsanalyst", "Bot · Übersicht jeden Morgen um 08:00"], "chan": "Verkauf · Sonnenküste", "dg": {"h": "Verkaufsübersicht {date} · Sonnenküste", "k": ["Buchungen gestern", "Reisende", "Planerfüllung nach Abflughafen", "Durchschnittspreis"], "avg": "zum Schnitt", "cities": "Stadt A {a} % · Stadt B {b} %", "top": "Meistverkaufte Hotels", "bk": "Buchungen", "none": "7 Tage ohne Verkäufe", "crit": "Kritische Flüge", "cl": "{fl} · {date} · Auslastung {lf} % bei {n} Tagen", "thread": "{n} Antworten"}, "hotels": ["Hotel Aurora 4*", "Marina Bay 5*", "Coral Garden 3*", "Sunset Villas 4*", "Palm Court 3*", "Ocean Pearl 4*"], "qa": [["warum ist SA103 kritisch?", "SA103 fliegt am <b>{d+4}</b>: 15 von 35 Plätzen verkauft (43 %), der Plan für diesen Abstand zum Abflug liegt bei 65 %. Keine Verkäufe in den letzten 3 Tagen. In den Preisrevisionen steht für diesen Flug −$300 bei 6 und 8 Nächten — die Empfehlung wartet auf eine Entscheidung."], ["vergleiche Stadt A und Stadt B diese Woche", "Diese Woche lag Stadt A im Schnitt bei <b>89 %</b> Planerfüllung, 5 von 7 Tagen über 85 %; Stadt B bei <b>68 %</b>, kein Tag über 80 %. Der Abstand wächst seit dem {d-3}: Stadt B hatte zwei Flüge in Folge unter 55 % Auslastung."], ["was hat sich seit dem Morgen geändert?", "Seit 08:00: <b>+6 Buchungen</b> (4 Hotel Aurora, 2 Marina Bay), SA103 unverändert, BB540 +2 Plätze (51 % → 55 %). Die nächste Preisberechnung ist um 14:30."]]}, "ru": {"crumb": "Портфолио · AI-аналитик по продажам", "title": "AI-аналитик по продажам в Microsoft Teams", "lead": "Каждое утро в 08:00 в канал направления приходила сводка продаж. Цифры считали запросы к базе, модель только писала текст. Работал с мая по сентябрь 2026 года, потом его заменил прямой доступ к базе через Claude.", "pill": "Демо-данные · 7 дней", "bot": ["AI-аналитик по продажам", "бот · сводка каждое утро в 08:00"], "chan": "Продажи · Солнечный берег", "dg": {"h": "Сводка продаж за {date} · Солнечный берег", "k": ["Бронирований вчера", "Туристов", "Выполнение плана по вылетам", "Средняя цена тура"], "avg": "к среднему", "cities": "Город A {a} % · Город B {b} %", "top": "Лучшие отели", "bk": "бронирований", "none": "Без продаж 7 дней", "crit": "Критичные рейсы", "cl": "{fl} · {date} · загрузка {lf} % за {n} дн.", "thread": "{n} ответа"}, "hotels": ["Hotel Aurora 4*", "Marina Bay 5*", "Coral Garden 3*", "Sunset Villas 4*", "Palm Court 3*", "Ocean Pearl 4*"], "qa": [["почему SA103 в критичных?", "SA103 вылетает <b>{d+4}</b>: продано 15 из 35 мест (43 %), план на этот срок до вылета — 65 %. За последние 3 дня продаж нет. В ревизиях цен по этому рейсу стоит −$300 на 6 и 8 ночей — рекомендация ждёт решения."], ["сравни города A и B за неделю", "За неделю город A — в среднем <b>89 %</b> плана, 5 дней из 7 выше 85 %; город B — <b>68 %</b>, ни одного дня выше 80 %. Разрыв растёт с {d-3}: у города B два рейса подряд с загрузкой ниже 55 %."], ["что изменилось с утра?", "С 08:00: <b>+6 бронирований</b> (4 — Hotel Aurora, 2 — Marina Bay), SA103 без изменений, BB540 +2 места (51 % → 55 %). Следующий пересчёт цен в 14:30."]]}};
   const NAME = { en: "Vildana Razumova", de: "Vildana Razumova", ru: "Вильдана Разумова" };
-  const HOW = {"en": {"lvl1": "What the manager sees", "lvl2": "How it works", "demo": "Demo", "legend": ["What the user sees", "Logic", "AI model", "Data", "Branch"]}, "de": {"lvl1": "Was der Manager sieht", "lvl2": "So funktioniert es", "demo": "Demo", "legend": ["Sieht der Nutzer", "Logik", "KI-Modell", "Daten", "Zweig"]}, "ru": {"lvl1": "Что видит менеджер", "lvl2": "Как устроено", "demo": "Демо", "legend": ["Видит пользователь", "Логика", "ИИ-модель", "Данные", "Ветка"]}};
-  const FLOW = {"en": {"heading": "From the 08:00 schedule to the post in the channel", "n": 4, "wires": "q:t>api:b; llm:b>q:r dash|reply in the thread", "items": [{"role": "flow", "icon": "clock", "title": "Every morning at 08:00", "tech": ["n8n"], "sub": "the schedule starts the digest"}, "->", {"group": {"cols": "3 / 8", "icon": "loop", "label": "for each destination", "items": [{"role": "data", "icon": "db", "title": "Fixed queries", "tech": ["FastAPI", "ClickHouse"], "sub": "bookings, plan by airport, hotels, flights", "id": "api"}, {"edge": {"label": "numbers"}}, {"role": "ai", "icon": "spark", "title": "Digest text", "tech": ["Azure AI Foundry", "tool use"], "sub": "the model receives only the numbers and writes the text", "id": "llm"}, "->", {"role": "user", "icon": "send", "title": "Post in the channel", "tech": ["Teams"], "sub": "the digest as a card in the destination channel", "demo": ["in the demo ↑", "#demo"]}]}}, {"role": "user", "icon": "msg", "title": "Question in the thread", "tech": ["Teams"], "sub": "“why is SA103 critical?” — the same service answers", "id": "q", "area": "2 / 3", "br": "branch"}]}, "de": {"heading": "Vom Zeitplan um 08:00 bis zum Beitrag im Kanal", "n": 4, "wires": "q:t>api:b; llm:b>q:r dash|Antwort im Thread", "items": [{"role": "flow", "icon": "clock", "title": "Jeden Morgen um 08:00", "tech": ["n8n"], "sub": "der Zeitplan startet die Übersicht"}, "->", {"group": {"cols": "3 / 8", "icon": "loop", "label": "für jedes Reiseziel", "items": [{"role": "data", "icon": "db", "title": "Feste Abfragen", "tech": ["FastAPI", "ClickHouse"], "sub": "Buchungen, Plan nach Abflughafen, Hotels, Flüge", "id": "api"}, {"edge": {"label": "Zahlen"}}, {"role": "ai", "icon": "spark", "title": "Text der Übersicht", "tech": ["Azure AI Foundry", "tool use"], "sub": "das Modell bekommt nur die Zahlen und schreibt den Text", "id": "llm"}, "->", {"role": "user", "icon": "send", "title": "Beitrag im Kanal", "tech": ["Teams"], "sub": "die Übersicht als Karte im Kanal des Reiseziels", "demo": ["in der Demo ↑", "#demo"]}]}}, {"role": "user", "icon": "msg", "title": "Frage im Thread", "tech": ["Teams"], "sub": "„warum ist SA103 kritisch?“ — derselbe Dienst antwortet", "id": "q", "area": "2 / 3", "br": "Zweig"}]}, "ru": {"heading": "От расписания в 08:00 до публикации в канале", "n": 4, "wires": "q:t>api:b; llm:b>q:r dash|ответ в тред", "items": [{"role": "flow", "icon": "clock", "title": "Каждое утро в 08:00", "tech": ["n8n"], "sub": "расписание запускает сводку"}, "->", {"group": {"cols": "3 / 8", "icon": "loop", "label": "для каждого направления", "items": [{"role": "data", "icon": "db", "title": "Фиксированные запросы", "tech": ["FastAPI", "ClickHouse"], "sub": "брони, план по вылетам, отели, рейсы", "id": "api"}, {"edge": {"label": "числа"}}, {"role": "ai", "icon": "spark", "title": "Текст сводки", "tech": ["Azure AI Foundry", "tool use"], "sub": "модель получает только числа и пишет текст", "id": "llm"}, "->", {"role": "user", "icon": "send", "title": "Публикация в канал", "tech": ["Teams"], "sub": "сводка карточкой в канале направления", "demo": ["в демо ↑", "#demo"]}]}}, {"role": "user", "icon": "msg", "title": "Вопрос в треде", "tech": ["Teams"], "sub": "«почему SA103 в критичных?» — отвечает тот же сервис", "id": "q", "area": "2 / 3", "br": "ветка"}]}};
+  const HOW = {"en": {"lvl1": "What the manager sees", "lvl2": "How it works", "demo": "Demo", "legend": ["What the user sees", "Logic", "AI model", "Data", "Branch", "data flow"]}, "de": {"lvl1": "Was der Manager sieht", "lvl2": "So funktioniert es", "demo": "Demo", "legend": ["Sieht der Nutzer", "Logik", "KI-Modell", "Daten", "Zweig", "Datenfluss"]}, "ru": {"lvl1": "Что видит менеджер", "lvl2": "Как устроено", "demo": "Демо", "legend": ["Видит пользователь", "Логика", "ИИ-модель", "Данные", "Ветка", "поток данных"]}};
+  const FLOW = {"en": {"heading": "From the 08:00 schedule to the post in the channel", "n": 4, "wires": "q:t>api:b; llm:b>q:r dash|reply in the thread", "rounds": [{"tours": [{"path": ["clk", "api", "llm", "post"]}]}, {"tours": [{"path": ["q", "api", "llm", "q"]}]}], "end": ["post"], "items": [{"role": "flow", "icon": "clock", "title": "Every morning at 08:00", "tech": ["n8n"], "sub": "the schedule starts the digest", "id": "clk"}, "->", {"group": {"cols": "3 / 8", "icon": "loop", "label": "for each destination", "items": [{"role": "data", "icon": "db", "title": "Fixed queries", "tech": ["FastAPI", "ClickHouse"], "sub": "bookings, plan by airport, hotels, flights", "id": "api"}, {"edge": {"label": "numbers"}}, {"role": "ai", "icon": "spark", "title": "Digest text", "tech": ["Azure AI Foundry", "tool use"], "sub": "the model receives only the numbers and writes the text", "id": "llm"}, "->", {"role": "user", "icon": "send", "title": "Post in the channel", "tech": ["Teams"], "sub": "the digest as a card in the destination channel", "demo": ["in the demo ↑", "#demo"], "id": "post"}]}}, {"role": "user", "icon": "msg", "title": "Question in the thread", "tech": ["Teams"], "sub": "“why is SA103 critical?” — the same service answers", "id": "q", "area": "2 / 3", "br": "branch"}]}, "de": {"heading": "Vom Zeitplan um 08:00 bis zum Beitrag im Kanal", "n": 4, "wires": "q:t>api:b; llm:b>q:r dash|Antwort im Thread", "rounds": [{"tours": [{"path": ["clk", "api", "llm", "post"]}]}, {"tours": [{"path": ["q", "api", "llm", "q"]}]}], "end": ["post"], "items": [{"role": "flow", "icon": "clock", "title": "Jeden Morgen um 08:00", "tech": ["n8n"], "sub": "der Zeitplan startet die Übersicht", "id": "clk"}, "->", {"group": {"cols": "3 / 8", "icon": "loop", "label": "für jedes Reiseziel", "items": [{"role": "data", "icon": "db", "title": "Feste Abfragen", "tech": ["FastAPI", "ClickHouse"], "sub": "Buchungen, Plan nach Abflughafen, Hotels, Flüge", "id": "api"}, {"edge": {"label": "Zahlen"}}, {"role": "ai", "icon": "spark", "title": "Text der Übersicht", "tech": ["Azure AI Foundry", "tool use"], "sub": "das Modell bekommt nur die Zahlen und schreibt den Text", "id": "llm"}, "->", {"role": "user", "icon": "send", "title": "Beitrag im Kanal", "tech": ["Teams"], "sub": "die Übersicht als Karte im Kanal des Reiseziels", "demo": ["in der Demo ↑", "#demo"], "id": "post"}]}}, {"role": "user", "icon": "msg", "title": "Frage im Thread", "tech": ["Teams"], "sub": "„warum ist SA103 kritisch?“ — derselbe Dienst antwortet", "id": "q", "area": "2 / 3", "br": "Zweig"}]}, "ru": {"heading": "От расписания в 08:00 до публикации в канале", "n": 4, "wires": "q:t>api:b; llm:b>q:r dash|ответ в тред", "rounds": [{"tours": [{"path": ["clk", "api", "llm", "post"]}]}, {"tours": [{"path": ["q", "api", "llm", "q"]}]}], "end": ["post"], "items": [{"role": "flow", "icon": "clock", "title": "Каждое утро в 08:00", "tech": ["n8n"], "sub": "расписание запускает сводку", "id": "clk"}, "->", {"group": {"cols": "3 / 8", "icon": "loop", "label": "для каждого направления", "items": [{"role": "data", "icon": "db", "title": "Фиксированные запросы", "tech": ["FastAPI", "ClickHouse"], "sub": "брони, план по вылетам, отели, рейсы", "id": "api"}, {"edge": {"label": "числа"}}, {"role": "ai", "icon": "spark", "title": "Текст сводки", "tech": ["Azure AI Foundry", "tool use"], "sub": "модель получает только числа и пишет текст", "id": "llm"}, "->", {"role": "user", "icon": "send", "title": "Публикация в канал", "tech": ["Teams"], "sub": "сводка карточкой в канале направления", "demo": ["в демо ↑", "#demo"], "id": "post"}]}}, {"role": "user", "icon": "msg", "title": "Вопрос в треде", "tech": ["Teams"], "sub": "«почему SA103 в критичных?» — отвечает тот же сервис", "id": "q", "area": "2 / 3", "br": "ветка"}]}};
 
   const ICONS = {"msg": "<path d=\"M4 5.5h16v10.5H10l-4.5 3.5V16H4z\"/>", "spark": "<path d=\"M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z\"/>", "branch": "<path d=\"M4 12h5M9 12c3 0 3-6 6-6h5M9 12c3 0 3 6 6 6h5M9 12h11\"/>", "db": "<ellipse cx=\"12\" cy=\"6\" rx=\"7\" ry=\"2.8\"/><path d=\"M5 6v12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6M5 12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8\"/>", "card": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"14\" rx=\"2.5\"/><path d=\"M7 10h10M7 14h6\"/>", "ticket": "<path d=\"M4 7.5h16v3a1.8 1.8 0 000 3.6v3H4v-3a1.8 1.8 0 000-3.6z\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 8v4.5l3 2\"/>", "loop": "<path d=\"M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4\"/>", "send": "<path d=\"M4 11.5L20 4l-6.5 16-2.7-6.8z\"/>", "shield": "<path d=\"M12 3.5l7 2.8v5.4c0 4.1-2.9 7.4-7 8.8-4.1-1.4-7-4.7-7-8.8V6.3z M9 12l2 2 4-4\"/>", "trend": "<path d=\"M4 17l5-5 3.5 3L20 7.5M15 7.5h5v5\"/>", "doc": "<path d=\"M7 3.5h7l4 4v13H7z M14 3.5v4h4 M10 12h5M10 15.5h5\"/>", "n8n": "<circle cx=\"5.5\" cy=\"12\" r=\"2\"/><circle cx=\"18.5\" cy=\"6\" r=\"2\"/><circle cx=\"18.5\" cy=\"18\" r=\"2\"/><path d=\"M7.5 12h2c3 0 3-6 7-6M9.5 12c3 0 3 6 7 6\"/>", "bell": "<path d=\"M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5h4\"/>", "window": "<rect x=\"3.5\" y=\"4.5\" width=\"17\" height=\"15\" rx=\"2.5\"/><path d=\"M3.5 9h17\"/>", "rss": "<path d=\"M5 5a14 14 0 0 1 14 14M5 10.5a8.5 8.5 0 0 1 8.5 8.5\"/><circle cx=\"6.2\" cy=\"17.8\" r=\"1.4\"/>", "filter": "<path d=\"M4 5h16l-6.5 8v5.5l-3 1.5V13z\"/>"};
   const ico = (n) => `<svg viewBox="0 0 24 24">${ICONS[n] || ""}</svg>`;
@@ -340,8 +364,9 @@
     const slot = n.demo ? `<a class="n-demo" href="${n.demo[1]}">${esc(n.demo[0])}</a>` : n.br ? `<span class="n-br">${esc(n.br)}</span>` : "";
     const body = n.ports ? `<b class="n-title">${esc(n.title)}</b><ul class="ports">${n.ports.map((p) => `<li class="${p[2] || ""}" data-id="${p[0]}">${esc(p[1])}</li>`).join("")}</ul>`
                          : `<b class="n-title">${esc(n.title)}</b><span class="n-sub">${esc(n.sub || "")}</span>`;
+    const srcs = n.srcs ? `<div class="src">${n.srcs.map((x) => `<span data-src="${x[0]}"><i style="--c:var(--p-${x[0]})"></i>${esc(x[1])}</span>`).join("")}</div>` : "";
     const tech = n.tech && n.tech.length ? `<div class="n-tech">${n.tech.map((t) => `<span>${esc(t)}</span>`).join("")}</div>` : "";
-    return `<div class="node${n.stack ? " stack" : ""}${n.area ? " br" : ""}" data-role="${n.role}"${n.id ? ` data-id="${n.id}"` : ""} role="listitem"${n.area || n.pos ? ` style="grid-area:${n.area || n.pos}"` : ""}><div class="n-top"><span class="n-ico">${ico(n.icon)}</span>${slot}</div>${body}${tech}</div>`;
+    return `<div class="node${n.stack ? " stack" : ""}${n.area ? " br" : ""}" data-role="${n.role}"${n.id ? ` data-id="${n.id}"` : ""} role="listitem"${n.area || n.pos ? ` style="grid-area:${n.area || n.pos}"` : ""}><div class="n-top"><span class="n-ico">${ico(n.icon)}</span>${slot}</div>${body}${srcs}${tech}</div>`;
   }
   function itemsHTML(list) {
     return list.map((it) => {
@@ -353,31 +378,169 @@
     }).join("");
   }
   const DIR = { l: [-1, 0], r: [1, 0], t: [0, -1], b: [0, 1] };
+  const NS = "http://www.w3.org/2000/svg";
+  const narrow = () => matchMedia("(max-width: 760px)").matches;
+  const nodeOf = (el) => el && (el.classList.contains("node") ? el : el.closest(".node"));
+  function svgEl(parent, tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text) e.textContent = text; parent.append(e); return e; }
+  // Wires drawn by script (branches, loops, merges). Each one is also a path the data points can travel ("segment").
+  // On a phone only the merge is drawn (as a shared line on the right); the other wires stay desktop-only.
   function drawWires(cv) {
     const svg = cv.querySelector(".wires");
-    if (!svg || !cv.dataset.wires || getComputedStyle(svg).display === "none") return;
-    const c = cv.getBoundingClientRect(), NS = "http://www.w3.org/2000/svg", marker = svg.querySelector("marker").id;
-    const at = (ref) => { const [id, s] = ref.trim().split(":"), el = cv.querySelector(`[data-id="${id}"]`); if (!el) return null; const r = el.getBoundingClientRect();
-      return { x: (s === "l" ? r.left : s === "r" ? r.right : r.left + r.width / 2) - c.left, y: (s === "t" ? r.top : s === "b" ? r.bottom : r.top + r.height / 2) - c.top, d: DIR[s] }; };
+    if (!svg) return;
+    const mob = narrow(), c = cv.getBoundingClientRect(), marker = svg.querySelector("marker").id;
+    const rel = (el) => { const r = el.getBoundingClientRect(); return { l: r.left - c.left, r: r.right - c.left, t: r.top - c.top, b: r.bottom - c.top, cx: (r.left + r.right) / 2 - c.left, cy: (r.top + r.bottom) / 2 - c.top }; };
+    const at = (ref) => { const [id, s] = ref.trim().split(":"), el = cv.querySelector(`[data-id="${id}"]`); if (!el) return null; const r = rel(el);
+      return { el, x: s === "l" ? r.l : s === "r" ? r.r : r.cx, y: s === "t" ? r.t : s === "b" ? r.b : r.cy, d: DIR[s] }; };
     svg.querySelectorAll(".w").forEach((n) => n.remove());
-    for (const spec of cv.dataset.wires.split(";")) {
+    const segs = [], merges = [];
+    for (const spec of (cv.dataset.wires || "").split(";")) {
       if (!spec.trim()) continue;
       const [def, label] = spec.split("|"), [ends, style = ""] = def.trim().split(/\s+/), [a, b] = ends.split(">").map(at);
       if (!a || !b) continue;
+      if (style === "merge") { merges.push({ a, b }); continue; }
+      if (mob) continue;
       const k = Math.min(80, Math.max(24, Math.hypot(b.x - a.x, b.y - a.y) * 0.45));
       const c1 = [a.x + a.d[0] * k, a.y + a.d[1] * k], c2 = [b.x + b.d[0] * k, b.y + b.d[1] * k];
-      const p = document.createElementNS(NS, "path");
-      p.setAttribute("d", `M${a.x},${a.y} C${c1} ${c2} ${b.x},${b.y}`); p.setAttribute("class", "w " + style); p.setAttribute("marker-end", `url(#${marker})`); svg.append(p);
-      if (label) { const t = document.createElementNS(NS, "text"); t.setAttribute("x", (a.x + 3 * c1[0] + 3 * c2[0] + b.x) / 8); t.setAttribute("y", (a.y + 3 * c1[1] + 3 * c2[1] + b.y) / 8 + 4);
-        t.setAttribute("text-anchor", "middle"); t.setAttribute("class", "w"); t.textContent = label.trim(); svg.append(t); }
+      const p = svgEl(svg, "path", { d: `M${a.x},${a.y} C${c1} ${c2} ${b.x},${b.y}`, class: "w " + style, "marker-end": `url(#${marker})` });
+      segs.push({ from: a.el, to: nodeOf(b.el), path: p });
+      if (label) svgEl(svg, "text", { x: (a.x + 3 * c1[0] + 3 * c2[0] + b.x) / 8, y: (a.y + 3 * c1[1] + 3 * c2[1] + b.y) / 8 + 4, "text-anchor": "middle", class: "w" }, label.trim());
     }
+    cv.classList.toggle("merge", merges.length > 0);
+    if (merges.length) {   // several flows that meet in one node: one shared line, "N → 1" at the joint
+      const R = 14, tgt = nodeOf(merges[0].b.el), T = rel(tgt), lbl = `${merges.length} → 1`;
+      merges.sort((m, n) => m.a.y - n.a.y);
+      if (!mob) {
+        const ty = merges[0].b.y, tx = merges[0].b.x, xc = Math.round((Math.max(...merges.map((m) => m.a.x)) + tx) / 2);
+        for (const m of merges) {
+          const y = m.a.y, s = Math.sign(ty - y), dy = Math.abs(ty - y);
+          const mid = dy < 1 ? `H${xc}` : dy < 2 * R ? `H${xc - 10} C${xc},${y} ${xc},${ty} ${xc + 10},${ty}` : `H${xc - R} Q${xc},${y} ${xc},${y + s * R} V${ty - s * R} Q${xc},${ty} ${xc + R},${ty}`;
+          svgEl(svg, "path", { d: `M${m.a.x},${y} ${mid}`, class: "w" });
+          segs.push({ from: m.a.el, to: tgt, path: svgEl(svg, "path", { d: `M${m.a.x},${y} ${mid} H${tx}`, class: "w route" }) });
+        }
+        svgEl(svg, "path", { d: `M${xc},${ty} H${tx}`, class: "w trunk", "marker-end": `url(#${marker})` });
+        svgEl(svg, "circle", { cx: xc, cy: ty, r: 4, class: "w jn" });
+        svgEl(svg, "text", { x: (xc + tx) / 2, y: ty - 12, "text-anchor": "middle", class: "w" }, lbl);
+      } else {
+        const bx = rel(cv.querySelector(".flow")).r + 22, ky = T.t - 26, cx = T.cx, down = `V${ky - R} Q${bx},${ky} ${bx - R},${ky} H${cx + R} Q${cx},${ky} ${cx},${ky + R} V${T.t}`;
+        merges.forEach((m, i) => {
+          const y = m.a.y;
+          svgEl(svg, "path", { d: `M${m.a.x},${y} H${bx - R} Q${bx},${y} ${bx},${y + R}`, class: "w" });
+          if (i) svgEl(svg, "circle", { cx: bx, cy: y + R, r: 3.5, class: "w jn" });
+          segs.push({ from: m.a.el, to: tgt, path: svgEl(svg, "path", { d: `M${m.a.x},${y} H${bx - R} Q${bx},${y} ${bx},${y + R} ${down}`, class: "w route" }) });
+        });
+        const y0 = merges[0].a.y, y1 = merges[merges.length - 1].a.y;
+        svgEl(svg, "path", { d: `M${bx},${y0 + R} V${y1 + R}`, class: "w" });
+        svgEl(svg, "path", { d: `M${bx},${y1 + R} ${down}`, class: "w trunk", "marker-end": `url(#${marker})` });
+        svgEl(svg, "text", { x: bx - 8, y: ky - 10, "text-anchor": "end", class: "w" }, lbl);
+      }
+    }
+    cv.__wireSegs = segs;
+    if (cv.__anim) cv.__anim.rebuild();
+  }
+  // Straight arrows between neighbouring blocks (CSS edges) as segments: horizontal on a desktop, vertical on a phone.
+  function edgeSegs(cv, g) {
+    const mob = narrow(), c = cv.getBoundingClientRect(), segs = [];
+    const rel = (el) => { const r = el.getBoundingClientRect(); return { l: r.left - c.left, cx: (r.left + r.right) / 2 - c.left, cy: (r.top + r.bottom) / 2 - c.top }; };
+    const first = (el) => el.classList.contains("node") ? el : el.querySelector(".node"), last = (el) => el.classList.contains("node") ? el : [...el.querySelectorAll(".node")].pop();
+    cv.querySelectorAll(".edge").forEach((e) => {
+      if (getComputedStyle(e).display === "none" || (e.classList.contains("js") && !mob)) return;
+      const pe = e.previousElementSibling, ne = e.nextElementSibling, a = pe && last(pe), b = ne && first(ne);
+      if (!a || !b) return;
+      const ra = rel(a), rb = rel(b), re = rel(e);
+      segs.push({ from: a, to: b, path: svgEl(g, "path", { d: mob ? `M${re.l + 28},${ra.cy} V${rb.cy}` : `M${ra.cx},${re.cy} H${rb.cx}`, class: "route" }) });
+    });
+    return segs;
+  }
+  // Data points moving along the scheme. A "tour" is a list of node or port ids; rounds of tours repeat.
+  // Joins light the source they came from (f.srcs on a node); f.end marks the final point.
+  function animate(cv, f) {
+    if (cv.__anim) cv.__anim.stop();
+    const svg = cv.querySelector(".wires"), gR = svgEl(svg, "g", { class: "routes" }), gD = svgEl(svg, "g", { class: "dots" });
+    const rounds = f.rounds || [], ends = new Set(f.end || []), done = f.done || {};
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const byId = (id) => cv.querySelector(`[data-id="${id}"]`);
+    let segs = [], sim = 0, events = [], toks = [], live = 0, ri = 0, cur = 0, visible = true, raf = 0, last = 0;
+    for (const id of ends) { const n = byId(id); if (n) n.classList.add("end"); }
+    const segFor = (a, b) => { const to = nodeOf(b), c = segs.filter((s) => s.to === to && (s.from === a || nodeOf(s.from) === nodeOf(a))); return c.find((s) => s.from === a) || c[0]; };
+    function plan(t) {
+      const els = t.path.map(byId); if (els.some((e) => !e)) return null;
+      let color = t.color || "var(--p-one)"; const legs = [];
+      for (let i = 1; i < els.length; i++) {
+        const a = els[i - 1], b = els[i];
+        if (b !== a && nodeOf(b) === nodeOf(a)) { for (const k of ["ok", "warn", "err"]) if (b.classList.contains(k)) color = `var(--${k})`; continue; }
+        const s = segFor(a, b); if (!s) return null;
+        legs.push({ s, color });
+      }
+      return legs.length ? legs : null;
+    }
+    const at = (d, fn) => events.push({ t: sim + d, fn });
+    function pulse(n, color, big) { n.style.setProperty("--pc", color); n.classList.remove("hit"); void n.offsetWidth; n.classList.add("hit"); }
+    function reset() {
+      cv.querySelectorAll(".src span").forEach((s) => s.classList.remove("on"));
+      for (const id in done) { const n = byId(id), sub = n && n.querySelector(".n-sub"); if (sub && sub.dataset.text) { sub.textContent = sub.dataset.text; sub.classList.remove("sent"); } }
+    }
+    function startRound(tries = 0) {
+      if (!rounds.length || tries > rounds.length) return;
+      cur = ri; const r = rounds[ri]; ri = (ri + 1) % rounds.length;
+      const ok = r.tours.map((t) => ({ t, legs: plan(t) })).filter((x) => x.legs);
+      if (!ok.length) return startRound(tries + 1);
+      if (r.reset) reset();
+      live = ok.length;
+      ok.forEach(({ t, legs }) => at(t.delay || 0, () => {
+        const g = svgEl(gD, "g", {}), rr = t.big ? 6.5 : 4.5;
+        const dots = [0.12, 0.25, 0.45, 1].map((op, k) => svgEl(g, "circle", { r: k === 3 ? rr : rr * (0.55 + k * 0.12), style: `opacity:${op}` }));
+        toks.push({ t, legs, li: 0, t0: sim, g, dots, gap: r.gap });
+      }));
+    }
+    function arrive(tok) {
+      const n = tok.legs[tok.legs.length - 1].s.to, color = tok.legs[tok.legs.length - 1].color, id = n.dataset.id;
+      if (tok.t.src) { const s = n.querySelector(`.src [data-src="${tok.t.src}"]`); if (s) s.classList.add("on"); }
+      pulse(n, color);
+      if (done[id]) { const sub = n.querySelector(".n-sub"); if (sub) { sub.dataset.text = sub.dataset.text || sub.textContent; sub.textContent = done[id]; sub.classList.add("sent"); } }
+      if (--live === 0) at(tok.gap != null ? tok.gap : 1.1, startRound);
+    }
+    function tick(dt) {
+      sim += dt;
+      for (let i = events.length - 1; i >= 0; i--) if (events[i].t <= sim) events.splice(i, 1)[0].fn();
+      const speed = narrow() ? 170 : 240;
+      for (let i = toks.length - 1; i >= 0; i--) {
+        const k = toks[i]; let leg = k.legs[k.li], len = leg.s.path.getTotalLength(), d = (sim - k.t0) * speed;
+        if (d >= len) { k.li++; k.t0 = sim; if (k.li >= k.legs.length) { k.g.remove(); toks.splice(i, 1); arrive(k); continue; } leg = k.legs[k.li]; d = 0; }
+        k.dots.forEach((c, j) => { const q = leg.s.path.getPointAtLength(Math.max(0, d - (3 - j) * 7)); c.setAttribute("cx", q.x); c.setAttribute("cy", q.y); c.style.fill = leg.color; });
+      }
+    }
+    function frame(now) { const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now; if (visible && !document.hidden) tick(dt); raf = requestAnimationFrame(frame); }
+    function drawStill() {   // reduced motion: points resting on the lines, every source in, the final point marked
+      gD.innerHTML = ""; const seen = new Set();
+      rounds.forEach((r) => r.tours.forEach((t) => (plan(t) || []).forEach((l) => { if (seen.has(l.s)) return; seen.add(l.s);
+        const len = l.s.path.getTotalLength(), q = l.s.path.getPointAtLength(len / 2); svgEl(gD, "circle", { cx: q.x, cy: q.y, r: 4, style: `fill:${l.color}` }); })));
+      cv.querySelectorAll(".src span").forEach((s) => s.classList.add("on"));
+    }
+    const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => { visible = es[0].isIntersecting; }) : null;
+    if (io) io.observe(cv);
+    const api = {
+      rebuild() {
+        gR.innerHTML = ""; svg.append(gR, gD);
+        segs = [...(cv.__wireSegs || []), ...edgeSegs(cv, gR)];
+        toks.forEach((k) => k.g.remove()); toks = []; events = []; live = 0;
+        if (still) return drawStill();
+        ri = cur; reset(); startRound();
+        if (!raf) raf = requestAnimationFrame(frame);
+      },
+      stop() { cancelAnimationFrame(raf); raf = 0; if (io) io.disconnect(); toks = []; events = []; },
+    };
+    cv.__anim = api;
+    return api;
   }
   function renderHow(f, u) {
     $("how-h").textContent = f.heading;
-    $("legend").innerHTML = [["user", u.legend[0]], ["flow", u.legend[1]], ["ai", u.legend[2]], ["data", u.legend[3]]].map(([r, l]) => `<li><i style="--r:var(--r-${r});--rb:var(--r-${r}-bg)"></i>${esc(l)}</li>`).join("") + `<li><i class="dash"></i>${esc(u.legend[4])}</li>`;
+    const pts = f.srcLegend ? f.srcLegend.map((x) => `<li><i class="pt" style="--c:var(--p-${x[0]})"></i>${esc(x[1])}</li>`).join("") : `<li><i class="pt" style="--c:var(--p-one)"></i>${esc(u.legend[5])}</li>`;
+    $("legend").innerHTML = [["user", u.legend[0]], ["flow", u.legend[1]], ["ai", u.legend[2]], ["data", u.legend[3]]].map(([r, l]) => `<li><i style="--r:var(--r-${r});--rb:var(--r-${r}-bg)"></i>${esc(l)}</li>`).join("") + `<li><i class="dash"></i>${esc(u.legend[4])}</li>` + pts;
     const cv = $("canvas");
+    if (cv.__anim) { cv.__anim.stop(); cv.__anim = null; }
     cv.innerHTML = `<svg class="wires" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M2 1.5L9 5L2 8.5" style="stroke-dasharray:none;stroke-width:1.5"/></marker></defs></svg><div class="flow${f.lanes ? " lanes" : ""}" data-n="${f.n}" role="list">${itemsHTML(f.items)}</div>`;
     cv.dataset.wires = f.wires || ""; cv.style.paddingBottom = f.pad || "";
+    animate(cv, f);
     if (!cv.__ro) { cv.__ro = new ResizeObserver(() => drawWires(cv)); cv.__ro.observe(cv); }
     document.fonts.ready.then(() => drawWires(cv)); drawWires(cv);
   }

@@ -76,13 +76,14 @@
   /* ── flow tokens: roles in the diagram — logic green, AI model gold, data slate ── */
   :root { --canvas: #efece4; --dot: rgba(26,31,28,.08); --edge: #a4a295; --node: #ffffff; --chip: #ebe8df;
     --r-user: #1a1f1c; --r-user-bg: #ebe8df; --r-flow: #2e7a63; --r-flow-bg: #e4efe9; --r-ai: #8a6100; --r-ai-bg: #f6ecd2; --r-data: #3b6c8c; --r-data-bg: #e3edf4;
-    --ok: #1f7a4d; --warn: #b25000; --err: #c0392b; }
+    --ok: #1f7a4d; --warn: #b25000; --err: #c0392b;
+    --p-one: #1a1f1c; --p-news: #b8860b; --p-market: #3b6c8c; --p-search: #2e7a63; --p-final: #2e7a63; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --canvas: #111815; --dot: rgba(237,241,237,.07); --edge: #56635c; --node: #151b18; --chip: #1f2824;
     --r-user: #edf1ed; --r-user-bg: #26302b; --r-flow: #5cc29c; --r-flow-bg: #16302a; --r-ai: #e3bd52; --r-ai-bg: #3a3016; --r-data: #86b8d8; --r-data-bg: #17293a;
-    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; } }
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; --p-one: #edf1ed; --p-news: #e3bd52; --p-market: #86b8d8; --p-search: #5cc29c; --p-final: #5cc29c; } }
   :root[data-theme="dark"] { --canvas: #111815; --dot: rgba(237,241,237,.07); --edge: #56635c; --node: #151b18; --chip: #1f2824;
     --r-user: #edf1ed; --r-user-bg: #26302b; --r-flow: #5cc29c; --r-flow-bg: #16302a; --r-ai: #e3bd52; --r-ai-bg: #3a3016; --r-data: #86b8d8; --r-data-bg: #17293a;
-    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; }
+    --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; --p-one: #edf1ed; --p-news: #e3bd52; --p-market: #86b8d8; --p-search: #5cc29c; --p-final: #5cc29c; }
   /* ── level rows ── */
   .meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 32px 0 12px; }
   .eyebrow { display: flex; align-items: center; gap: 8px; margin: 0; font: 600 13px/1 var(--sans); color: var(--muted); }
@@ -97,6 +98,7 @@
   .legend li { display: flex; align-items: center; gap: 6px; }
   .legend i { width: 12px; height: 12px; border-radius: 4px; background: var(--rb); box-shadow: inset 0 0 0 1.5px var(--r); }
   .legend .dash { width: 18px; height: 0; border-radius: 0; background: none; box-shadow: none; border-top: 1.5px dashed var(--edge); }
+  .legend .pt { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: -7px 0 0 -2px color-mix(in srgb, var(--c) 35%, transparent); margin-left: 6px; }
   /* ── canvas ── */
   .canvas { position: relative; border: 1px solid var(--line); border-radius: 18px; padding: 44px 24px 40px;
     background: radial-gradient(circle, var(--dot) 1px, transparent 1.5px) 0 0 / 16px 16px, var(--canvas); }
@@ -104,9 +106,28 @@
   .wires path { fill: none; stroke: var(--edge); stroke-width: 1.5; }
   .wires .dash { stroke-dasharray: 4 4; }
   .wires text { font: 500 11px var(--sans); fill: var(--muted); paint-order: stroke; stroke: var(--canvas); stroke-width: 5px; stroke-linejoin: round; }
+  /* data points: the joint of several flows, the shared line, the moving points */
+  .wires .trunk { stroke-width: 3; stroke-linecap: round; }
+  .wires path.route { stroke: none; }
+  .wires .jn { fill: var(--edge); stroke: none; }
+  .wires .dots circle { stroke: none; }
+  .src { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; font: 500 11.5px/1.3 var(--sans); color: var(--faint); }
+  .src span { display: inline-flex; align-items: center; gap: 5px; transition: color .3s; }
+  .src i { width: 8px; height: 8px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--edge); transition: background .3s, box-shadow .3s; }
+  .src span.on { color: var(--ink); }
+  .src span.on i { background: var(--c); box-shadow: none; }
+  .node.end { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .node.hit { animation: hit .7s ease-out; }
+  .node.end.hit { animation: hit-end 1s ease-out; }
+  @keyframes hit { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pc) 55%, transparent); } 100% { box-shadow: 0 0 0 12px color-mix(in srgb, var(--pc) 0%, transparent); } }
+  @keyframes hit-end { 0% { box-shadow: 0 0 0 3px var(--brand-soft), 0 0 0 3px color-mix(in srgb, var(--brand) 60%, transparent); }
+    100% { box-shadow: 0 0 0 3px var(--brand-soft), 0 0 0 22px color-mix(in srgb, var(--brand) 0%, transparent); } }
+  .n-sub.sent { color: var(--brand-ink); font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { .node.hit, .node.end.hit { animation: none; } }
   .flow { --gap: 44px; position: relative; z-index: 1; display: grid; align-items: center; row-gap: 56px; grid-template-columns: repeat(4, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
   .flow[data-n="4"] { grid-template-columns: repeat(3, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
   .flow[data-n="6"] { --gap: 32px; grid-template-columns: repeat(5, minmax(0,1fr) var(--gap)) minmax(0,1fr); }
+  .flow.lanes[data-n="5"] { grid-template-columns: repeat(2, minmax(0,1fr) var(--gap)) minmax(0,1fr) 104px minmax(0,1fr) var(--gap) minmax(0,1fr); }   /* room for the joint of the flows */
   .node { --r: var(--r-flow); --rb: var(--r-flow-bg); position: relative; min-width: 0; min-height: 124px; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px;
     background: var(--node); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
   .node[data-role="user"] { --r: var(--r-user); --rb: var(--r-user-bg); }
@@ -139,13 +160,16 @@
   .flow.lanes { row-gap: 64px; }
   .flow.lanes .node { min-height: 0; height: 150px; overflow: hidden; }
   .flow.lanes .n-sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .flow.lanes > .node { height: auto; min-height: 150px; }
   .group { display: grid; grid-template-columns: subgrid; align-items: center; position: relative; margin: -34px -12px -12px; padding: 34px 12px 12px; border: 1px dashed var(--edge); border-radius: 20px; }
   .g-lbl { position: absolute; top: 11px; left: 14px; display: flex; align-items: center; gap: 6px; font: 500 12px/1 var(--sans); color: var(--muted); }
   .g-lbl svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   @media (max-width: 760px) {
     .how { margin-top: 28px; } .how + .meta { margin-top: 44px; } .how h2 { font-size: 21px; }
     .canvas { padding: 16px 12px; background: var(--canvas); }
-    .wires { display: none; }
+    .canvas.merge { padding-right: 40px; }
+    .flow.lanes > .edge.js { display: none; }
+    .flow.lanes > .edge.js + .node { margin-top: 64px; }
     .flow, .flow[data-n] { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
     .group { display: flex; flex-direction: column; align-items: stretch; margin: 0; padding: 36px 10px 10px; }
     .node { min-height: 0; }
@@ -326,8 +350,9 @@
     const slot = n.demo ? `<a class="n-demo" href="${n.demo[1]}">${esc(n.demo[0])}</a>` : n.br ? `<span class="n-br">${esc(n.br)}</span>` : "";
     const body = n.ports ? `<b class="n-title">${esc(n.title)}</b><ul class="ports">${n.ports.map((p) => `<li class="${p[2] || ""}" data-id="${p[0]}">${esc(p[1])}</li>`).join("")}</ul>`
                          : `<b class="n-title">${esc(n.title)}</b><span class="n-sub">${esc(n.sub || "")}</span>`;
+    const srcs = n.srcs ? `<div class="src">${n.srcs.map((x) => `<span data-src="${x[0]}"><i style="--c:var(--p-${x[0]})"></i>${esc(x[1])}</span>`).join("")}</div>` : "";
     const tech = n.tech && n.tech.length ? `<div class="n-tech">${n.tech.map((t) => `<span>${esc(t)}</span>`).join("")}</div>` : "";
-    return `<div class="node${n.stack ? " stack" : ""}${n.area ? " br" : ""}" data-role="${n.role}"${n.id ? ` data-id="${n.id}"` : ""} role="listitem"${n.area || n.pos ? ` style="grid-area:${n.area || n.pos}"` : ""}><div class="n-top"><span class="n-ico">${ico(n.icon)}</span>${slot}</div>${body}${tech}</div>`;
+    return `<div class="node${n.stack ? " stack" : ""}${n.area ? " br" : ""}" data-role="${n.role}"${n.id ? ` data-id="${n.id}"` : ""} role="listitem"${n.area || n.pos ? ` style="grid-area:${n.area || n.pos}"` : ""}><div class="n-top"><span class="n-ico">${ico(n.icon)}</span>${slot}</div>${body}${srcs}${tech}</div>`;
   }
   function itemsHTML(list) {
     return list.map((it) => {
@@ -339,31 +364,169 @@
     }).join("");
   }
   const DIR = { l: [-1, 0], r: [1, 0], t: [0, -1], b: [0, 1] };
+  const NS = "http://www.w3.org/2000/svg";
+  const narrow = () => matchMedia("(max-width: 760px)").matches;
+  const nodeOf = (el) => el && (el.classList.contains("node") ? el : el.closest(".node"));
+  function svgEl(parent, tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text) e.textContent = text; parent.append(e); return e; }
+  // Wires drawn by script (branches, loops, merges). Each one is also a path the data points can travel ("segment").
+  // On a phone only the merge is drawn (as a shared line on the right); the other wires stay desktop-only.
   function drawWires(cv) {
     const svg = cv.querySelector(".wires");
-    if (!svg || !cv.dataset.wires || getComputedStyle(svg).display === "none") return;
-    const c = cv.getBoundingClientRect(), NS = "http://www.w3.org/2000/svg", marker = svg.querySelector("marker").id;
-    const at = (ref) => { const [id, s] = ref.trim().split(":"), el = cv.querySelector(`[data-id="${id}"]`); if (!el) return null; const r = el.getBoundingClientRect();
-      return { x: (s === "l" ? r.left : s === "r" ? r.right : r.left + r.width / 2) - c.left, y: (s === "t" ? r.top : s === "b" ? r.bottom : r.top + r.height / 2) - c.top, d: DIR[s] }; };
+    if (!svg) return;
+    const mob = narrow(), c = cv.getBoundingClientRect(), marker = svg.querySelector("marker").id;
+    const rel = (el) => { const r = el.getBoundingClientRect(); return { l: r.left - c.left, r: r.right - c.left, t: r.top - c.top, b: r.bottom - c.top, cx: (r.left + r.right) / 2 - c.left, cy: (r.top + r.bottom) / 2 - c.top }; };
+    const at = (ref) => { const [id, s] = ref.trim().split(":"), el = cv.querySelector(`[data-id="${id}"]`); if (!el) return null; const r = rel(el);
+      return { el, x: s === "l" ? r.l : s === "r" ? r.r : r.cx, y: s === "t" ? r.t : s === "b" ? r.b : r.cy, d: DIR[s] }; };
     svg.querySelectorAll(".w").forEach((n) => n.remove());
-    for (const spec of cv.dataset.wires.split(";")) {
+    const segs = [], merges = [];
+    for (const spec of (cv.dataset.wires || "").split(";")) {
       if (!spec.trim()) continue;
       const [def, label] = spec.split("|"), [ends, style = ""] = def.trim().split(/\s+/), [a, b] = ends.split(">").map(at);
       if (!a || !b) continue;
+      if (style === "merge") { merges.push({ a, b }); continue; }
+      if (mob) continue;
       const k = Math.min(80, Math.max(24, Math.hypot(b.x - a.x, b.y - a.y) * 0.45));
       const c1 = [a.x + a.d[0] * k, a.y + a.d[1] * k], c2 = [b.x + b.d[0] * k, b.y + b.d[1] * k];
-      const p = document.createElementNS(NS, "path");
-      p.setAttribute("d", `M${a.x},${a.y} C${c1} ${c2} ${b.x},${b.y}`); p.setAttribute("class", "w " + style); p.setAttribute("marker-end", `url(#${marker})`); svg.append(p);
-      if (label) { const t = document.createElementNS(NS, "text"); t.setAttribute("x", (a.x + 3 * c1[0] + 3 * c2[0] + b.x) / 8); t.setAttribute("y", (a.y + 3 * c1[1] + 3 * c2[1] + b.y) / 8 + 4);
-        t.setAttribute("text-anchor", "middle"); t.setAttribute("class", "w"); t.textContent = label.trim(); svg.append(t); }
+      const p = svgEl(svg, "path", { d: `M${a.x},${a.y} C${c1} ${c2} ${b.x},${b.y}`, class: "w " + style, "marker-end": `url(#${marker})` });
+      segs.push({ from: a.el, to: nodeOf(b.el), path: p });
+      if (label) svgEl(svg, "text", { x: (a.x + 3 * c1[0] + 3 * c2[0] + b.x) / 8, y: (a.y + 3 * c1[1] + 3 * c2[1] + b.y) / 8 + 4, "text-anchor": "middle", class: "w" }, label.trim());
     }
+    cv.classList.toggle("merge", merges.length > 0);
+    if (merges.length) {   // several flows that meet in one node: one shared line, "N → 1" at the joint
+      const R = 14, tgt = nodeOf(merges[0].b.el), T = rel(tgt), lbl = `${merges.length} → 1`;
+      merges.sort((m, n) => m.a.y - n.a.y);
+      if (!mob) {
+        const ty = merges[0].b.y, tx = merges[0].b.x, xc = Math.round((Math.max(...merges.map((m) => m.a.x)) + tx) / 2);
+        for (const m of merges) {
+          const y = m.a.y, s = Math.sign(ty - y), dy = Math.abs(ty - y);
+          const mid = dy < 1 ? `H${xc}` : dy < 2 * R ? `H${xc - 10} C${xc},${y} ${xc},${ty} ${xc + 10},${ty}` : `H${xc - R} Q${xc},${y} ${xc},${y + s * R} V${ty - s * R} Q${xc},${ty} ${xc + R},${ty}`;
+          svgEl(svg, "path", { d: `M${m.a.x},${y} ${mid}`, class: "w" });
+          segs.push({ from: m.a.el, to: tgt, path: svgEl(svg, "path", { d: `M${m.a.x},${y} ${mid} H${tx}`, class: "w route" }) });
+        }
+        svgEl(svg, "path", { d: `M${xc},${ty} H${tx}`, class: "w trunk", "marker-end": `url(#${marker})` });
+        svgEl(svg, "circle", { cx: xc, cy: ty, r: 4, class: "w jn" });
+        svgEl(svg, "text", { x: (xc + tx) / 2, y: ty - 12, "text-anchor": "middle", class: "w" }, lbl);
+      } else {
+        const bx = rel(cv.querySelector(".flow")).r + 22, ky = T.t - 26, cx = T.cx, down = `V${ky - R} Q${bx},${ky} ${bx - R},${ky} H${cx + R} Q${cx},${ky} ${cx},${ky + R} V${T.t}`;
+        merges.forEach((m, i) => {
+          const y = m.a.y;
+          svgEl(svg, "path", { d: `M${m.a.x},${y} H${bx - R} Q${bx},${y} ${bx},${y + R}`, class: "w" });
+          if (i) svgEl(svg, "circle", { cx: bx, cy: y + R, r: 3.5, class: "w jn" });
+          segs.push({ from: m.a.el, to: tgt, path: svgEl(svg, "path", { d: `M${m.a.x},${y} H${bx - R} Q${bx},${y} ${bx},${y + R} ${down}`, class: "w route" }) });
+        });
+        const y0 = merges[0].a.y, y1 = merges[merges.length - 1].a.y;
+        svgEl(svg, "path", { d: `M${bx},${y0 + R} V${y1 + R}`, class: "w" });
+        svgEl(svg, "path", { d: `M${bx},${y1 + R} ${down}`, class: "w trunk", "marker-end": `url(#${marker})` });
+        svgEl(svg, "text", { x: bx - 8, y: ky - 10, "text-anchor": "end", class: "w" }, lbl);
+      }
+    }
+    cv.__wireSegs = segs;
+    if (cv.__anim) cv.__anim.rebuild();
+  }
+  // Straight arrows between neighbouring blocks (CSS edges) as segments: horizontal on a desktop, vertical on a phone.
+  function edgeSegs(cv, g) {
+    const mob = narrow(), c = cv.getBoundingClientRect(), segs = [];
+    const rel = (el) => { const r = el.getBoundingClientRect(); return { l: r.left - c.left, cx: (r.left + r.right) / 2 - c.left, cy: (r.top + r.bottom) / 2 - c.top }; };
+    const first = (el) => el.classList.contains("node") ? el : el.querySelector(".node"), last = (el) => el.classList.contains("node") ? el : [...el.querySelectorAll(".node")].pop();
+    cv.querySelectorAll(".edge").forEach((e) => {
+      if (getComputedStyle(e).display === "none" || (e.classList.contains("js") && !mob)) return;
+      const pe = e.previousElementSibling, ne = e.nextElementSibling, a = pe && last(pe), b = ne && first(ne);
+      if (!a || !b) return;
+      const ra = rel(a), rb = rel(b), re = rel(e);
+      segs.push({ from: a, to: b, path: svgEl(g, "path", { d: mob ? `M${re.l + 28},${ra.cy} V${rb.cy}` : `M${ra.cx},${re.cy} H${rb.cx}`, class: "route" }) });
+    });
+    return segs;
+  }
+  // Data points moving along the scheme. A "tour" is a list of node or port ids; rounds of tours repeat.
+  // Joins light the source they came from (f.srcs on a node); f.end marks the final point.
+  function animate(cv, f) {
+    if (cv.__anim) cv.__anim.stop();
+    const svg = cv.querySelector(".wires"), gR = svgEl(svg, "g", { class: "routes" }), gD = svgEl(svg, "g", { class: "dots" });
+    const rounds = f.rounds || [], ends = new Set(f.end || []), done = f.done || {};
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const byId = (id) => cv.querySelector(`[data-id="${id}"]`);
+    let segs = [], sim = 0, events = [], toks = [], live = 0, ri = 0, cur = 0, visible = true, raf = 0, last = 0;
+    for (const id of ends) { const n = byId(id); if (n) n.classList.add("end"); }
+    const segFor = (a, b) => { const to = nodeOf(b), c = segs.filter((s) => s.to === to && (s.from === a || nodeOf(s.from) === nodeOf(a))); return c.find((s) => s.from === a) || c[0]; };
+    function plan(t) {
+      const els = t.path.map(byId); if (els.some((e) => !e)) return null;
+      let color = t.color || "var(--p-one)"; const legs = [];
+      for (let i = 1; i < els.length; i++) {
+        const a = els[i - 1], b = els[i];
+        if (b !== a && nodeOf(b) === nodeOf(a)) { for (const k of ["ok", "warn", "err"]) if (b.classList.contains(k)) color = `var(--${k})`; continue; }
+        const s = segFor(a, b); if (!s) return null;
+        legs.push({ s, color });
+      }
+      return legs.length ? legs : null;
+    }
+    const at = (d, fn) => events.push({ t: sim + d, fn });
+    function pulse(n, color, big) { n.style.setProperty("--pc", color); n.classList.remove("hit"); void n.offsetWidth; n.classList.add("hit"); }
+    function reset() {
+      cv.querySelectorAll(".src span").forEach((s) => s.classList.remove("on"));
+      for (const id in done) { const n = byId(id), sub = n && n.querySelector(".n-sub"); if (sub && sub.dataset.text) { sub.textContent = sub.dataset.text; sub.classList.remove("sent"); } }
+    }
+    function startRound(tries = 0) {
+      if (!rounds.length || tries > rounds.length) return;
+      cur = ri; const r = rounds[ri]; ri = (ri + 1) % rounds.length;
+      const ok = r.tours.map((t) => ({ t, legs: plan(t) })).filter((x) => x.legs);
+      if (!ok.length) return startRound(tries + 1);
+      if (r.reset) reset();
+      live = ok.length;
+      ok.forEach(({ t, legs }) => at(t.delay || 0, () => {
+        const g = svgEl(gD, "g", {}), rr = t.big ? 6.5 : 4.5;
+        const dots = [0.12, 0.25, 0.45, 1].map((op, k) => svgEl(g, "circle", { r: k === 3 ? rr : rr * (0.55 + k * 0.12), style: `opacity:${op}` }));
+        toks.push({ t, legs, li: 0, t0: sim, g, dots, gap: r.gap });
+      }));
+    }
+    function arrive(tok) {
+      const n = tok.legs[tok.legs.length - 1].s.to, color = tok.legs[tok.legs.length - 1].color, id = n.dataset.id;
+      if (tok.t.src) { const s = n.querySelector(`.src [data-src="${tok.t.src}"]`); if (s) s.classList.add("on"); }
+      pulse(n, color);
+      if (done[id]) { const sub = n.querySelector(".n-sub"); if (sub) { sub.dataset.text = sub.dataset.text || sub.textContent; sub.textContent = done[id]; sub.classList.add("sent"); } }
+      if (--live === 0) at(tok.gap != null ? tok.gap : 1.1, startRound);
+    }
+    function tick(dt) {
+      sim += dt;
+      for (let i = events.length - 1; i >= 0; i--) if (events[i].t <= sim) events.splice(i, 1)[0].fn();
+      const speed = narrow() ? 170 : 240;
+      for (let i = toks.length - 1; i >= 0; i--) {
+        const k = toks[i]; let leg = k.legs[k.li], len = leg.s.path.getTotalLength(), d = (sim - k.t0) * speed;
+        if (d >= len) { k.li++; k.t0 = sim; if (k.li >= k.legs.length) { k.g.remove(); toks.splice(i, 1); arrive(k); continue; } leg = k.legs[k.li]; d = 0; }
+        k.dots.forEach((c, j) => { const q = leg.s.path.getPointAtLength(Math.max(0, d - (3 - j) * 7)); c.setAttribute("cx", q.x); c.setAttribute("cy", q.y); c.style.fill = leg.color; });
+      }
+    }
+    function frame(now) { const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now; if (visible && !document.hidden) tick(dt); raf = requestAnimationFrame(frame); }
+    function drawStill() {   // reduced motion: points resting on the lines, every source in, the final point marked
+      gD.innerHTML = ""; const seen = new Set();
+      rounds.forEach((r) => r.tours.forEach((t) => (plan(t) || []).forEach((l) => { if (seen.has(l.s)) return; seen.add(l.s);
+        const len = l.s.path.getTotalLength(), q = l.s.path.getPointAtLength(len / 2); svgEl(gD, "circle", { cx: q.x, cy: q.y, r: 4, style: `fill:${l.color}` }); })));
+      cv.querySelectorAll(".src span").forEach((s) => s.classList.add("on"));
+    }
+    const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => { visible = es[0].isIntersecting; }) : null;
+    if (io) io.observe(cv);
+    const api = {
+      rebuild() {
+        gR.innerHTML = ""; svg.append(gR, gD);
+        segs = [...(cv.__wireSegs || []), ...edgeSegs(cv, gR)];
+        toks.forEach((k) => k.g.remove()); toks = []; events = []; live = 0;
+        if (still) return drawStill();
+        ri = cur; reset(); startRound();
+        if (!raf) raf = requestAnimationFrame(frame);
+      },
+      stop() { cancelAnimationFrame(raf); raf = 0; if (io) io.disconnect(); toks = []; events = []; },
+    };
+    cv.__anim = api;
+    return api;
   }
   function renderHow(f, u) {
     $("how-h").textContent = f.heading;
-    $("legend").innerHTML = [["user", u.legend[0]], ["flow", u.legend[1]], ["ai", u.legend[2]], ["data", u.legend[3]]].map(([r, l]) => `<li><i style="--r:var(--r-${r});--rb:var(--r-${r}-bg)"></i>${esc(l)}</li>`).join("") + `<li><i class="dash"></i>${esc(u.legend[4])}</li>`;
+    const pts = f.srcLegend ? f.srcLegend.map((x) => `<li><i class="pt" style="--c:var(--p-${x[0]})"></i>${esc(x[1])}</li>`).join("") : `<li><i class="pt" style="--c:var(--p-one)"></i>${esc(u.legend[5])}</li>`;
+    $("legend").innerHTML = [["user", u.legend[0]], ["flow", u.legend[1]], ["ai", u.legend[2]], ["data", u.legend[3]]].map(([r, l]) => `<li><i style="--r:var(--r-${r});--rb:var(--r-${r}-bg)"></i>${esc(l)}</li>`).join("") + `<li><i class="dash"></i>${esc(u.legend[4])}</li>` + pts;
     const cv = $("canvas");
+    if (cv.__anim) { cv.__anim.stop(); cv.__anim = null; }
     cv.innerHTML = `<svg class="wires" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M2 1.5L9 5L2 8.5" style="stroke-dasharray:none;stroke-width:1.5"/></marker></defs></svg><div class="flow${f.lanes ? " lanes" : ""}" data-n="${f.n}" role="list">${itemsHTML(f.items)}</div>`;
     cv.dataset.wires = f.wires || ""; cv.style.paddingBottom = f.pad || "";
+    animate(cv, f);
     if (!cv.__ro) { cv.__ro = new ResizeObserver(() => drawWires(cv)); cv.__ro.observe(cv); }
     document.fonts.ready.then(() => drawWires(cv)); drawWires(cv);
   }
@@ -371,8 +534,8 @@
 
   const T = {"en": {"role": "AI/ML Project Lead", "crumb": "Portfolio · Price revisions", "back": "← Portfolio", "title": "Price revisions: destination “Sunny Coast”", "lead": "Three times a day the system recalculates a price: a machine-learning forecast of the flight's load plus rule-based signals.", "pill": "Demo data · run {date}, 14:30", "f": {"dir": "Destination", "city": "Departure city", "air": "Airline", "grp": "Hotel group", "all": "all"}, "dirs": ["Sunny Coast", "Azure Bay"], "cities": ["City A", "City B"], "grps": ["Group A", "Group B"], "leg": ["price up", "price down", "deep discount (from $120)", "no change"], "sum": ["accepted", "rejected", "waiting"], "th": ["Date", "Airline", "Flight", "Block", "Sold", "Left", "Load", "4 nights", "5", "6", "7", "8", "Decision"], "stim": "sales stimulus — the flight is not selling yet", "wait": "waiting", "acc": "accepted", "rej": "rejected", "seed": {"m": "Mary", "k": "Marat", "c1": "A group request for 12 seats is in progress on this flight; confirmation expected tomorrow.", "c2": "The request was not confirmed — lowering the price."}, "d": {"ctx": "{days} to departure · load {lf}% (plan {plan}%)", "ctx0": "departs today · load {lf}% (plan {plan}%)", "day": ["day", "days"], "ind": "Flight indicators", "indRows": ["Load now", "Sales pace", "Pace change", "Cancellations"], "perDay": "{n} seats/day", "bk": "{n} bookings · {p}%", "calc": "Revision calculation", "calcSub": "each signal's contribution: % of the ticket price and $ per person", "fc": ["Flight forecast", "load at departure below plan ({r}% of the norm)", "load at departure above plan ({r}% of the norm)"], "ld": ["Flight load", "discount for low load ({lf}% taken)", "surcharge for high load ({lf}% taken)", "within the norm ({lf}% taken)"], "pc": ["Sales pace", "{x}× faster than the norm", "{x}× slower than the norm"], "dd": ["Days to departure", "early-booking surcharge", "no surcharge: departure is close"], "yy": ["Year-on-year demand", "{p}% below last year", "{p}% above last year"], "hd": ["Holiday", "none in this period"], "sigSum": "Flight signals", "ret": "Return-flight balance", "smooth": "Smoothing between runs", "total": "Total per person", "same": "No change since the last run.", "mkt": "Market · for reference", "mk": ["hotel", "ours", "competitor", "difference"], "sales": "No sales in the last 3 days", "sales2": "Sales in the last 3 days: {n}", "q": "Do you agree with the recommendation?", "now": "Now: {dec} · {who}, {when}", "none": "No decision yet", "you": "You:", "yes": "Agree", "no": "Disagree", "cmts": "Comments", "ph": "Your comment…", "send": "Send", "agreed": "agrees", "disagreed": "disagrees", "nights": "nights"}}, "de": {"role": "AI/ML Project Lead", "crumb": "Portfolio · Preisrevisionen", "back": "← Portfolio", "title": "Preisrevisionen: Ziel „Sonnenküste“", "lead": "Dreimal täglich berechnet das System einen Preis neu: eine ML-Prognose der Flugauslastung plus regelbasierte Signale.", "pill": "Demo-Daten · Lauf {date}, 14:30", "f": {"dir": "Ziel", "city": "Abflughafen", "air": "Airline", "grp": "Hotelgruppe", "all": "alle"}, "dirs": ["Sonnenküste", "Azurbucht"], "cities": ["Stadt A", "Stadt B"], "grps": ["Gruppe A", "Gruppe B"], "leg": ["Preis rauf", "Preis runter", "tiefer Rabatt (ab $120)", "keine Änderung"], "sum": ["angenommen", "abgelehnt", "offen"], "th": ["Datum", "Airline", "Flug", "Block", "Verkauft", "Rest", "Auslastung", "4 Nächte", "5", "6", "7", "8", "Entscheidung"], "stim": "Verkaufsanreiz — der Flug verkauft sich noch nicht", "wait": "offen", "acc": "angenommen", "rej": "abgelehnt", "seed": {"m": "Mary", "k": "Marat", "c1": "Für diesen Flug läuft eine Gruppenanfrage über 12 Plätze; Bestätigung morgen erwartet.", "c2": "Die Anfrage wurde nicht bestätigt — wir senken den Preis."}, "d": {"ctx": "{days} bis Abflug · Auslastung {lf} % (Plan {plan} %)", "ctx0": "Abflug heute · Auslastung {lf} % (Plan {plan} %)", "day": ["Tag", "Tage"], "ind": "Kennzahlen des Flugs", "indRows": ["Auslastung jetzt", "Verkaufstempo", "Tempoänderung", "Stornierungen"], "perDay": "{n} Plätze/Tag", "bk": "{n} Buchungen · {p} %", "calc": "Berechnung der Revision", "calcSub": "Beitrag jedes Signals: % des Ticketpreises und $ pro Person", "fc": ["Prognose des Flugs", "zum Abflug unter Plan ({r} % der Norm)", "zum Abflug über Plan ({r} % der Norm)"], "ld": ["Auslastung des Flugs", "Rabatt für niedrige Auslastung ({lf} % belegt)", "Aufschlag für hohe Auslastung ({lf} % belegt)", "im Rahmen der Norm ({lf} % belegt)"], "pc": ["Verkaufstempo", "{x}-mal schneller als die Norm", "{x}-mal langsamer als die Norm"], "dd": ["Tage bis Abflug", "Frühbucher-Aufschlag", "kein Aufschlag: Abflug ist nah"], "yy": ["Nachfrage zum Vorjahr", "{p} % unter dem Vorjahr", "{p} % über dem Vorjahr"], "hd": ["Feiertag", "keiner in diesem Zeitraum"], "sigSum": "Signale des Flugs", "ret": "Balance der Rückflüge", "smooth": "Glättung zwischen Läufen", "total": "Gesamt pro Person", "same": "Keine Änderung seit dem letzten Lauf.", "mkt": "Markt · zur Information", "mk": ["Hotel", "wir", "Wettbewerber", "Differenz"], "sales": "Keine Verkäufe in den letzten 3 Tagen", "sales2": "Verkäufe in den letzten 3 Tagen: {n}", "q": "Stimmen Sie der Empfehlung zu?", "now": "Jetzt: {dec} · {who}, {when}", "none": "Noch keine Entscheidung", "you": "Sie:", "yes": "Zustimmen", "no": "Ablehnen", "cmts": "Kommentare", "ph": "Ihr Kommentar …", "send": "Senden", "agreed": "stimmt zu", "disagreed": "lehnt ab", "nights": "Nächte"}}, "ru": {"role": "AI/ML Project Lead", "crumb": "Портфолио · Ревизии цен", "back": "← Портфолио", "title": "Ревизии цен: направление «Солнечный берег»", "lead": "Три раза в день система пересчитывает цену: ML-прогноз загрузки рейса плюс сигналы по правилам.", "pill": "Демо-данные · прогон {date}, 14:30", "f": {"dir": "Направление", "city": "Город вылета", "air": "Авиакомпания", "grp": "Группа отелей", "all": "все"}, "dirs": ["Солнечный берег", "Лазурная бухта"], "cities": ["Город A", "Город B"], "grps": ["Группа A", "Группа B"], "leg": ["цена вверх", "цена вниз", "глубокая скидка (от $120)", "без изменений"], "sum": ["принято", "отклонено", "ждут"], "th": ["Дата", "Авиакомпания", "Рейс", "Блок", "Продано", "Остаток", "Загрузка", "4 ночи", "5", "6", "7", "8", "Решение"], "stim": "стимул продаж — рейс ещё не продаётся", "wait": "ждёт", "acc": "принято", "rej": "отклонено", "seed": {"m": "Мэри", "k": "Марат", "c1": "По этому рейсу идёт групповая заявка на 12 мест, завтра подтвердят.", "c2": "Заявка не подтвердилась, снижаем."}, "d": {"ctx": "За {days} до вылета · загружено {lf} % (план {plan} %)", "ctx0": "вылет сегодня · загружено {lf} % (план {plan} %)", "day": ["день", "дня", "дней"], "ind": "Показатели рейса", "indRows": ["Загрузка сейчас", "Темп продаж", "Ускорение темпа", "Отмены"], "perDay": "{n} мест/день", "bk": "{n} заявок · {p} %", "calc": "Расчёт ревизии", "calcSub": "вклад каждого сигнала: % от стоимости билета и $ на человека", "fc": ["Прогноз рейса", "к вылету ниже плана ({r} % нормы)", "к вылету выше плана ({r} % нормы)"], "ld": ["Загрузка рейса", "скидка за низкую загрузку (занято {lf} %)", "надбавка за высокую загрузку (занято {lf} %)", "в норме (занято {lf} %)"], "pc": ["Темп продаж", "в {x} раза быстрее нормы", "в {x} раза медленнее нормы"], "dd": ["Срок до вылета", "ранняя надбавка за срок", "без надбавки: вылет близко"], "yy": ["Спрос год-к-году", "ниже прошлогоднего на {p} %", "выше прошлогоднего на {p} %"], "hd": ["Праздник", "в этот период нет"], "sigSum": "Сигналы рейса", "ret": "Баланс обратных рейсов", "smooth": "Сглаживание между прогонами", "total": "Итого на человека", "same": "Без изменений с прошлого прогона.", "mkt": "Рынок · справочно", "mk": ["отель", "у нас", "конкурент", "разница"], "sales": "Продаж за последние 3 дня нет", "sales2": "Продаж за последние 3 дня: {n}", "q": "Согласны с рекомендацией?", "now": "Сейчас: {dec} · {who}, {when}", "none": "Решения пока нет", "you": "Вы:", "yes": "Согласен", "no": "Не согласен", "cmts": "Комментарии", "ph": "Ваш комментарий…", "send": "Отправить", "agreed": "согласие", "disagreed": "несогласие", "nights": "ночей"}}};
   const NAME = { en: "Vildana Razumova", de: "Vildana Razumova", ru: "Вильдана Разумова" };
-  const HOW = {"en": {"lvl1": "What the manager sees", "lvl2": "How it works", "demo": "Demo", "legend": ["What the user sees", "Logic", "AI model", "Data", "Branch"]}, "de": {"lvl1": "Was der Manager sieht", "lvl2": "So funktioniert es", "demo": "Demo", "legend": ["Sieht der Nutzer", "Logik", "KI-Modell", "Daten", "Zweig"]}, "ru": {"lvl1": "Что видит менеджер", "lvl2": "Как устроено", "demo": "Демо", "legend": ["Видит пользователь", "Логика", "ИИ-модель", "Данные", "Ветка"]}};
-  const FLOW = {"en": {"heading": "How a run goes and where the decisions go", "n": 5, "wires": "run:b>al:t; page:b>n8:t; n8:l>chd:r; chd:l>calc:b dash|into the next run", "items": [{"role": "flow", "icon": "clock", "title": "Run 3 times a day", "tech": ["Airflow", "Docker"], "sub": "on schedule, in a container", "id": "run"}, "->", {"role": "flow", "icon": "shield", "title": "Data checks", "tech": ["SQL"], "sub": "incomplete data — the calculation does not start"}, "->", {"role": "ai", "icon": "trend", "title": "ML forecast and signals", "tech": ["LightGBM", "SHAP"], "sub": "load at departure vs plan, plus load, pace, days to departure, year-on-year demand, holidays → $ per person", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Recommendations", "tech": ["ClickHouse"], "sub": "the run's result in the database"}, "->", {"role": "user", "icon": "window", "title": "Managers' page", "tech": ["HTML", "JS"], "sub": "table, breakdown, agree / disagree", "id": "page", "demo": ["in the demo ↑", "#demo"]}, {"role": "user", "icon": "bell", "title": "Alert in Teams", "tech": ["Teams"], "sub": "how the run went", "id": "al", "area": "2 / 1", "demo": ["demo →", "alerts.html"]}, {"role": "flow", "icon": "n8n", "title": "Decision intake", "tech": ["n8n"], "sub": "the button and the comment from the page", "id": "n8", "area": "2 / 9"}, {"role": "data", "icon": "db", "title": "Decisions in the database", "tech": ["ClickHouse"], "sub": "the decision and the comment for each recommendation", "id": "chd", "area": "2 / 7", "br": "feedback"}]}, "de": {"heading": "Wie ein Lauf abläuft und wohin die Entscheidungen gehen", "n": 5, "wires": "run:b>al:t; page:b>n8:t; n8:l>chd:r; chd:l>calc:b dash|in den nächsten Lauf", "items": [{"role": "flow", "icon": "clock", "title": "Lauf 3-mal am Tag", "tech": ["Airflow", "Docker"], "sub": "nach Zeitplan, im Container", "id": "run"}, "->", {"role": "flow", "icon": "shield", "title": "Datenprüfungen", "tech": ["SQL"], "sub": "unvollständige Daten — die Berechnung startet nicht"}, "->", {"role": "ai", "icon": "trend", "title": "ML-Prognose und Signale", "tech": ["LightGBM", "SHAP"], "sub": "Auslastung zum Abflug vs. Plan, dazu Auslastung, Tempo, Tage bis Abflug, Vorjahresnachfrage, Feiertage → $ pro Person", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Empfehlungen", "tech": ["ClickHouse"], "sub": "das Ergebnis des Laufs in der Datenbank"}, "->", {"role": "user", "icon": "window", "title": "Seite der Manager", "tech": ["HTML", "JS"], "sub": "Tabelle, Aufschlüsselung, zustimmen / ablehnen", "id": "page", "demo": ["in der Demo ↑", "#demo"]}, {"role": "user", "icon": "bell", "title": "Meldung in Teams", "tech": ["Teams"], "sub": "wie der Lauf gelaufen ist", "id": "al", "area": "2 / 1", "demo": ["Demo →", "alerts.html"]}, {"role": "flow", "icon": "n8n", "title": "Entscheidung entgegennehmen", "tech": ["n8n"], "sub": "Button und Kommentar von der Seite", "id": "n8", "area": "2 / 9"}, {"role": "data", "icon": "db", "title": "Entscheidungen in der Datenbank", "tech": ["ClickHouse"], "sub": "Entscheidung und Kommentar zu jeder Empfehlung", "id": "chd", "area": "2 / 7", "br": "Rückkopplung"}]}, "ru": {"heading": "Как проходит прогон и куда уходят решения", "n": 5, "wires": "run:b>al:t; page:b>n8:t; n8:l>chd:r; chd:l>calc:b dash|в следующий прогон", "items": [{"role": "flow", "icon": "clock", "title": "Прогон 3 раза в день", "tech": ["Airflow", "Docker"], "sub": "по расписанию, в контейнере", "id": "run"}, "->", {"role": "flow", "icon": "shield", "title": "Проверки данных", "tech": ["SQL"], "sub": "неполные данные — расчёт не стартует"}, "->", {"role": "ai", "icon": "trend", "title": "ML-прогноз и сигналы", "tech": ["LightGBM", "SHAP"], "sub": "загрузка к вылету против плана, плюс загрузка, темп, срок до вылета, спрос год-к-году, праздники → $ на человека", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Рекомендации", "tech": ["ClickHouse"], "sub": "результат прогона в базе"}, "->", {"role": "user", "icon": "window", "title": "Страница менеджеров", "tech": ["HTML", "JS"], "sub": "таблица, разбор, согласен / не согласен", "id": "page", "demo": ["в демо ↑", "#demo"]}, {"role": "user", "icon": "bell", "title": "Алерт в Teams", "tech": ["Teams"], "sub": "как прошёл прогон", "id": "al", "area": "2 / 1", "demo": ["демо →", "alerts.html"]}, {"role": "flow", "icon": "n8n", "title": "Приём решения", "tech": ["n8n"], "sub": "кнопка и комментарий со страницы", "id": "n8", "area": "2 / 9"}, {"role": "data", "icon": "db", "title": "Решения в базе", "tech": ["ClickHouse"], "sub": "решение и комментарий к каждой рекомендации", "id": "chd", "area": "2 / 7", "br": "обратная связь"}]}};
+  const HOW = {"en": {"lvl1": "What the manager sees", "lvl2": "How it works", "demo": "Demo", "legend": ["What the user sees", "Logic", "AI model", "Data", "Branch", "data flow"]}, "de": {"lvl1": "Was der Manager sieht", "lvl2": "So funktioniert es", "demo": "Demo", "legend": ["Sieht der Nutzer", "Logik", "KI-Modell", "Daten", "Zweig", "Datenfluss"]}, "ru": {"lvl1": "Что видит менеджер", "lvl2": "Как устроено", "demo": "Демо", "legend": ["Видит пользователь", "Логика", "ИИ-модель", "Данные", "Ветка", "поток данных"]}};
+  const FLOW = {"en": {"heading": "How a run goes and where the decisions go", "n": 5, "wires": "run:b>al:t; page:b>n8:t; n8:l>chd:r; chd:l>calc:b dash|into the next run", "rounds": [{"tours": [{"path": ["run", "chkd", "calc", "recs", "page"]}, {"path": ["run", "al"], "delay": 0.4}]}, {"tours": [{"path": ["page", "n8", "chd", "calc"]}]}], "end": ["page"], "items": [{"role": "flow", "icon": "clock", "title": "Run 3 times a day", "tech": ["Airflow", "Docker"], "sub": "on schedule, in a container", "id": "run"}, "->", {"role": "flow", "icon": "shield", "title": "Data checks", "tech": ["SQL"], "sub": "incomplete data — the calculation does not start", "id": "chkd"}, "->", {"role": "ai", "icon": "trend", "title": "ML forecast and signals", "tech": ["LightGBM", "SHAP"], "sub": "load at departure vs plan, plus load, pace, days to departure, year-on-year demand, holidays → $ per person", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Recommendations", "tech": ["ClickHouse"], "sub": "the run's result in the database", "id": "recs"}, "->", {"role": "user", "icon": "window", "title": "Managers' page", "tech": ["HTML", "JS"], "sub": "table, breakdown, agree / disagree", "id": "page", "demo": ["in the demo ↑", "#demo"]}, {"role": "user", "icon": "bell", "title": "Alert in Teams", "tech": ["Teams"], "sub": "how the run went", "id": "al", "area": "2 / 1", "demo": ["demo →", "alerts.html"]}, {"role": "flow", "icon": "n8n", "title": "Decision intake", "tech": ["n8n"], "sub": "the button and the comment from the page", "id": "n8", "area": "2 / 9"}, {"role": "data", "icon": "db", "title": "Decisions in the database", "tech": ["ClickHouse"], "sub": "the decision and the comment for each recommendation", "id": "chd", "area": "2 / 7", "br": "feedback"}]}, "de": {"heading": "Wie ein Lauf abläuft und wohin die Entscheidungen gehen", "n": 5, "wires": "run:b>al:t; page:b>n8:t; n8:l>chd:r; chd:l>calc:b dash|in den nächsten Lauf", "rounds": [{"tours": [{"path": ["run", "chkd", "calc", "recs", "page"]}, {"path": ["run", "al"], "delay": 0.4}]}, {"tours": [{"path": ["page", "n8", "chd", "calc"]}]}], "end": ["page"], "items": [{"role": "flow", "icon": "clock", "title": "Lauf 3-mal am Tag", "tech": ["Airflow", "Docker"], "sub": "nach Zeitplan, im Container", "id": "run"}, "->", {"role": "flow", "icon": "shield", "title": "Datenprüfungen", "tech": ["SQL"], "sub": "unvollständige Daten — die Berechnung startet nicht", "id": "chkd"}, "->", {"role": "ai", "icon": "trend", "title": "ML-Prognose und Signale", "tech": ["LightGBM", "SHAP"], "sub": "Auslastung zum Abflug vs. Plan, dazu Auslastung, Tempo, Tage bis Abflug, Vorjahresnachfrage, Feiertage → $ pro Person", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Empfehlungen", "tech": ["ClickHouse"], "sub": "das Ergebnis des Laufs in der Datenbank", "id": "recs"}, "->", {"role": "user", "icon": "window", "title": "Seite der Manager", "tech": ["HTML", "JS"], "sub": "Tabelle, Aufschlüsselung, zustimmen / ablehnen", "id": "page", "demo": ["in der Demo ↑", "#demo"]}, {"role": "user", "icon": "bell", "title": "Meldung in Teams", "tech": ["Teams"], "sub": "wie der Lauf gelaufen ist", "id": "al", "area": "2 / 1", "demo": ["Demo →", "alerts.html"]}, {"role": "flow", "icon": "n8n", "title": "Entscheidung entgegennehmen", "tech": ["n8n"], "sub": "Button und Kommentar von der Seite", "id": "n8", "area": "2 / 9"}, {"role": "data", "icon": "db", "title": "Entscheidungen in der Datenbank", "tech": ["ClickHouse"], "sub": "Entscheidung und Kommentar zu jeder Empfehlung", "id": "chd", "area": "2 / 7", "br": "Rückkopplung"}]}, "ru": {"heading": "Как проходит прогон и куда уходят решения", "n": 5, "wires": "run:b>al:t; page:b>n8:t; n8:l>chd:r; chd:l>calc:b dash|в следующий прогон", "rounds": [{"tours": [{"path": ["run", "chkd", "calc", "recs", "page"]}, {"path": ["run", "al"], "delay": 0.4}]}, {"tours": [{"path": ["page", "n8", "chd", "calc"]}]}], "end": ["page"], "items": [{"role": "flow", "icon": "clock", "title": "Прогон 3 раза в день", "tech": ["Airflow", "Docker"], "sub": "по расписанию, в контейнере", "id": "run"}, "->", {"role": "flow", "icon": "shield", "title": "Проверки данных", "tech": ["SQL"], "sub": "неполные данные — расчёт не стартует", "id": "chkd"}, "->", {"role": "ai", "icon": "trend", "title": "ML-прогноз и сигналы", "tech": ["LightGBM", "SHAP"], "sub": "загрузка к вылету против плана, плюс загрузка, темп, срок до вылета, спрос год-к-году, праздники → $ на человека", "id": "calc"}, "->", {"role": "data", "icon": "db", "title": "Рекомендации", "tech": ["ClickHouse"], "sub": "результат прогона в базе", "id": "recs"}, "->", {"role": "user", "icon": "window", "title": "Страница менеджеров", "tech": ["HTML", "JS"], "sub": "таблица, разбор, согласен / не согласен", "id": "page", "demo": ["в демо ↑", "#demo"]}, {"role": "user", "icon": "bell", "title": "Алерт в Teams", "tech": ["Teams"], "sub": "как прошёл прогон", "id": "al", "area": "2 / 1", "demo": ["демо →", "alerts.html"]}, {"role": "flow", "icon": "n8n", "title": "Приём решения", "tech": ["n8n"], "sub": "кнопка и комментарий со страницы", "id": "n8", "area": "2 / 9"}, {"role": "data", "icon": "db", "title": "Решения в базе", "tech": ["ClickHouse"], "sub": "решение и комментарий к каждой рекомендации", "id": "chd", "area": "2 / 7", "br": "обратная связь"}]}};
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   const fmt = (n) => (n < 0 ? "−" : "+") + "$" + Math.abs(n);
