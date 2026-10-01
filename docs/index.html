@@ -759,7 +759,7 @@ function a(e,t){return n(e)||r(e,t)||o(e,t)||i()}function o(e,n){if(e){if(typeof
     window.scrollTo({ top: 0, behavior: "smooth" }); input.focus({ preventScroll: true });
   }
 
-  const MAX = 1500;   // same limit as the Guard node in n8n
+  const MAX = 3000;   // same limit as the Guard node in n8n (raised from 1500 on 01.10.2026)
   const grow = () => {
     input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 180) + "px"; input.style.overflowY = input.scrollHeight > 180 ? "auto" : "hidden";
     const n = input.value.length, over = n > MAX;
